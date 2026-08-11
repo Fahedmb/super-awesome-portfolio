@@ -94,8 +94,9 @@ export default function ScrollCanvas({ onProgressUpdate }: ScrollCanvasProps) {
   const handleResize = useCallback(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    canvas.width = Math.round(window.innerWidth * dpr);
+    canvas.height = Math.round(window.innerHeight * dpr);
     // Re-cache context after resize (canvas reset clears it)
     ctxRef.current = canvas.getContext("2d", { alpha: false });
     // Re-render current frame
@@ -142,6 +143,7 @@ export default function ScrollCanvas({ onProgressUpdate }: ScrollCanvasProps) {
 
       // Only seek if the time actually changed (avoid redundant seeks)
       if (Math.abs(video.currentTime - targetTime) > 0.001) {
+        if (video.seeking) return; // Skip this frame if a seek is already in progress
         video.currentTime = targetTime;
       }
 
@@ -342,7 +344,7 @@ export default function ScrollCanvas({ onProgressUpdate }: ScrollCanvasProps) {
             Loading Video Scenes
           </h2>
           <p className="text-xs font-mono text-neutral-400 mb-6">
-            Quality: {selectedTier || "Detecting..."}
+            Streaming at {selectedTier || "Detecting..."}
           </p>
 
           <div className="w-full h-2 bg-neutral-900 border border-neutral-800 rounded-full overflow-hidden mb-3">
