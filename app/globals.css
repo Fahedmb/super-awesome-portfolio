@@ -1,63 +1,148 @@
 @import "tailwindcss";
 
 @layer base {
+  :root {
+    --font-syne: var(--font-syne, "Syne", sans-serif);
+    --font-instrument: var(--font-instrument, "Instrument Serif", serif);
+    --font-mono: var(--font-geist-mono, "Geist Mono", monospace);
+  }
+
   html {
-    color-scheme: dark;
+    color-scheme: dark light;
+    scroll-behavior: smooth;
   }
 
   body {
-    background-color: #09090b;
+    background-color: #000000;
     color: #f4f4f5;
     overflow-x: hidden;
+    font-family: var(--font-syne), sans-serif;
   }
 
   /* Custom sleek scrollbar */
   ::-webkit-scrollbar {
-    width: 6px;
+    width: 5px;
   }
   ::-webkit-scrollbar-track {
-    background: #09090b;
+    background: transparent;
   }
   ::-webkit-scrollbar-thumb {
-    background: #27272a;
+    background: rgba(255, 255, 255, 0.2);
     border-radius: 9999px;
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: #3f3f46;
+    background: rgba(255, 255, 255, 0.4);
   }
 }
 
-/* Glassmorphism helpers */
-.glass-panel {
-  background: rgba(18, 18, 24, 0.65);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+/* Typography Helpers */
+.font-display {
+  font-family: var(--font-syne), sans-serif;
+}
+
+.font-editorial {
+  font-family: var(--font-instrument), serif;
+}
+
+.font-code {
+  font-family: var(--font-mono), monospace;
+}
+
+/* Glassmorphism Systems */
+.glass-panel-dark {
+  background: rgba(14, 14, 18, 0.72);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
   transform: translateZ(0);
-  will-change: transform, backdrop-filter;
 }
 
-.glass-card {
-  background: rgba(24, 24, 32, 0.5);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+.glass-panel-light {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.06);
+  transform: translateZ(0);
 }
 
-.glass-card:hover {
-  background: rgba(30, 30, 42, 0.7);
-  border-color: rgba(99, 102, 241, 0.3);
+.glass-card-dark {
+  background: rgba(20, 20, 26, 0.6);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  transition: transform 200ms cubic-bezier(0.23, 1, 0.32, 1),
+    border-color 200ms ease, box-shadow 200ms ease;
+}
+
+.glass-card-dark:hover {
+  background: rgba(26, 26, 36, 0.8);
+  border-color: rgba(255, 214, 0, 0.35);
   transform: translateY(-2px);
-  box-shadow: 0 12px 30px rgba(99, 102, 241, 0.15);
+  box-shadow: 0 16px 40px rgba(255, 214, 0, 0.12);
 }
 
-/* Glowing text effects */
-.glow-text {
-  text-shadow: 0 0 30px rgba(99, 102, 241, 0.5);
+.glass-card-light {
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(0, 0, 0, 0.07);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+  transition: transform 200ms cubic-bezier(0.23, 1, 0.32, 1),
+    border-color 200ms ease, box-shadow 200ms ease;
 }
 
-.glow-cyan {
-  text-shadow: 0 0 30px rgba(34, 211, 238, 0.5);
+.glass-card-light:hover {
+  background: #ffffff;
+  border-color: rgba(180, 83, 9, 0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 16px 35px rgba(0, 0, 0, 0.08);
+}
+
+/* Glowing & Accent Utility Tokens */
+.text-electric-yellow {
+  color: #ffd600;
+}
+
+.glow-yellow {
+  text-shadow: 0 0 25px rgba(255, 214, 0, 0.55), 0 0 60px rgba(255, 214, 0, 0.25);
+}
+
+.glow-white {
+  text-shadow: 0 0 30px rgba(255, 255, 255, 0.6);
+}
+
+/* Infinite Marquee Animation */
+@keyframes logo-loop {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-logo-loop {
+  display: flex;
+  width: max-content;
+  animation: logo-loop 28s linear infinite;
+}
+
+.animate-logo-loop:hover {
+  animation-play-state: paused;
+}
+
+/* Floating Animation */
+@keyframes gentle-float {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-8px) rotate(0.5deg);
+  }
+}
+
+.animate-float {
+  animation: gentle-float 6s ease-in-out infinite;
 }

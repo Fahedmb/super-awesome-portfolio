@@ -60,6 +60,7 @@ export default function ScrollCanvas({ onProgressUpdate }: ScrollCanvasProps) {
 
   // Video refs - one <video> per scene
   const videosRef = useRef<Record<string, HTMLVideoElement>>({});
+  const pendingSeekRef = useRef<Record<string, number | null>>({});
   const manifestRef = useRef<VideoManifest | null>(null);
   const activeSceneRef = useRef<string>("scene_1");
   const currentFrameRef = useRef<number>(0);
@@ -119,10 +120,26 @@ export default function ScrollCanvas({ onProgressUpdate }: ScrollCanvasProps) {
       const totalScrollHeight = vh * 3; // 4 sections = 3vh of scroll range
 
       // Determine which scene and progress within it
+      // Section 0 (0.0): Scene 1 frame 0
+      // Section 1 (1.0): Scene 1 last frame (completed transition)
+      // Section 2 (2.0): Scene 2 last frame (completed transition)
+      // Section 3 (3.0): Scene 3 last frame (completed transition)
       const scrollRatio = Math.max(0, Math.min(1, scrollTop / totalScrollHeight));
       const sectionFloat = scrollRatio * 3; // 0.0 to 3.0
-      const sectionIndex = Math.min(2, Math.floor(sectionFloat));
-      const sectionProgress = sectionFloat - sectionIndex;
+
+      let sectionIndex = 0;
+      let sectionProgress = 0;
+
+      if (sectionFloat <= 1.0) {
+        sectionIndex = 0;
+        sectionProgress = sectionFloat;
+      } else if (sectionFloat <= 2.0) {
+        sectionIndex = 1;
+        sectionProgress = sectionFloat - 1.0;
+      } else {
+        sectionIndex = 2;
+        sectionProgress = Math.min(1.0, sectionFloat - 2.0);
+      }
 
       const sceneKeys = ["scene_1", "scene_2", "scene_3"];
       const sceneKey = sceneKeys[sectionIndex];
@@ -130,8 +147,11 @@ export default function ScrollCanvas({ onProgressUpdate }: ScrollCanvasProps) {
 
       if (!scene) return;
 
-      // Calculate target time within the video
-      const targetTime = sectionProgress * scene.duration;
+      // Calculate target time within the video (clamped ~1 frame before duration to prevent video ended stalls)
+      const targetTime =
+        sectionProgress >= 1.0
+          ? Math.max(0, scene.duration - 0.033)
+          : sectionProgress * scene.duration;
       const video = videosRef.current[sceneKey];
 
       if (!video || video.readyState < 2) return;
@@ -141,10 +161,14 @@ export default function ScrollCanvas({ onProgressUpdate }: ScrollCanvasProps) {
         activeSceneRef.current = sceneKey;
       }
 
-      // Only seek if the time actually changed (avoid redundant seeks)
+      // Smooth seek dispatch with pending queue
       if (Math.abs(video.currentTime - targetTime) > 0.001) {
-        if (video.seeking) return; // Skip this frame if a seek is already in progress
-        video.currentTime = targetTime;
+        if (video.seeking) {
+          pendingSeekRef.current[sceneKey] = targetTime;
+        } else {
+          video.currentTime = targetTime;
+          pendingSeekRef.current[sceneKey] = null;
+        }
       }
 
       // Calculate frame number for the HUD
@@ -243,6 +267,12 @@ export default function ScrollCanvas({ onProgressUpdate }: ScrollCanvasProps) {
             video.addEventListener("seeked", () => {
               if (activeSceneRef.current === sceneKey) {
                 renderVideoFrame(video);
+              }
+              // Flush any pending target time that was queued during seeking
+              const pendingTime = pendingSeekRef.current[sceneKey];
+              if (pendingTime !== null && pendingTime !== undefined && Math.abs(video.currentTime - pendingTime) > 0.001) {
+                pendingSeekRef.current[sceneKey] = null;
+                video.currentTime = pendingTime;
               }
             });
 
