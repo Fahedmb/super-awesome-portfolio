@@ -1,9 +1,43 @@
+/* eslint-disable react/no-unknown-property */
 "use client";
 
-import React, { useRef, useState, useEffect } from "react";
-import { Sparkles, Orbit, Award, Terminal } from "lucide-react";
+import React, { useEffect, useMemo, useRef, useState, Suspense } from "react";
+import { Canvas, extend, useFrame } from "@react-three/fiber";
+import { useGLTF, useTexture, Environment, Lightformer } from "@react-three/drei";
+import {
+  BallCollider,
+  CuboidCollider,
+  Physics,
+  RigidBody,
+  useRopeJoint,
+  useSphericalJoint,
+} from "@react-three/rapier";
+import { MeshLineGeometry, MeshLineMaterial } from "meshline";
+import * as THREE from "three";
+import "./Lanyard.css";
 
-interface LanyardProps {
+extend({ MeshLineGeometry, MeshLineMaterial });
+
+declare module "@react-three/fiber" {
+  interface ThreeElements {
+    meshLineGeometry: any;
+    meshLineMaterial: any;
+  }
+}
+
+const FRONT_UV_RECT = { x: 0, y: 0, w: 0.5, h: 0.755 };
+const BACK_UV_RECT = { x: 0.5, y: 0, w: 0.5, h: 0.757 };
+
+export interface LanyardProps {
+  position?: [number, number, number];
+  gravity?: [number, number, number];
+  fov?: number;
+  transparent?: boolean;
+  frontImage?: string | null;
+  backImage?: string | null;
+  imageFit?: "cover" | "contain";
+  lanyardImage?: string | null;
+  lanyardWidth?: number;
   name?: string;
   role?: string;
   status?: string;
@@ -12,184 +46,358 @@ interface LanyardProps {
 }
 
 export default function Lanyard({
-  name = "FAHED",
-  role = "SOFTWARE ENGINEER // ASTRONOMY ENTHUSIAST",
-  status = "ACTIVE IN EARTH ORBIT",
-  theme = "light",
+  position = [0, 0, 24],
+  gravity = [0, -40, 0],
+  fov = 20,
+  transparent = true,
+  frontImage = null,
+  backImage = null,
+  imageFit = "cover",
+  lanyardImage = null,
+  lanyardWidth = 1,
   className = "",
 }: LanyardProps) {
-  const cardRef = useRef<HTMLDivElement>(null);
-  const [rotate, setRotate] = useState({ x: 0, y: 0 });
-  const [isDragging, setIsDragging] = useState(false);
-  const [offset, setOffset] = useState({ x: 0, y: 0 });
-  const dragStartPos = useRef({ x: 0, y: 0 });
-
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (isDragging || !cardRef.current) return;
-    const rect = cardRef.current.getBoundingClientRect();
-    const centerX = rect.left + rect.width / 2;
-    const centerY = rect.top + rect.height / 2;
-    const x = (e.clientY - centerY) / 12; // Inverted for 3D tilt
-    const y = -(e.clientX - centerX) / 12;
-    setRotate({ x, y });
-  };
-
-  const handleMouseLeave = () => {
-    if (!isDragging) {
-      setRotate({ x: 0, y: 0 });
-    }
-  };
-
-  // Drag physics simulation
-  const handleMouseDown = (e: React.MouseEvent) => {
-    setIsDragging(true);
-    dragStartPos.current = {
-      x: e.clientX - offset.x,
-      y: e.clientY - offset.y,
-    };
-  };
+  const [mounted, setMounted] = useState(false);
+  const [isMobile, setIsMobile] = useState(() =>
+    typeof window !== "undefined" ? window.innerWidth < 768 : false
+  );
 
   useEffect(() => {
-    const handleGlobalMouseMove = (e: MouseEvent) => {
-      if (!isDragging) return;
-      const newX = e.clientX - dragStartPos.current.x;
-      const newY = e.clientY - dragStartPos.current.y;
-      setOffset({
-        x: Math.max(-120, Math.min(120, newX)),
-        y: Math.max(-60, Math.min(120, newY)),
-      });
-      setRotate({
-        x: Math.max(-25, Math.min(25, -newY / 4)),
-        y: Math.max(-25, Math.min(25, newX / 4)),
-      });
-    };
+    setMounted(true);
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
-    const handleGlobalMouseUp = () => {
-      if (isDragging) {
-        setIsDragging(false);
-        // Spring back to rest position
-        setOffset({ x: 0, y: 0 });
-        setRotate({ x: 0, y: 0 });
-      }
-    };
-
-    if (isDragging) {
-      window.addEventListener("mousemove", handleGlobalMouseMove);
-      window.addEventListener("mouseup", handleGlobalMouseUp);
-    }
-
-    return () => {
-      window.removeEventListener("mousemove", handleGlobalMouseMove);
-      window.removeEventListener("mouseup", handleGlobalMouseUp);
-    };
-  }, [isDragging]);
-
-  const isLight = theme === "light";
+  if (!mounted) {
+    return <div className={`lanyard-wrapper ${className}`} />;
+  }
 
   return (
-    <div
-      className={`relative flex flex-col items-center justify-center select-none ${className}`}
-      style={{ perspective: "1000px" }}
-    >
-      {/* Elastic Suspension Strap & Metallic Clasp */}
-      <div className="flex flex-col items-center pointer-events-none z-10">
-        {/* Top Anchor Ring */}
-        <div
-          className={`w-5 h-5 rounded-full border-2 ${
-            isLight
-              ? "border-neutral-400 bg-neutral-300 shadow-sm"
-              : "border-neutral-600 bg-neutral-800"
-          }`}
-        />
-        {/* Elastic Lanyard Strap */}
-        <div
-          className={`w-3.5 h-16 transition-transform duration-100 ${
-            isLight
-              ? "bg-gradient-to-b from-neutral-800 via-neutral-900 to-black shadow-md"
-              : "bg-gradient-to-b from-neutral-700 via-neutral-800 to-neutral-900"
-          }`}
-          style={{
-            transform: `rotate(${offset.x * 0.15}deg)`,
-            transformOrigin: "top center",
-          }}
-        />
-        {/* Metal Carabiner Clip */}
-        <div
-          className={`w-7 h-4 rounded-sm border ${
-            isLight
-              ? "bg-gradient-to-r from-neutral-300 via-white to-neutral-300 border-neutral-400"
-              : "bg-gradient-to-r from-neutral-700 via-neutral-600 to-neutral-700 border-neutral-500"
-          }`}
-        />
-      </div>
-
-      {/* 3D Physical ID Badge */}
-      <div
-        ref={cardRef}
-        onMouseMove={handleMouseMove}
-        onMouseLeave={handleMouseLeave}
-        onMouseDown={handleMouseDown}
-        className={`w-64 sm:w-72 rounded-2xl p-5 shadow-2xl transition-all ${
-          isDragging ? "cursor-grabbing duration-75" : "cursor-grab duration-300 ease-out"
-        } ${
-          isLight
-            ? "bg-white/90 border border-neutral-300/80 text-neutral-900 shadow-neutral-900/15"
-            : "bg-neutral-900/90 border border-neutral-700/80 text-white shadow-black/60"
-        } backdrop-blur-2xl`}
-        style={{
-          transform: `translate3d(${offset.x}px, ${offset.y}px, 0px) rotateX(${rotate.x}deg) rotateY(${rotate.y}deg)`,
-          transformStyle: "preserve-3d",
-        }}
-      >
-        {/* Top Badge Header */}
-        <div className="flex items-center justify-between pb-3 border-b border-neutral-200/80 dark:border-neutral-700/50 mb-4">
-          <div className="flex items-center gap-1.5 text-[10px] font-mono tracking-widest text-amber-600 dark:text-yellow-400 font-bold">
-            <Orbit className="w-3.5 h-3.5 animate-spin" style={{ animationDuration: "12s" }} />
-            <span>FLIGHT PASS // 2026</span>
-          </div>
-          <div className="flex items-center gap-1 text-[9px] font-mono text-emerald-600 dark:text-emerald-400">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-            <span>VALIDATED</span>
-          </div>
-        </div>
-
-        {/* Identity Section */}
-        <div className="flex items-center gap-3.5 mb-4">
-          {/* Avatar Silhouette / Emblem */}
-          <div
-            className={`w-14 h-14 rounded-xl flex items-center justify-center border font-mono font-bold text-xl ${
-              isLight
-                ? "bg-gradient-to-br from-neutral-900 to-black text-yellow-400 border-neutral-700 shadow-md"
-                : "bg-gradient-to-br from-yellow-400 to-amber-600 text-black border-yellow-300 shadow-lg shadow-yellow-500/20"
-            }`}
-          >
-            FH
-          </div>
-          <div>
-            <h3 className="text-lg font-bold font-display tracking-tight leading-none mb-1">
-              {name}
-            </h3>
-            <p className="text-[10px] font-mono text-neutral-500 dark:text-neutral-400 leading-tight">
-              {role}
-            </p>
-          </div>
-        </div>
-
-        {/* Barcode & Security Hologram */}
-        <div className="pt-3 border-t border-neutral-200/80 dark:border-neutral-700/50 flex items-center justify-between">
-          <div className="flex flex-col">
-            <span className="text-[8px] font-mono text-neutral-400 uppercase tracking-widest">
-              TELEMETRY REF
-            </span>
-            <span className="text-[10px] font-mono font-bold tracking-wider text-neutral-700 dark:text-neutral-300">
-              VI · I · VIII · V · IV
-            </span>
-          </div>
-          <div className="px-2 py-1 rounded bg-amber-500/10 border border-amber-500/20 text-[9px] font-mono text-amber-700 dark:text-yellow-400">
-            {status}
-          </div>
-        </div>
-      </div>
+    <div className={`lanyard-wrapper ${className}`}>
+      <Suspense fallback={null}>
+        <Canvas
+          camera={{ position: position, fov: fov }}
+          dpr={[1, isMobile ? 1.5 : 2]}
+          gl={{ alpha: transparent, antialias: true }}
+          onCreated={({ gl }) =>
+            gl.setClearColor(new THREE.Color(0x000000), transparent ? 0 : 1)
+          }
+        >
+          <ambientLight intensity={Math.PI} />
+          <Physics gravity={gravity} timeStep={isMobile ? 1 / 30 : 1 / 60}>
+            <Band
+              isMobile={isMobile}
+              frontImage={frontImage}
+              backImage={backImage}
+              imageFit={imageFit}
+              lanyardImage={lanyardImage}
+              lanyardWidth={lanyardWidth}
+            />
+          </Physics>
+          <Environment blur={0.75}>
+            <Lightformer
+              intensity={2}
+              color="white"
+              position={[0, -1, 5]}
+              rotation={[0, 0, Math.PI / 3]}
+              scale={[100, 0.1, 1]}
+            />
+            <Lightformer
+              intensity={3}
+              color="white"
+              position={[-1, -1, 1]}
+              rotation={[0, 0, Math.PI / 3]}
+              scale={[100, 0.1, 1]}
+            />
+            <Lightformer
+              intensity={3}
+              color="white"
+              position={[1, 1, 1]}
+              rotation={[0, 0, Math.PI / 3]}
+              scale={[100, 0.1, 1]}
+            />
+            <Lightformer
+              intensity={10}
+              color="white"
+              position={[-10, 0, 14]}
+              rotation={[0, Math.PI / 2, Math.PI / 3]}
+              scale={[100, 10, 1]}
+            />
+          </Environment>
+        </Canvas>
+      </Suspense>
     </div>
   );
 }
+
+function Band({
+  maxSpeed = 50,
+  minSpeed = 0,
+  isMobile = false,
+  frontImage = null,
+  backImage = null,
+  imageFit = "cover",
+  lanyardImage = null,
+  lanyardWidth = 1,
+}: {
+  maxSpeed?: number;
+  minSpeed?: number;
+  isMobile?: boolean;
+  frontImage?: string | null;
+  backImage?: string | null;
+  imageFit?: "cover" | "contain";
+  lanyardImage?: string | null;
+  lanyardWidth?: number;
+}) {
+  const band = useRef<any>(null);
+  const fixed = useRef<any>(null);
+  const j1 = useRef<any>(null);
+  const j2 = useRef<any>(null);
+  const j3 = useRef<any>(null);
+  const card = useRef<any>(null);
+
+  const vec = useMemo(() => new THREE.Vector3(), []);
+  const ang = useMemo(() => new THREE.Vector3(), []);
+  const rot = useMemo(() => new THREE.Vector3(), []);
+  const dir = useMemo(() => new THREE.Vector3(), []);
+
+  const segmentProps = {
+    type: "dynamic" as const,
+    canSleep: true,
+    colliders: false as const,
+    angularDamping: 4,
+    linearDamping: 4,
+  };
+
+  const { nodes, materials } = useGLTF("/assets/lanyard/card.glb") as any;
+  const texture = useTexture(lanyardImage || "/assets/lanyard/lanyard.png");
+
+  const [frontTex, setFrontTex] = useState<THREE.Texture | null>(null);
+  const [backTex, setBackTex] = useState<THREE.Texture | null>(null);
+
+  useEffect(() => {
+    if (!frontImage) {
+      setFrontTex(null);
+      return;
+    }
+    const loader = new THREE.TextureLoader();
+    loader.load(frontImage, (t) => setFrontTex(t));
+  }, [frontImage]);
+
+  useEffect(() => {
+    if (!backImage) {
+      setBackTex(null);
+      return;
+    }
+    const loader = new THREE.TextureLoader();
+    loader.load(backImage, (t) => setBackTex(t));
+  }, [backImage]);
+
+  const cardMap = useMemo(() => {
+    if (!materials?.base?.map) return null;
+    const baseMap = materials.base.map;
+    if (!frontImage && !backImage) return baseMap;
+
+    const baseImg = baseMap.image;
+    if (!baseImg) return baseMap;
+    const W = baseImg.width || 1024;
+    const H = baseImg.height || 1024;
+    const canvas = document.createElement("canvas");
+    canvas.width = W;
+    canvas.height = H;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return baseMap;
+
+    ctx.drawImage(baseImg, 0, 0, W, H);
+
+    const drawFitted = (img: any, rect: typeof FRONT_UV_RECT) => {
+      const rx = rect.x * W;
+      const ry = rect.y * H;
+      const rw = rect.w * W;
+      const rh = rect.h * H;
+      const pick = imageFit === "contain" ? Math.min : Math.max;
+      const scale = pick(rw / img.width, rh / img.height);
+      const dw = img.width * scale;
+      const dh = img.height * scale;
+      const dx = rx + (rw - dw) / 2;
+      const dy = ry + (rh - dh) / 2;
+      ctx.save();
+      ctx.beginPath();
+      ctx.rect(rx, ry, rw, rh);
+      ctx.clip();
+      ctx.drawImage(img, dx, dy, dw, dh);
+      ctx.restore();
+    };
+
+    if (frontImage && frontTex?.image) drawFitted(frontTex.image, FRONT_UV_RECT);
+    if (backImage && backTex?.image) drawFitted(backTex.image, BACK_UV_RECT);
+
+    const composite = new THREE.CanvasTexture(canvas);
+    composite.colorSpace = THREE.SRGBColorSpace;
+    composite.flipY = baseMap.flipY;
+    composite.anisotropy = 16;
+    composite.needsUpdate = true;
+    return composite;
+  }, [frontImage, backImage, imageFit, frontTex, backTex, materials]);
+
+  const [curve] = useState(
+    () =>
+      new THREE.CatmullRomCurve3([
+        new THREE.Vector3(),
+        new THREE.Vector3(),
+        new THREE.Vector3(),
+        new THREE.Vector3(),
+      ])
+  );
+
+  const [dragged, drag] = useState<THREE.Vector3 | false>(false);
+  const [hovered, hover] = useState(false);
+
+  // Rope joints hanging down from fixed anchor
+  useRopeJoint(fixed, j1, [[0, 0, 0], [0, 0, 0], 1]);
+  useRopeJoint(j1, j2, [[0, 0, 0], [0, 0, 0], 1]);
+  useRopeJoint(j2, j3, [[0, 0, 0], [0, 0, 0], 1]);
+  // Connect j3 (rope end) EXACTLY at the card's clamp top (0, 0, 0)
+  useSphericalJoint(j3, card, [
+    [0, 0, 0],
+    [0, 0, 0],
+  ]);
+
+  useEffect(() => {
+    if (hovered) {
+      document.body.style.cursor = dragged ? "grabbing" : "grab";
+      return () => void (document.body.style.cursor = "auto");
+    }
+  }, [hovered, dragged]);
+
+  useFrame((state, delta) => {
+    if (dragged) {
+      vec.set(state.pointer.x, state.pointer.y, 0.5).unproject(state.camera);
+      dir.copy(vec).sub(state.camera.position).normalize();
+      vec.add(dir.multiplyScalar(state.camera.position.length()));
+      [card, j1, j2, j3, fixed].forEach((ref) => ref.current?.wakeUp());
+      card.current?.setNextKinematicTranslation({
+        x: vec.x - dragged.x,
+        y: vec.y - dragged.y,
+        z: vec.z - dragged.z,
+      });
+    }
+    if (fixed.current && j1.current && j2.current && j3.current && card.current) {
+      [j1, j2].forEach((ref) => {
+        if (!ref.current.lerped)
+          ref.current.lerped = new THREE.Vector3().copy(ref.current.translation());
+        const clampedDistance = Math.max(
+          0.1,
+          Math.min(1, ref.current.lerped.distanceTo(ref.current.translation()))
+        );
+        ref.current.lerped.lerp(
+          ref.current.translation(),
+          delta * (minSpeed + clampedDistance * (maxSpeed - minSpeed))
+        );
+      });
+      curve.points[0].copy(j3.current.translation());
+      curve.points[1].copy(j2.current.lerped);
+      curve.points[2].copy(j1.current.lerped);
+      curve.points[3].copy(fixed.current.translation());
+      band.current?.geometry?.setPoints(curve.getPoints(isMobile ? 16 : 32));
+      ang.copy(card.current.angvel());
+      rot.copy(card.current.rotation());
+      card.current.setAngvel({ x: ang.x, y: ang.y - rot.y * 0.25, z: ang.z });
+    }
+  });
+
+  curve.curveType = "chordal";
+  texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+
+  // Sizing calibration: scale S = 2.4 (mobile) or 3.0 (desktop)
+  const S = isMobile ? 2.4 : 3.0;
+  // In card.glb: clamp ring top loop is at local Y = 1.229.
+  // By offsetting the mesh group Y by -1.229 * S, the clamp ring top sits EXACTLY at local Y = 0.
+  const groupYOffset = -1.229 * S;
+
+  return (
+    <>
+      {/* Anchor fixed at top */}
+      <group position={[0, 4.2, 0]}>
+        <RigidBody ref={fixed} {...segmentProps} type="fixed" />
+        <RigidBody position={[0.4, -0.6, 0]} ref={j1} {...segmentProps}>
+          <BallCollider args={[0.1]} />
+        </RigidBody>
+        <RigidBody position={[0.8, -1.4, 0]} ref={j2} {...segmentProps}>
+          <BallCollider args={[0.1]} />
+        </RigidBody>
+        <RigidBody position={[1.2, -2.2, 0]} ref={j3} {...segmentProps}>
+          <BallCollider args={[0.1]} />
+        </RigidBody>
+        <RigidBody
+          position={[1.2, -2.2, 0]}
+          ref={card}
+          {...segmentProps}
+          type={dragged ? "kinematicPosition" : "dynamic"}
+        >
+          {/* Card physics collider centered on the badge body */}
+          <CuboidCollider
+            position={[0, -0.7 * S, 0]}
+            args={[0.38 * S, 0.52 * S, 0.02]}
+          />
+          <group
+            scale={S}
+            position={[0, groupYOffset, 0]}
+            onPointerOver={() => hover(true)}
+            onPointerOut={() => hover(false)}
+            onPointerUp={(e) => {
+              (e.target as any).releasePointerCapture(e.pointerId);
+              drag(false);
+            }}
+            onPointerDown={(e) => {
+              (e.target as any).setPointerCapture(e.pointerId);
+              drag(
+                new THREE.Vector3()
+                  .copy(e.point)
+                  .sub(vec.copy(card.current.translation()))
+              );
+            }}
+          >
+            {nodes?.card && (
+              <mesh geometry={nodes.card.geometry}>
+                <meshPhysicalMaterial
+                  map={cardMap || materials?.base?.map}
+                  map-anisotropy={16}
+                  clearcoat={isMobile ? 0 : 1}
+                  clearcoatRoughness={0.15}
+                  roughness={0.9}
+                  metalness={0.8}
+                />
+              </mesh>
+            )}
+            {nodes?.clip && (
+              <mesh
+                geometry={nodes.clip.geometry}
+                material={materials?.metal}
+                material-roughness={0.3}
+              />
+            )}
+            {nodes?.clamp && (
+              <mesh geometry={nodes.clamp.geometry} material={materials?.metal} />
+            )}
+          </group>
+        </RigidBody>
+      </group>
+      <mesh ref={band}>
+        <meshLineGeometry />
+        <meshLineMaterial
+          color="white"
+          depthTest={false}
+          resolution={isMobile ? [1000, 2000] : [1000, 1000]}
+          useMap
+          map={texture}
+          repeat={[-4, 1]}
+          lineWidth={lanyardWidth}
+        />
+      </mesh>
+    </>
+  );
+}
+
+useGLTF.preload("/assets/lanyard/card.glb");

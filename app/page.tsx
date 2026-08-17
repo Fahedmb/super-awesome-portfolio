@@ -1,15 +1,20 @@
 "use client";
 
 import React, { useState, useCallback, useEffect, useRef } from "react";
+import dynamic from "next/dynamic";
 import ScrollCanvas from "@/components/ScrollCanvas";
 import SpecularButton from "@/components/SpecularButton";
 import LogoLoop from "@/components/LogoLoop";
-import Lanyard from "@/components/Lanyard";
 import BorderGlowCard from "@/components/BorderGlowCard";
 import DepthCarousel from "@/components/DepthCarousel";
 import EasterEggDecoder from "@/components/EasterEggDecoder";
 import TransmissionForm from "@/components/TransmissionForm";
 import GradualBlur from "@/components/GradualBlur";
+
+const Lanyard = dynamic(() => import("@/components/Lanyard"), {
+  ssr: false,
+  loading: () => <div className="h-[480px] w-full" />,
+});
 import {
   ArrowDown,
   ArrowUp,
@@ -412,11 +417,11 @@ export default function Home() {
         */}
         <GradualBlur
           visibleProgress={getSectionVisibility(0)}
-          className="absolute max-w-6xl w-full flex flex-col justify-between"
+          className="absolute max-w-7xl w-full flex flex-col justify-between"
         >
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center pt-8">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center pt-4 lg:pt-6">
             {/* Left Narrative Column */}
-            <div className="lg:col-span-7 flex flex-col items-start text-neutral-900">
+            <div className="lg:col-span-7 flex flex-col items-start text-neutral-900 z-10">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-900 text-xs font-mono mb-4 backdrop-blur-md">
                 <Sparkles className="w-3.5 h-3.5 text-amber-600 animate-pulse" />
                 <span>ACT 00 // THE COSMIC ASCENT</span>
@@ -474,13 +479,14 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Right Column: Interactive 3D Lanyard */}
-            <div className="lg:col-span-5 flex justify-center items-center">
+            {/* Right Column: Interactive 3D Lanyard (React Bits + Rapier Physics) */}
+            <div className="lg:col-span-5 flex justify-center items-center pointer-events-auto overflow-visible">
               <Lanyard
-                name="FAHED"
-                role="SOFTWARE ENGINEER // ASTRONOMY ENTHUSIAST"
-                status="ACTIVE IN ORBIT"
-                theme="light"
+                position={[0, 0, 20]}
+                gravity={[0, -40, 0]}
+                fov={20}
+                transparent={true}
+                lanyardWidth={1}
               />
             </div>
           </div>
