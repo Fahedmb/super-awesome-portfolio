@@ -10,6 +10,7 @@ import DepthCarousel from "@/components/DepthCarousel";
 import EasterEggDecoder from "@/components/EasterEggDecoder";
 import TransmissionForm from "@/components/TransmissionForm";
 import GradualBlur from "@/components/GradualBlur";
+import AboutTabs from "@/components/AboutTabs";
 
 const Lanyard = dynamic(() => import("@/components/Lanyard"), {
   ssr: false,
@@ -25,9 +26,12 @@ import {
   Radio,
   Cpu,
   Layers,
-  Dumbbell,
-  Disc,
-  Coffee,
+  FileDown,
+  GraduationCap,
+  Briefcase,
+  Database,
+  CheckCircle,
+  ExternalLink,
 } from "lucide-react";
 
 interface ProgressData {
@@ -45,6 +49,7 @@ export default function Home() {
 
   const [mounted, setMounted] = useState(false);
   const [activeSection, setActiveSection] = useState<number>(0);
+  const [hoveredNav, setHoveredNav] = useState<number | null>(null);
   const [progressState, setProgressState] = useState<ProgressData>({
     progress: 0,
     currentFrame: 0,
@@ -58,13 +63,13 @@ export default function Home() {
   }, []);
 
   const sectionTitles = [
-    { num: "01", name: "GENESIS", subtitle: "The Ascent" },
-    { num: "02", name: "SINGULARITY", subtitle: "Interstellar Code" },
-    { num: "03", name: "WORKS", subtitle: "Compiled Projects" },
-    { num: "04", name: "TRANSMIT", subtitle: "Radio Signal" },
+    { num: "00", name: "ORIGIN", themeLabel: "THE ASCENT", subtitle: "Genesis" },
+    { num: "01", name: "ABOUT ME", themeLabel: "SINGULARITY", subtitle: "Engineering Profile" },
+    { num: "02", name: "WORKS", themeLabel: "PROJECTS", subtitle: "Enterprise Demos" },
+    { num: "03", name: "CONTACT ME", themeLabel: "TRANSMIT", subtitle: "Direct Dispatch" },
   ];
 
-  // Slow, cinematic transition engine (3.2s duration per scene)
+  // Smooth cinematic transition engine (3.2s duration per scene)
   const scrollToSection = useCallback(
     (index: number, customDuration?: number) => {
       const vh = window.innerHeight;
@@ -93,12 +98,12 @@ export default function Home() {
       isAnimating.current = true;
       const startTime = performance.now();
 
-      // Pacing calibration: 3200ms per section to allow full appreciation of the visual video transformations
+      // Pacing calibration: 3200ms per section
       const sectionsCount = Math.max(1, Math.abs(change) / vh);
       const duration =
         customDuration ?? Math.min(5200, 3200 + (sectionsCount - 1) * 900);
 
-      // Smooth cinematic cruise easing (10% ease-in, 80% constant cruise, 10% ease-out)
+      // Smooth cinematic cruise easing
       const cinematicCruiseEase = (t: number): number => {
         if (t < 0.10) {
           const p = t / 0.10;
@@ -138,7 +143,6 @@ export default function Home() {
   useEffect(() => {
     let lastWheelTime = 0;
 
-    // 1. Wheel/Trackpad Interceptor
     const handleWheel = (e: WheelEvent) => {
       const now = performance.now();
       if (isAnimating.current && now - lastWheelTime < 600) {
@@ -160,7 +164,6 @@ export default function Home() {
       }
     };
 
-    // 2. Mobile Touch & Swipe Engine
     let touchStartY = 0;
     let touchStartTime = 0;
 
@@ -187,7 +190,6 @@ export default function Home() {
       }
     };
 
-    // 3. Accessible Keyboard Navigation
     const handleKeyDown = (e: KeyboardEvent) => {
       const vh = window.innerHeight;
       const currentSection = Math.round(window.scrollY / vh);
@@ -207,7 +209,6 @@ export default function Home() {
       }
     };
 
-    // 4. Native scroll sync
     const handleScroll = () => {
       const vh = window.innerHeight;
       const current = Math.round(window.scrollY / vh);
@@ -243,17 +244,15 @@ export default function Home() {
     setProgressState(data);
   }, []);
 
-  // Compute smooth visibility for GradualBlur based on scroll position
+  // Smooth visibility for GradualBlur based on scroll position
   const progressRatio = progressState.progress;
   const sectionFloat = progressRatio * 3;
 
-  // Components and writing fade in/out during the first 10-12% and last 10-12% of the journey
-  // During the middle 75-80% of the transition, visibility is 0 (hidden & blurred) so the full video is unobstructed
   const getSectionVisibility = (index: number) => {
     const dist = Math.abs(sectionFloat - index);
     const threshold = 0.12; // 12% window around checkpoint
     if (dist >= threshold) return 0;
-    return 1 - dist / threshold; // 1.0 at checkpoint, drops to 0 at threshold
+    return 1 - dist / threshold;
   };
 
   const isCurrentSectionLight = activeSection === 0 || activeSection === 2;
@@ -264,7 +263,7 @@ export default function Home() {
       <ScrollCanvas onProgressUpdate={handleProgressUpdate} />
 
       {/* Top Glass Header & Navigation HUD */}
-      <header className="fixed top-0 left-0 right-0 z-40 px-6 py-4 flex items-center justify-between pointer-events-auto">
+      <header className="fixed top-0 left-0 right-0 z-40 px-4 sm:px-6 py-3.5 flex items-center justify-between pointer-events-auto">
         <div className="flex items-center space-x-3">
           <div
             className={`w-8 h-8 rounded-lg flex items-center justify-center backdrop-blur-md transition-colors duration-300 ${
@@ -277,11 +276,11 @@ export default function Home() {
           </div>
           <div>
             <div
-              className={`text-xs font-mono font-bold tracking-widest flex items-center gap-2 transition-colors duration-300 ${
+              className={`text-xs font-mono font-bold tracking-widest flex items-center gap-1.5 transition-colors duration-300 ${
                 isCurrentSectionLight ? "text-neutral-900" : "text-white"
               }`}
             >
-              FAHED <span className="font-normal opacity-60">// COSMIC SYSTEMS</span>
+              FAHED MBAREK <span className="font-normal opacity-60">// FULL-STACK &amp; AI</span>
             </div>
             <div
               className={`text-[10px] flex items-center gap-1.5 font-mono ${
@@ -289,12 +288,12 @@ export default function Home() {
               }`}
             >
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping" />
-              IN ORBIT // OPEN FOR VENTURES
+              TUNISIA (UTC+1) // OPEN FOR ROLES &amp; VENTURES
             </div>
           </div>
         </div>
 
-        {/* Floating Glass Navigation Pill */}
+        {/* Floating Glass Navigation Pill with Zero-Jitter Grid Overlay */}
         <nav
           className={`hidden md:flex items-center p-1.5 rounded-full border shadow-2xl transition-all duration-300 ${
             isCurrentSectionLight ? "glass-panel-light" : "glass-panel-dark"
@@ -302,11 +301,14 @@ export default function Home() {
         >
           {sectionTitles.map((item, idx) => {
             const isActive = activeSection === idx;
+            const isHovered = hoveredNav === idx;
             return (
               <button
                 key={item.num}
                 onClick={() => scrollToSection(idx)}
-                className={`px-4 py-1.5 rounded-full text-xs font-mono transition-all duration-500 flex items-center gap-2 cursor-pointer ${
+                onMouseEnter={() => setHoveredNav(idx)}
+                onMouseLeave={() => setHoveredNav(null)}
+                className={`relative px-4 py-1.5 rounded-full text-xs font-mono transition-all duration-300 flex items-center gap-2 cursor-pointer ${
                   isActive
                     ? isCurrentSectionLight
                       ? "bg-neutral-900 text-white font-bold shadow-md"
@@ -316,54 +318,88 @@ export default function Home() {
                     : "text-neutral-400 hover:text-white hover:bg-white/5"
                 }`}
               >
-                <span>{item.num}</span>
-                <span className="text-[11px] tracking-wider">{item.name}</span>
+                <span className="opacity-70 font-mono text-[10px]">{item.num}</span>
+                {/* CSS Grid dual-layer: Keeps width fixed to max(name, themeLabel) with zero layout shift */}
+                <span className="inline-grid grid-cols-1 grid-rows-1 text-[11px] tracking-wider font-semibold">
+                  <span
+                    className={`col-start-1 row-start-1 whitespace-nowrap transition-all duration-200 ${
+                      isHovered ? "opacity-0 scale-95" : "opacity-100 scale-100"
+                    }`}
+                  >
+                    {item.name}
+                  </span>
+                  <span
+                    className={`col-start-1 row-start-1 whitespace-nowrap transition-all duration-200 ${
+                      isHovered
+                        ? "opacity-100 scale-100"
+                        : "opacity-0 scale-105 pointer-events-none"
+                    }`}
+                  >
+                    {item.themeLabel}
+                  </span>
+                </span>
               </button>
             );
           })}
         </nav>
 
-        {/* Action Button */}
-        <SpecularButton
-          variant={isCurrentSectionLight ? "light" : "yellow"}
-          onClick={() => scrollToSection(3)}
-          className="!py-2 !px-4 !text-[11px]"
-        >
-          <span>TRANSMIT</span>
-          <ChevronRight className="w-3.5 h-3.5" />
-        </SpecularButton>
+        {/* Quick Header Actions: CV Download & Contact */}
+        <div className="flex items-center gap-2">
+          <a
+            href="/cv_fahed_mbarek.pdf"
+            download
+            className={`hidden sm:flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-mono font-bold transition-all duration-200 active:scale-95 border ${
+              isCurrentSectionLight
+                ? "bg-amber-500/10 border-amber-500/30 text-amber-900 hover:bg-amber-500/20"
+                : "bg-yellow-400/10 border-yellow-400/30 text-yellow-400 hover:bg-yellow-400/20"
+            }`}
+            title="Download Official CV PDF"
+          >
+            <FileDown className="w-3.5 h-3.5" />
+            <span>CV (PDF)</span>
+          </a>
+
+          <SpecularButton
+            variant={isCurrentSectionLight ? "light" : "yellow"}
+            onClick={() => scrollToSection(3)}
+            className="!py-1.5 !px-3.5 !text-[11px]"
+          >
+            <span>CONTACT ME</span>
+            <ChevronRight className="w-3.5 h-3.5" />
+          </SpecularButton>
+        </div>
       </header>
 
       {/* Floating Bottom Telemetry & Navigation Controls */}
       <footer className="fixed bottom-0 left-0 right-0 z-40 px-6 py-4 flex items-center justify-between pointer-events-none">
-        {/* Left: Realtime Scene & Frame Telemetry */}
+        {/* Left: Refined Telemetry HUD with Clear Sector / Phase / Sync */}
         <div
           suppressHydrationWarning
-          className={`px-4 py-2 rounded-xl text-[11px] font-mono pointer-events-auto flex items-center gap-4 border transition-all duration-300 ${
+          className={`px-4 py-2 rounded-xl text-[11px] font-mono pointer-events-auto flex items-center gap-3.5 border shadow-lg backdrop-blur-xl transition-all duration-300 ${
             isCurrentSectionLight ? "glass-panel-light text-neutral-800" : "glass-panel-dark text-neutral-300"
           }`}
         >
-          <div>
-            <span className="opacity-50">SCENE:</span>{" "}
+          <div className="flex items-center gap-1.5">
+            <span className="opacity-50">SECTOR:</span>{" "}
             <span
-              className={`font-bold uppercase ${
+              className={`font-bold uppercase tracking-wider ${
                 isCurrentSectionLight ? "text-amber-800" : "text-yellow-400"
               }`}
             >
-              {progressState.currentScene.replace("_", " ")}
+              {sectionTitles[activeSection]?.name || "ORIGIN"}
             </span>
           </div>
           <div className="hidden sm:block h-3 w-[1px] bg-neutral-500/20" />
-          <div className="hidden sm:block">
-            <span className="opacity-50">FRAME:</span>{" "}
-            <span className="font-bold">
-              {String(progressState.currentFrame).padStart(4, "0")} / {progressState.totalFrames}
+          <div className="hidden sm:flex items-center gap-1.5">
+            <span className="opacity-50">PHASE:</span>{" "}
+            <span className="font-semibold tracking-wider">
+              {sectionTitles[activeSection]?.themeLabel || "THE ASCENT"}
             </span>
           </div>
           <div className="hidden sm:block h-3 w-[1px] bg-neutral-500/20" />
-          <div className="flex items-center gap-2">
-            <span className="opacity-50">PROGRESS:</span>
-            <span className="font-bold">{Math.round(progressState.progress * 100)}%</span>
+          <div className="flex items-center gap-1.5">
+            <span className="opacity-50">SYNC:</span>
+            <span className="font-bold font-mono">{Math.round(progressState.progress * 100)}%</span>
           </div>
         </div>
 
@@ -385,7 +421,7 @@ export default function Home() {
                 ? "glass-panel-light text-neutral-800 hover:bg-neutral-200"
                 : "glass-panel-dark text-neutral-300 hover:text-white"
             }`}
-            title="Previous Scene (Arrow Up)"
+            title="Previous Section (Arrow Up)"
           >
             <ArrowUp className="w-4 h-4" />
           </button>
@@ -397,7 +433,7 @@ export default function Home() {
                 ? "glass-panel-light text-neutral-800 hover:bg-neutral-200"
                 : "glass-panel-dark text-neutral-300 hover:text-white"
             }`}
-            title="Next Scene (Arrow Down)"
+            title="Next Section (Arrow Down)"
           >
             <ArrowDown className="w-4 h-4" />
           </button>
@@ -409,72 +445,81 @@ export default function Home() {
         CINEMATIC NARRATIVE OVERLAYS (4 Acts with Gradual Blur)
         ═══════════════════════════════════════════════════════════════════════
       */}
-      <div className="fixed inset-0 z-20 pointer-events-none flex items-center justify-center p-6 md:p-12 overflow-hidden">
+      <div className="fixed inset-0 z-20 pointer-events-none flex items-center justify-center p-4 sm:p-8 md:p-12 overflow-hidden">
         {/* 
           ─────────────────────────────────────────────────────────────────────
-          ACT 0: THE GENESIS & ASCENT (Light // #FFFFFF)
+          SECTION 0: ORIGIN // THE ASCENT (Light // #FFFFFF)
           ─────────────────────────────────────────────────────────────────────
         */}
         <GradualBlur
           visibleProgress={getSectionVisibility(0)}
           className="absolute max-w-7xl w-full flex flex-col justify-between"
         >
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center pt-4 lg:pt-6">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center pt-2 lg:pt-4">
             {/* Left Narrative Column */}
             <div className="lg:col-span-7 flex flex-col items-start text-neutral-900 z-10">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-900 text-xs font-mono mb-4 backdrop-blur-md">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-900 text-xs font-mono mb-3 backdrop-blur-md">
                 <Sparkles className="w-3.5 h-3.5 text-amber-600 animate-pulse" />
-                <span>ACT 00 // THE COSMIC ASCENT</span>
+                <span>FAHED MBAREK // FULL-STACK &amp; AI SYSTEMS</span>
               </div>
 
-              <h1 className="text-4xl sm:text-6xl md:text-7xl font-extrabold font-display tracking-tight leading-[1.05] mb-4 text-neutral-900">
-                Architecting Software Across the{" "}
-                <span className="font-editorial italic text-amber-700 font-normal">
-                  Digital Cosmos.
+              {/* Bold, Clear, Distinct Software Engineer Title */}
+              <h1 className="text-3xl sm:text-5xl md:text-6xl font-extrabold font-display tracking-tight leading-[1.08] mb-3 text-neutral-900">
+                Full-Stack Software Engineer{" "}
+                <span className="block font-editorial italic text-amber-700 font-normal text-2xl sm:text-4xl md:text-5xl mt-1">
+                  Distributed Backends, AI &amp; Modern Web.
                 </span>
               </h1>
 
-              <p className="text-sm sm:text-base text-neutral-600 max-w-xl leading-relaxed mb-6 font-light">
-                Full-stack engineer and astronomy enthusiast crafting high-performance
-                systems, synchronized 60 FPS canvas graphics, and resilient architectures
-                that operate with celestial precision.
+              {/* Generalized Bio without specific university names */}
+              <p className="text-xs sm:text-sm text-neutral-700 max-w-xl leading-relaxed mb-4 font-light">
+                Full-Stack Software Engineer with a National Engineering Diploma and Data Science background,
+                combining 3+ years of client-facing freelance web delivery (15+ custom platforms) with enterprise
+                systems engineering. Specializing in scalable Java/Spring Boot microservices, modern Next.js &amp; Angular
+                architectures, and AI-enabled integrations.
               </p>
 
-              {/* Persona Hobbies & Easter Egg Badges */}
-              <div className="flex flex-wrap gap-2 mb-8">
-                <span className="px-3 py-1 rounded-lg bg-neutral-100 border border-neutral-200 text-neutral-700 text-xs font-mono flex items-center gap-1.5">
-                  <Dumbbell className="w-3.5 h-3.5 text-amber-700" />
-                  <span>BOXING &amp; STRENGTH</span>
+              {/* Clean General Qualification Badges */}
+              <div className="flex flex-wrap gap-1.5 mb-6">
+                <span className="px-2.5 py-1 rounded-lg bg-neutral-100 border border-neutral-200 text-neutral-800 text-[11px] font-mono flex items-center gap-1.5">
+                  <GraduationCap className="w-3.5 h-3.5 text-amber-700" />
+                  <span>NATIONAL ENGINEERING DIPLOMA</span>
                 </span>
-                <span className="px-3 py-1 rounded-lg bg-neutral-100 border border-neutral-200 text-neutral-700 text-xs font-mono flex items-center gap-1.5">
-                  <Disc className="w-3.5 h-3.5 text-amber-700" />
-                  <span>VINYL &amp; ACOUSTICS</span>
+                <span className="px-2.5 py-1 rounded-lg bg-neutral-100 border border-neutral-200 text-neutral-800 text-[11px] font-mono flex items-center gap-1.5">
+                  <Database className="w-3.5 h-3.5 text-amber-700" />
+                  <span>DATA SCIENCE BACKGROUND</span>
                 </span>
-                <span className="px-3 py-1 rounded-lg bg-neutral-100 border border-neutral-200 text-neutral-700 text-xs font-mono flex items-center gap-1.5">
-                  <Coffee className="w-3.5 h-3.5 text-amber-700" />
-                  <span>ESPRESSO</span>
-                </span>
-                <span className="px-3 py-1 rounded-lg bg-amber-500/10 border border-amber-500/20 text-amber-800 text-xs font-mono flex items-center gap-1.5">
-                  <Orbit className="w-3.5 h-3.5 text-amber-700" />
-                  <span>ASTROPHYSICS</span>
+                <span className="px-2.5 py-1 rounded-lg bg-amber-500/10 border border-amber-500/20 text-amber-900 text-[11px] font-mono flex items-center gap-1.5">
+                  <Briefcase className="w-3.5 h-3.5 text-amber-700" />
+                  <span>3+ YRS FREELANCE DELIVERY</span>
                 </span>
               </div>
 
               {/* Action Buttons */}
-              <div className="flex flex-wrap items-center gap-4">
+              <div className="flex flex-wrap items-center gap-3">
+                <a
+                  href="/cv_fahed_mbarek.pdf"
+                  download
+                  className="px-5 py-3 rounded-full bg-neutral-900 hover:bg-black text-white text-xs font-mono font-bold tracking-wider transition-all duration-200 active:scale-95 shadow-xl shadow-neutral-900/15 flex items-center gap-2"
+                >
+                  <FileDown className="w-4 h-4 text-yellow-400" />
+                  <span>DOWNLOAD CV (PDF)</span>
+                </a>
+
                 <SpecularButton
                   variant="light"
                   onClick={() => scrollToSection(1)}
-                  className="shadow-xl shadow-neutral-900/15"
+                  className="shadow-md"
                 >
-                  <span>ENTER THE SINGULARITY</span>
+                  <span>ABOUT ME</span>
                   <ChevronRight className="w-4 h-4" />
                 </SpecularButton>
+
                 <button
                   onClick={() => scrollToSection(2)}
-                  className="px-6 py-3.5 rounded-full border border-neutral-300 bg-white/80 hover:bg-white text-neutral-800 text-xs font-mono font-semibold transition-all duration-200 active:scale-95 shadow-sm cursor-pointer"
+                  className="px-5 py-3 rounded-full border border-neutral-300 bg-white/80 hover:bg-white text-neutral-800 text-xs font-mono font-semibold transition-all duration-200 active:scale-95 shadow-xs cursor-pointer"
                 >
-                  VIEW SELECTED WORKS
+                  EXPLORE WORKS
                 </button>
               </div>
             </div>
@@ -487,167 +532,104 @@ export default function Home() {
                 fov={20}
                 transparent={true}
                 lanyardWidth={1}
+                frontImage="/assets/lanyard/fahed_badge.svg"
               />
             </div>
           </div>
 
-          {/* Bottom Tech Logo Loop */}
-          <div className="mt-8">
+          {/* Bottom Tech Logo Loop with Actual Framework Logos */}
+          <div className="mt-4 sm:mt-6">
             <LogoLoop theme="light" />
           </div>
         </GradualBlur>
 
         {/* 
           ─────────────────────────────────────────────────────────────────────
-          ACT 1: THE BLACK HOLE & FABRIC OF CODE (Noir // #000000)
+          SECTION 1: ABOUT ME // THE SINGULARITY (Noir // #000000)
           ─────────────────────────────────────────────────────────────────────
         */}
         <GradualBlur
           visibleProgress={getSectionVisibility(1)}
           className="absolute max-w-5xl w-full flex flex-col text-white"
         >
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-yellow-400/10 border border-yellow-400/30 text-yellow-400 text-xs font-mono mb-3 backdrop-blur-md self-start">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-yellow-400/10 border border-yellow-400/30 text-yellow-400 text-xs font-mono mb-2 backdrop-blur-md self-start">
             <Sparkles className="w-3.5 h-3.5" />
-            <span>ACT 01 // INTERSTELLAR COMPUTATION</span>
+            <span>SECTION 01 // ABOUT ME &amp; ENGINEERING CORE</span>
           </div>
 
-          <h2 className="text-3xl sm:text-5xl font-extrabold font-display tracking-tight mb-3">
-            Inside the Singularity:{" "}
+          <h2 className="text-2xl sm:text-4xl font-extrabold font-display tracking-tight mb-2">
+            The Engineer Behind the Code:{" "}
             <span className="text-electric-yellow glow-yellow font-editorial italic font-normal">
-              The Fabric of Code.
+              Foundations, Journey &amp; Persona.
             </span>
           </h2>
 
-          <p className="text-xs sm:text-sm text-neutral-300 max-w-2xl leading-relaxed mb-6 font-light">
-            Like Cooper navigating the Tesseract in <em>Interstellar</em>, software engineering is
-            the craft of manipulating the foundational fabric of information. Inside the black hole,
-            code galaxies compile into physical reality.
+          <p className="text-xs sm:text-sm text-neutral-300 max-w-3xl leading-relaxed mb-3.5 font-light">
+            Bridging academic engineering rigor with 3+ years of client-facing freelance web delivery and enterprise systems.
+            Explore my core architecture pillars, academic timeline, physical &amp; creative pursuits, and classified intel below.
           </p>
 
-          {/* 3 Border Glow Experience Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-            <BorderGlowCard>
-              <div className="w-9 h-9 rounded-xl bg-yellow-400/10 border border-yellow-400/20 flex items-center justify-center mb-3 text-yellow-400">
-                <Code2 className="w-4 h-4" />
-              </div>
-              <h3 className="text-base font-bold mb-1 text-white font-display">
-                Modern Frontend &amp; Web Systems
-              </h3>
-              <p className="text-xs text-neutral-400 leading-relaxed font-light mb-3">
-                Next.js 16, React 19, TypeScript, Turbopack, and sub-second Core Web Vitals.
-              </p>
-              <div className="flex flex-wrap gap-1">
-                <span className="px-2 py-0.5 rounded bg-white/5 text-[9px] font-mono text-neutral-400">
-                  Next.js 16
-                </span>
-                <span className="px-2 py-0.5 rounded bg-white/5 text-[9px] font-mono text-neutral-400">
-                  React 19
-                </span>
-              </div>
-            </BorderGlowCard>
-
-            <BorderGlowCard>
-              <div className="w-9 h-9 rounded-xl bg-cyan-400/10 border border-cyan-400/20 flex items-center justify-center mb-3 text-cyan-400">
-                <Layers className="w-4 h-4" />
-              </div>
-              <h3 className="text-base font-bold mb-1 text-white font-display">
-                60 FPS Canvas &amp; 3D Shaders
-              </h3>
-              <p className="text-xs text-neutral-400 leading-relaxed font-light mb-3">
-                WebGL, Three.js, requestVideoFrameCallback, and custom GLSL relativistic shaders.
-              </p>
-              <div className="flex flex-wrap gap-1">
-                <span className="px-2 py-0.5 rounded bg-white/5 text-[9px] font-mono text-neutral-400">
-                  HTML5 Canvas
-                </span>
-                <span className="px-2 py-0.5 rounded bg-white/5 text-[9px] font-mono text-neutral-400">
-                  GLSL
-                </span>
-              </div>
-            </BorderGlowCard>
-
-            <BorderGlowCard>
-              <div className="w-9 h-9 rounded-xl bg-purple-400/10 border border-purple-400/20 flex items-center justify-center mb-3 text-purple-400">
-                <Cpu className="w-4 h-4" />
-              </div>
-              <h3 className="text-base font-bold mb-1 text-white font-display">
-                Physical Rigor &amp; Astronomy
-              </h3>
-              <p className="text-xs text-neutral-400 leading-relaxed font-light mb-3">
-                Applying astrophysical discipline, boxing endurance, and clean systems thinking.
-              </p>
-              <div className="flex flex-wrap gap-1">
-                <span className="px-2 py-0.5 rounded bg-white/5 text-[9px] font-mono text-neutral-400">
-                  Astrophysics
-                </span>
-                <span className="px-2 py-0.5 rounded bg-white/5 text-[9px] font-mono text-neutral-400">
-                  Resilience
-                </span>
-              </div>
-            </BorderGlowCard>
-          </div>
-
-          {/* Interactive Easter Egg Decoder Component */}
-          <EasterEggDecoder />
+          {/* Interactive Multi-Tab Interface: Core Architecture, Academic Roadmap, Hobbies, Q&A */}
+          <AboutTabs />
         </GradualBlur>
 
         {/* 
           ─────────────────────────────────────────────────────────────────────
-          ACT 2: COMPILED REALITY & PROJECTS (Gallery White // #F8F9FA)
+          SECTION 2: WORKS // COMPILED PROJECTS (Gallery White // #F8F9FA)
           ─────────────────────────────────────────────────────────────────────
         */}
         <GradualBlur
           visibleProgress={getSectionVisibility(2)}
           className="absolute max-w-5xl w-full flex flex-col text-neutral-900"
         >
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-900 text-xs font-mono mb-3 backdrop-blur-md self-start">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-900 text-xs font-mono mb-2 backdrop-blur-md self-start">
             <Sparkles className="w-3.5 h-3.5 text-amber-700" />
-            <span>ACT 02 // COMPILED WORKS &amp; DEMOS</span>
+            <span>SECTION 02 // COMPILED ENTERPRISE WORKS &amp; DEMOS</span>
           </div>
 
-          <h2 className="text-3xl sm:text-5xl font-extrabold font-display tracking-tight mb-2">
-            Featured Inventions &amp;{" "}
+          <h2 className="text-2xl sm:text-4xl font-extrabold font-display tracking-tight mb-1.5">
+            Enterprise Platforms &amp;{" "}
             <span className="font-editorial italic text-amber-800 font-normal">
-              Recorded Walkthroughs.
+              Recorded Video Demos.
             </span>
           </h2>
 
-          <p className="text-xs sm:text-sm text-neutral-600 max-w-xl leading-relaxed mb-6 font-light">
-            Each project is built from scratch with production-grade engineering, performance benchmarks,
-            and interactive video walkthroughs.
+          <p className="text-xs sm:text-sm text-neutral-600 max-w-2xl leading-relaxed mb-3 font-light">
+            Production-grade systems built from scratch with microservices, automated cost reconciliation,
+            automotive competency matrices, and embedded video walkthroughs.
           </p>
 
-          {/* 3D Depth Carousel with Embedded YouTube Video Player Modals */}
+          {/* 3D Depth Carousel with Quick Tabs and Video Modals */}
           <DepthCarousel />
         </GradualBlur>
 
         {/* 
           ─────────────────────────────────────────────────────────────────────
-          ACT 3: THE COSMIC RADIO TRANSMISSION (Void Noir // #000000)
+          SECTION 3: CONTACT ME // DIRECT TRANSMISSION (Void Noir // #000000)
           ─────────────────────────────────────────────────────────────────────
         */}
         <GradualBlur
           visibleProgress={getSectionVisibility(3)}
           className="absolute max-w-4xl w-full flex flex-col text-white"
         >
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-yellow-400/10 border border-yellow-400/30 text-yellow-400 text-xs font-mono mb-3 backdrop-blur-md self-center">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-yellow-400/10 border border-yellow-400/30 text-yellow-400 text-xs font-mono mb-2 backdrop-blur-md self-center">
             <Radio className="w-3.5 h-3.5 animate-pulse" />
-            <span>ACT 03 // DEEP SPACE RADIO BROADCAST</span>
+            <span>SECTION 03 // CONTACT ME &amp; DIRECT TRANSMISSION</span>
           </div>
 
-          <h2 className="text-3xl sm:text-5xl md:text-6xl font-extrabold font-display tracking-tight text-center mb-3">
-            Transmit a Signal to{" "}
+          <h2 className="text-2xl sm:text-4xl md:text-5xl font-extrabold font-display tracking-tight text-center mb-2">
+            Initiate Contact with{" "}
             <span className="text-electric-yellow glow-yellow font-editorial italic font-normal">
-              Earth Orbit.
+              Fahed Mbarek.
             </span>
           </h2>
 
-          <p className="text-xs sm:text-sm text-neutral-400 text-center max-w-lg mx-auto leading-relaxed mb-6 font-light font-mono">
-            A satellite dish pointed at the stars, transforming radio signals into Git commits.
-            Send a message to initiate a collaboration.
+          <p className="text-xs sm:text-sm text-neutral-300 text-center max-w-lg mx-auto leading-relaxed mb-4 font-light font-mono">
+            Open for full-time software engineering roles, enterprise system architecture,
+            and client collaborations. Send a message to initiate discussion.
           </p>
 
-          {/* Interactive Cosmic Radio Transmission Form */}
+          {/* Interactive Contact & Telemetry Dispatch Form */}
           <TransmissionForm />
         </GradualBlur>
       </div>

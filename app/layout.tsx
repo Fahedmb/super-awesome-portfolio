@@ -24,9 +24,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "FAHED // Software Engineer & Astronomy Enthusiast",
+  title: "Fahed Mbarek // Full-Stack Software Engineer | AI & Intelligent Systems",
   description:
-    "Architecting software systems across the digital cosmos. Full-stack engineering, 60 FPS WebGL/Canvas graphics, and resilient architectures.",
+    "Portfolio of Fahed Mbarek — National Engineering Diploma graduate with freelance delivery and enterprise experience across Java/Spring Boot microservices, Next.js/React platforms, and AI systems.",
 };
 
 export default function RootLayout({

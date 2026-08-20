@@ -1,0 +1,116 @@
+﻿<svg width="512" height="768" viewBox="0 0 512 768" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="512" y2="768" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#0a0a12" />
+      <stop offset="50%" stop-color="#121324" />
+      <stop offset="100%" stop-color="#07080f" />
+    </linearGradient>
+    <linearGradient id="goldGrad" x1="0" y1="0" x2="512" y2="0" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#FFD600" />
+      <stop offset="100%" stop-color="#FF8A00" />
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="25%" r="60%">
+      <stop offset="0%" stop-color="rgba(255, 214, 0, 0.25)" />
+      <stop offset="100%" stop-color="rgba(0, 0, 0, 0)" />
+    </radialGradient>
+  </defs>
+
+  <!-- Background Base -->
+  <rect width="512" height="768" rx="28" fill="url(#bgGrad)" />
+  <rect width="512" height="768" rx="28" fill="url(#glow)" />
+  <rect x="2" y="2" width="508" height="764" rx="26" stroke="#FFD600" stroke-width="3" stroke-opacity="0.6" fill="none" />
+  <rect x="14" y="14" width="484" height="740" rx="18" stroke="#FFFFFF" stroke-width="1" stroke-opacity="0.1" fill="none" />
+
+  <!-- Top Clip / Hole Area -->
+  <rect x="206" y="24" width="100" height="14" rx="7" fill="#050508" stroke="#FFD600" stroke-width="1.5" stroke-opacity="0.5" />
+
+  <!-- Orbit Header -->
+  <g transform="translate(36, 68)">
+    <circle cx="20" cy="20" r="18" fill="#FFD600" fill-opacity="0.15" stroke="#FFD600" stroke-width="1.5" />
+    <path d="M 12 20 A 8 8 0 0 1 28 20 A 8 8 0 0 1 12 20" stroke="#FFD600" stroke-width="2" fill="none" />
+    <circle cx="20" cy="20" r="4" fill="#FFD600" />
+
+    <text x="50" y="16" font-family="'Courier New', monospace" font-size="14" font-weight="900" fill="#FFD600" letter-spacing="3">ORBITAL ACCESS PASS</text>
+    <text x="50" y="32" font-family="'Courier New', monospace" font-size="11" fill="#FFFFFF" fill-opacity="0.6" letter-spacing="2">CLEARANCE // LEVEL 05</text>
+  </g>
+
+  <!-- Photo / Hologram Frame -->
+  <g transform="translate(40, 130)">
+    <rect width="432" height="300" rx="16" fill="#0c0d18" stroke="#FFFFFF" stroke-width="1" stroke-opacity="0.15" />
+    
+    <!-- Hologram Grid lines -->
+    <path d="M 0 50 L 432 50 M 0 100 L 432 100 M 0 150 L 432 150 M 0 200 L 432 200 M 0 250 L 432 250" stroke="#FFFFFF" stroke-width="0.5" stroke-opacity="0.06" />
+    <path d="M 72 0 L 72 300 M 144 0 L 144 300 M 216 0 L 216 300 M 288 0 L 288 300 M 360 0 L 360 300" stroke="#FFFFFF" stroke-width="0.5" stroke-opacity="0.06" />
+
+    <!-- Avatar Placeholder / System Icon -->
+    <circle cx="216" cy="120" r="64" fill="#141628" stroke="#FFD600" stroke-width="2" stroke-opacity="0.8" />
+    <!-- Stylized Engineer Monogram / Glyph -->
+    <text x="216" y="136" text-anchor="middle" font-family="sans-serif" font-size="44" font-weight="900" fill="#FFD600" letter-spacing="2">FM</text>
+
+    <!-- Subtitle on Avatar -->
+    <rect x="116" y="210" width="200" height="28" rx="14" fill="#FFD600" fill-opacity="0.15" stroke="#FFD600" stroke-width="1" stroke-opacity="0.4" />
+    <text x="216" y="228" text-anchor="middle" font-family="'Courier New', monospace" font-size="11" font-weight="bold" fill="#FFD600" letter-spacing="2">VERIFIED ENGINEER</text>
+
+    <!-- Telemetry Status Tag -->
+    <text x="216" y="270" text-anchor="middle" font-family="'Courier New', monospace" font-size="11" fill="#00E5FF" letter-spacing="1">SYSTEM ID: FM-2025-01</text>
+  </g>
+
+  <!-- Name & Credentials Section -->
+  <g transform="translate(40, 460)">
+    <text x="0" y="32" font-family="sans-serif" font-size="34" font-weight="900" fill="#FFFFFF" letter-spacing="1">FAHED MBAREK</text>
+    <text x="0" y="58" font-family="sans-serif" font-size="16" font-weight="bold" fill="#FFD600" letter-spacing="1">FULL-STACK &amp; AI SYSTEMS</text>
+
+    <!-- Diploma & Academy Tag -->
+    <text x="0" y="86" font-family="'Courier New', monospace" font-size="12" fill="#FFFFFF" fill-opacity="0.75" letter-spacing="0.5">DIPLÔME NATIONAL D&apos;INGÉNIEUR</text>
+    <text x="0" y="104" font-family="'Courier New', monospace" font-size="11" fill="#FFB700" letter-spacing="0.5">TEK-UP &amp; DATA SCIENCE (ISSAT GAFSA)</text>
+
+    <!-- Divider Line -->
+    <line x1="0" y1="126" x2="432" y2="126" stroke="#FFFFFF" stroke-opacity="0.15" stroke-width="1" />
+  </g>
+
+  <!-- Competency & Stats Pills -->
+  <g transform="translate(40, 610)">
+    <!-- Pill 1 -->
+    <rect x="0" y="0" width="134" height="42" rx="10" fill="#FFFFFF" fill-opacity="0.05" stroke="#FFFFFF" stroke-opacity="0.15" />
+    <text x="67" y="18" text-anchor="middle" font-family="'Courier New', monospace" font-size="9" fill="#FFFFFF" fill-opacity="0.5">BACKEND</text>
+    <text x="67" y="32" text-anchor="middle" font-family="sans-serif" font-size="11" font-weight="bold" fill="#FFD600">JAVA / SPRING</text>
+
+    <!-- Pill 2 -->
+    <rect x="148" y="0" width="134" height="42" rx="10" fill="#FFFFFF" fill-opacity="0.05" stroke="#FFFFFF" stroke-opacity="0.15" />
+    <text x="215" y="18" text-anchor="middle" font-family="'Courier New', monospace" font-size="9" fill="#FFFFFF" fill-opacity="0.5">FRONTEND</text>
+    <text x="215" y="32" text-anchor="middle" font-family="sans-serif" font-size="11" font-weight="bold" fill="#00E5FF">NEXT / REACT</text>
+
+    <!-- Pill 3 -->
+    <rect x="296" y="0" width="136" height="42" rx="10" fill="#FFFFFF" fill-opacity="0.05" stroke="#FFFFFF" stroke-opacity="0.15" />
+    <text x="364" y="18" text-anchor="middle" font-family="'Courier New', monospace" font-size="9" fill="#FFFFFF" fill-opacity="0.5">INTELLIGENCE</text>
+    <text x="364" y="32" text-anchor="middle" font-family="sans-serif" font-size="11" font-weight="bold" fill="#B388FF">PYTHON / AI</text>
+  </g>
+
+  <!-- Bottom Barcode & Security Hash -->
+  <g transform="translate(40, 676)">
+    <!-- Simulated High Tech Barcode -->
+    <rect x="0" y="0" width="6" height="34" fill="#FFD600" />
+    <rect x="10" y="0" width="3" height="34" fill="#FFD600" />
+    <rect x="17" y="0" width="9" height="34" fill="#FFD600" />
+    <rect x="30" y="0" width="4" height="34" fill="#FFD600" />
+    <rect x="38" y="0" width="7" height="34" fill="#FFD600" />
+    <rect x="49" y="0" width="2" height="34" fill="#FFD600" />
+    <rect x="55" y="0" width="6" height="34" fill="#FFD600" />
+    <rect x="65" y="0" width="10" height="34" fill="#FFD600" />
+    <rect x="79" y="0" width="3" height="34" fill="#FFD600" />
+    <rect x="86" y="0" width="6" height="34" fill="#FFD600" />
+    <rect x="96" y="0" width="8" height="34" fill="#FFD600" />
+    <rect x="108" y="0" width="4" height="34" fill="#FFD600" />
+    <rect x="116" y="0" width="12" height="34" fill="#FFD600" />
+    <rect x="132" y="0" width="4" height="34" fill="#FFD600" />
+    <rect x="140" y="0" width="8" height="34" fill="#FFD600" />
+    <rect x="152" y="0" width="3" height="34" fill="#FFD600" />
+    <rect x="159" y="0" width="7" height="34" fill="#FFD600" />
+    <rect x="170" y="0" width="5" height="34" fill="#FFD600" />
+    <rect x="179" y="0" width="10" height="34" fill="#FFD600" />
+
+    <!-- Right Side Hash -->
+    <text x="432" y="16" text-anchor="end" font-family="'Courier New', monospace" font-size="10" fill="#FFFFFF" fill-opacity="0.4">HASH: SHA256//F4H3D98A</text>
+    <text x="432" y="30" text-anchor="end" font-family="'Courier New', monospace" font-size="10" font-weight="bold" fill="#00E5FF">AUTHENTICATED // 2026</text>
+  </g>
+</svg>
