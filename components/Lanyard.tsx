@@ -201,8 +201,8 @@ function Band({
 
     const baseImg = baseMap.image;
     if (!baseImg) return baseMap;
-    const W = baseImg.width || 1024;
-    const H = baseImg.height || 1024;
+    const W = 2048;
+    const H = 2048;
     const canvas = document.createElement("canvas");
     canvas.width = W;
     canvas.height = H;
@@ -237,6 +237,9 @@ function Band({
     composite.colorSpace = THREE.SRGBColorSpace;
     composite.flipY = baseMap.flipY;
     composite.anisotropy = 16;
+    composite.minFilter = THREE.LinearMipmapLinearFilter;
+    composite.magFilter = THREE.LinearFilter;
+    composite.generateMipmaps = true;
     composite.needsUpdate = true;
     return composite;
   }, [frontImage, backImage, imageFit, frontTex, backTex, materials]);

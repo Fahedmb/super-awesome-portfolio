@@ -28,6 +28,22 @@ export default function TransmissionForm() {
   const [status, setStatus] = useState<"idle" | "transmitting" | "sent">("idle");
   const [copiedEmail, setCopiedEmail] = useState(false);
 
+  React.useEffect(() => {
+    const handleOrderEvent = (e: any) => {
+      const detail = e.detail || {};
+      setFormData((prev) => ({
+        ...prev,
+        frequency: detail.frequency || "Freelance Web Platform Delivery",
+        message:
+          detail.message ||
+          "Hi Fahed, I would like to commission a custom interactive 3D portfolio / web platform for my personal branding. Let's discuss scope and timeline!",
+      }));
+    };
+
+    window.addEventListener("order-portfolio-request", handleOrderEvent);
+    return () => window.removeEventListener("order-portfolio-request", handleOrderEvent);
+  }, []);
+
   const handleCopyEmail = () => {
     navigator.clipboard.writeText("fahedmbarek9@gmail.com");
     setCopiedEmail(true);

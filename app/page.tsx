@@ -600,7 +600,7 @@ export default function Home() {
           </p>
 
           {/* 3D Depth Carousel with Quick Tabs and Video Modals */}
-          <DepthCarousel />
+          <DepthCarousel onOrderPortfolio={() => scrollToSection(3)} />
         </GradualBlur>
 
         {/* 

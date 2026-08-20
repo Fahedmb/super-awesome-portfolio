@@ -52,38 +52,38 @@
     <text x="216" y="228" text-anchor="middle" font-family="'Courier New', monospace" font-size="11" font-weight="bold" fill="#FFD600" letter-spacing="2">VERIFIED ENGINEER</text>
 
     <!-- Telemetry Status Tag -->
-    <text x="216" y="270" text-anchor="middle" font-family="'Courier New', monospace" font-size="11" fill="#00E5FF" letter-spacing="1">SYSTEM ID: FM-2025-01</text>
+    <text x="216" y="270" text-anchor="middle" font-family="'Courier New', monospace" font-size="11" font-weight="bold" fill="#FFD600" letter-spacing="1">SYSTEM ID: FM-2026-TEKUP</text>
   </g>
 
   <!-- Name & Credentials Section -->
   <g transform="translate(40, 460)">
     <text x="0" y="32" font-family="sans-serif" font-size="34" font-weight="900" fill="#FFFFFF" letter-spacing="1">FAHED MBAREK</text>
-    <text x="0" y="58" font-family="sans-serif" font-size="16" font-weight="bold" fill="#FFD600" letter-spacing="1">FULL-STACK &amp; AI SYSTEMS</text>
+    <text x="0" y="58" font-family="sans-serif" font-size="16" font-weight="bold" fill="#FFD600" letter-spacing="1">FULL-STACK SOFTWARE ENGINEER</text>
 
     <!-- Diploma & Academy Tag -->
-    <text x="0" y="86" font-family="'Courier New', monospace" font-size="12" fill="#FFFFFF" fill-opacity="0.75" letter-spacing="0.5">DIPLÔME NATIONAL D&apos;INGÉNIEUR</text>
+    <text x="0" y="86" font-family="'Courier New', monospace" font-size="12" font-weight="bold" fill="#FFFFFF" fill-opacity="0.85" letter-spacing="0.5">DIPLÔME NATIONAL D&apos;INGÉNIEUR</text>
     <text x="0" y="104" font-family="'Courier New', monospace" font-size="11" fill="#FFB700" letter-spacing="0.5">TEK-UP &amp; DATA SCIENCE (ISSAT GAFSA)</text>
 
     <!-- Divider Line -->
     <line x1="0" y1="126" x2="432" y2="126" stroke="#FFFFFF" stroke-opacity="0.15" stroke-width="1" />
   </g>
 
-  <!-- Competency & Stats Pills -->
+  <!-- Competency & Stats Pills (Harmonized Golden Shades) -->
   <g transform="translate(40, 610)">
     <!-- Pill 1 -->
-    <rect x="0" y="0" width="134" height="42" rx="10" fill="#FFFFFF" fill-opacity="0.05" stroke="#FFFFFF" stroke-opacity="0.15" />
+    <rect x="0" y="0" width="134" height="42" rx="10" fill="#FFFFFF" fill-opacity="0.05" stroke="#FFD600" stroke-opacity="0.3" />
     <text x="67" y="18" text-anchor="middle" font-family="'Courier New', monospace" font-size="9" fill="#FFFFFF" fill-opacity="0.5">BACKEND</text>
     <text x="67" y="32" text-anchor="middle" font-family="sans-serif" font-size="11" font-weight="bold" fill="#FFD600">JAVA / SPRING</text>
 
     <!-- Pill 2 -->
-    <rect x="148" y="0" width="134" height="42" rx="10" fill="#FFFFFF" fill-opacity="0.05" stroke="#FFFFFF" stroke-opacity="0.15" />
+    <rect x="148" y="0" width="134" height="42" rx="10" fill="#FFFFFF" fill-opacity="0.05" stroke="#FFB700" stroke-opacity="0.3" />
     <text x="215" y="18" text-anchor="middle" font-family="'Courier New', monospace" font-size="9" fill="#FFFFFF" fill-opacity="0.5">FRONTEND</text>
-    <text x="215" y="32" text-anchor="middle" font-family="sans-serif" font-size="11" font-weight="bold" fill="#00E5FF">NEXT / REACT</text>
+    <text x="215" y="32" text-anchor="middle" font-family="sans-serif" font-size="11" font-weight="bold" fill="#FFB700">NEXT / REACT</text>
 
     <!-- Pill 3 -->
-    <rect x="296" y="0" width="136" height="42" rx="10" fill="#FFFFFF" fill-opacity="0.05" stroke="#FFFFFF" stroke-opacity="0.15" />
+    <rect x="296" y="0" width="136" height="42" rx="10" fill="#FFFFFF" fill-opacity="0.05" stroke="#FFE57F" stroke-opacity="0.3" />
     <text x="364" y="18" text-anchor="middle" font-family="'Courier New', monospace" font-size="9" fill="#FFFFFF" fill-opacity="0.5">INTELLIGENCE</text>
-    <text x="364" y="32" text-anchor="middle" font-family="sans-serif" font-size="11" font-weight="bold" fill="#B388FF">PYTHON / AI</text>
+    <text x="364" y="32" text-anchor="middle" font-family="sans-serif" font-size="11" font-weight="bold" fill="#FFE57F">PYTHON / AI</text>
   </g>
 
   <!-- Bottom Barcode & Security Hash -->
@@ -110,7 +110,7 @@
     <rect x="179" y="0" width="10" height="34" fill="#FFD600" />
 
     <!-- Right Side Hash -->
-    <text x="432" y="16" text-anchor="end" font-family="'Courier New', monospace" font-size="10" fill="#FFFFFF" fill-opacity="0.4">HASH: SHA256//F4H3D98A</text>
-    <text x="432" y="30" text-anchor="end" font-family="'Courier New', monospace" font-size="10" font-weight="bold" fill="#00E5FF">AUTHENTICATED // 2026</text>
+    <text x="432" y="16" text-anchor="end" font-family="'Courier New', monospace" font-size="10" fill="#FFFFFF" fill-opacity="0.5">HASH: SHA256//F4H3D98A</text>
+    <text x="432" y="30" text-anchor="end" font-family="'Courier New', monospace" font-size="10" font-weight="bold" fill="#FFD600">AUTHENTICATED // 2026</text>
   </g>
 </svg>

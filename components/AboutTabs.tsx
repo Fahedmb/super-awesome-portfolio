@@ -4,6 +4,15 @@ import React, { useState } from "react";
 import BorderGlowCard from "./BorderGlowCard";
 import EasterEggDecoder from "./EasterEggDecoder";
 import {
+  Timeline,
+  TimelineDate,
+  TimelineHeader,
+  TimelineIndicator,
+  TimelineItem,
+  TimelineTitle,
+} from "@/components/reui/timeline";
+import { cn } from "@/lib/utils";
+import {
   Code2,
   Cpu,
   Layers,
@@ -37,7 +46,7 @@ import {
 } from "lucide-react";
 
 // Crisp SVG Youtube Icon
-function YoutubeIcon({ className = "w-4 h-4" }: { className?: string }) {
+function YoutubeIcon({ className = "w-3.5 h-3.5" }: { className?: string }) {
   return (
     <svg
       className={className}
@@ -52,6 +61,7 @@ function YoutubeIcon({ className = "w-4 h-4" }: { className?: string }) {
 export default function AboutTabs() {
   const [activeTab, setActiveTab] = useState<"core" | "manifesto" | "roadmap" | "hobbies" | "qa" | "youtube">("core");
 
+  // Short, clear, meaningful tab titles that fit on one line effortlessly
   const tabs = [
     { id: "core", label: "CORE", icon: Code2 },
     { id: "manifesto", label: "PHILOSOPHY", icon: Quote },
@@ -61,7 +71,7 @@ export default function AboutTabs() {
     { id: "youtube", label: "CHANNELS", icon: Video },
   ] as const;
 
-  // Engineering Philosophy Principles
+  // Engineering Philosophy Principles (Harmonized in shades of yellow & gold)
   const philosophyItems = [
     {
       number: "01",
@@ -85,7 +95,7 @@ export default function AboutTabs() {
       tagline: "First make it work, then make it right, then make it fast & elegant.",
       description: "Build an end-to-end working pipeline first to validate technical feasibility against real-world data, then refactor ruthlessly for clean separation of concerns, modularity, and speed.",
       icon: Lightbulb,
-      accent: "text-cyan-400",
+      accent: "text-yellow-300",
     },
     {
       number: "04",
@@ -93,7 +103,7 @@ export default function AboutTabs() {
       tagline: "Complexity must be minimized at all costs — simplest is always best.",
       description: "Architect systems to be scalable and modular, but avoid speculative over-engineering. In production, simple and decoupled components are easier to debug, test, and maintain over years.",
       icon: Layers,
-      accent: "text-purple-400",
+      accent: "text-amber-300",
     },
     {
       number: "05",
@@ -101,46 +111,51 @@ export default function AboutTabs() {
       tagline: "Feeling lost is normal in an evolving field. Rapid adaptability is the real superpower.",
       description: "Imposter syndrome is just discomfort with unfamiliar territory. In an exponential industry like software, if you know everything you're doing, you aren't innovating. The defining superpower of an exceptional engineer is not knowing everything upfront, but the relentless hunger to learn, adapt, and take autonomous initiative.",
       icon: Flame,
-      accent: "text-emerald-400",
+      accent: "text-yellow-400",
     },
   ];
 
-  // Roadmap Milestones
+  // Alternating Milestones (Shadcn pattern matching the reference screenshot)
   const roadmapItems = [
     {
-      period: "2019",
-      title: "Baccalauréat in Computer Science",
-      institution: "Lycée Houcine Bouzaiene Gafsa (L.H.B.G)",
-      description: "Graduated in Computer Science, building first algorithms, relational logic, and software fundamentals.",
-      badge: "FOUNDATION",
+      id: 1,
+      date: "2019",
+      title: "Baccalauréat in CS",
+      institution: "Lycée Houcine Bouzaiene (L.H.B.G)",
+      description: "Graduated with honors in CS, building algorithms & logic foundations.",
+      badge: "HONORS",
     },
     {
-      period: "2019 – 2022",
-      title: "Licence Appliquée en DSI (Information Systems Development)",
-      institution: "ISET Gafsa (Higher Institute of Technological Studies)",
-      description: "Specialized in software development, relational database modeling, web technologies, and information systems engineering.",
-      badge: "APPLIED LICENCE",
+      id: 2,
+      date: "2019 – 2022",
+      title: "Licence Appliquée en DSI",
+      institution: "ISET Gafsa",
+      description: "Information systems, Java OOP, database design & web architectures.",
+      badge: "DSI LICENCE",
     },
     {
-      period: "2022 – 2023",
-      title: "Master's in Data Science (First Year - M1)",
-      institution: "ISSAT Gafsa (Higher Institute of Applied Sciences and Technology)",
-      description: "Advanced coursework in Python data science, statistical modeling, machine learning concepts, data mining, and neural network foundations.",
-      badge: "DATA SCIENCE M1",
+      id: 3,
+      date: "2022 – 2023",
+      title: "Master's in Data Science (M1)",
+      institution: "ISSAT Gafsa",
+      description: "Python data science, statistical modeling & machine learning.",
+      badge: "DATA SCIENCE",
     },
     {
-      period: "2022 – 2025",
-      title: "National Engineering Diploma in Software Engineering",
-      institution: "TEK-UP (Higher Institute of Technologies) • Ariana, Tunis",
-      description: "Diplôme National d'Ingénieur focused on Distributed Systems, Enterprise Architecture (Java/Spring Boot), Microservices, and OpenAPI specifications.",
-      badge: "NATIONAL ENG. DIPLOMA",
+      id: 4,
+      date: "2022 – 2025",
+      title: "National Engineering Diploma",
+      institution: "TEK-UP Ariana, Tunis",
+      description: "Software Architecture, Distributed Systems, Microservices & OpenAPI.",
+      badge: "INGÉNIEUR",
     },
     {
-      period: "2022 – PRESENT",
-      title: "Freelance Full-Stack Engineer & Independent Contractor",
-      institution: "Global Remote Clients • 3+ Years Experience",
-      description: "Direct partner to international clients, scoping requirements, designing relational schemas, and shipping 15+ custom web platforms, microservices, and AI integrations.",
-      badge: "3+ YRS FREELANCE",
+      id: 5,
+      date: "2022 – PRESENT",
+      title: "Freelance Full-Stack Engineer",
+      institution: "Global Remote Clients (3+ Yrs)",
+      description: "Delivering 15+ custom platforms, REST microservices & AI integrations.",
+      badge: "15+ PLATFORMS",
     },
   ];
 
@@ -158,7 +173,7 @@ export default function AboutTabs() {
       title: "Music Production & Beatmaking",
       category: "CREATIVE SOUND ARCHITECTURE",
       icon: Music,
-      accent: "text-purple-400",
+      accent: "text-yellow-400",
       description: "Music producer sculpting drum arrangements, analog synths, and acoustic dynamics. Deeply inspired by pioneering producers who redefine audio landscapes.",
       tags: ["Beatmaking", "Analog Synths", "Pharrell Williams", "Nick Mira", "Audio Mixing"],
     },
@@ -166,7 +181,7 @@ export default function AboutTabs() {
       title: "Competitive Gaming & Strategy",
       category: "MECHANICAL REFLEXES & TACTICS",
       icon: Gamepad2,
-      accent: "text-cyan-400",
+      accent: "text-amber-300",
       description: "High-intensity competitive gamer focusing on fast decision-making and mechanical execution under pressure.",
       tags: ["League of Legends", "Riven Main", "Vayne", "Kayn", "Tactical Focus"],
     },
@@ -174,7 +189,7 @@ export default function AboutTabs() {
       title: "Astrophysics & Cosmic Mechanics",
       category: "UNIVERSE LAWS & RELATIVITY",
       icon: Orbit,
-      accent: "text-yellow-400",
+      accent: "text-yellow-300",
       description: "Fascinated by general relativity, orbital mechanics, and gravitational lensing. Applying fundamental cosmic order to distributed systems design.",
       tags: ["Astrophysics", "General Relativity", "Cosmology", "Simulations"],
     },
@@ -278,9 +293,9 @@ export default function AboutTabs() {
 
   return (
     <div className="w-full">
-      {/* Centered, Compact, Zero-Scroll Glass Tab Switcher */}
+      {/* Centered, Compact, Single-Line Glass Tab Switcher */}
       <div className="flex justify-center mb-3">
-        <div className="flex items-center gap-1 p-1 rounded-2xl bg-black/85 border border-white/15 backdrop-blur-2xl shadow-xl max-w-full">
+        <div className="flex items-center gap-1 p-1 rounded-2xl bg-black/85 border border-white/15 backdrop-blur-2xl shadow-xl max-w-fit mx-auto">
           {tabs.map((tab) => {
             const Icon = tab.icon;
             const isActive = activeTab === tab.id;
@@ -288,7 +303,7 @@ export default function AboutTabs() {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id as any)}
-                className={`flex items-center gap-1.5 px-2.5 sm:px-3.5 py-1.5 rounded-xl text-[11px] sm:text-xs font-mono font-bold tracking-wider transition-all whitespace-nowrap cursor-pointer active:scale-95 ${
+                className={`flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl text-[10px] sm:text-[11px] font-mono font-bold tracking-wider transition-all whitespace-nowrap cursor-pointer active:scale-95 ${
                   isActive
                     ? "bg-[#FFD600] text-black shadow-md shadow-yellow-400/25 font-extrabold"
                     : "text-neutral-300 hover:text-white hover:bg-white/10"
@@ -303,10 +318,10 @@ export default function AboutTabs() {
       </div>
 
       {/* ─────────────────────────────────────────────────────────────────── */}
-      {/* TAB 1: DEDICATED REBRANDED ENGINEERING CORE                        */}
+      {/* TAB 1: DEDICATED REBRANDED ENGINEERING CORE (Harmonized Yellows)    */}
       {/* ─────────────────────────────────────────────────────────────────── */}
       {activeTab === "core" && (
-        <div className="space-y-3 animate-fadeIn">
+        <div key="core" className="space-y-3 animate-tab-switch">
           {/* Header Banner */}
           <div className="flex items-center justify-between px-1">
             <div className="flex items-center gap-2 text-xs font-mono font-bold text-yellow-400">
@@ -318,13 +333,13 @@ export default function AboutTabs() {
             </span>
           </div>
 
-          {/* 3 Rebranded, Highly Structured Architectural Cards */}
+          {/* 3 Rebranded Architectural Cards — All Unified in Distinct Shades of Yellow & Gold */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-            {/* Card 1: Distributed Backends & Microservices */}
-            <div className="p-3.5 rounded-2xl bg-black/60 border border-yellow-400/30 hover:border-yellow-400/60 transition-all backdrop-blur-xl flex flex-col justify-between group">
+            {/* Card 1: Distributed Backends & Microservices (Electric Yellow #FFD600) */}
+            <div className="p-3.5 rounded-2xl bg-black/60 border border-yellow-400/40 hover:border-yellow-400/70 transition-all backdrop-blur-xl flex flex-col justify-between group">
               <div>
                 <div className="flex items-center justify-between mb-2.5">
-                  <div className="w-8 h-8 rounded-xl bg-yellow-400/10 border border-yellow-400/25 flex items-center justify-center text-yellow-400 group-hover:scale-110 transition-transform">
+                  <div className="w-8 h-8 rounded-xl bg-yellow-400/10 border border-yellow-400/30 flex items-center justify-center text-yellow-400 group-hover:scale-110 transition-transform">
                     <Server className="w-4 h-4" />
                   </div>
                   <span className="px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-yellow-400/15 border border-yellow-400/30 text-yellow-300">
@@ -358,7 +373,7 @@ export default function AboutTabs() {
               </div>
 
               <div className="flex flex-wrap gap-1 border-t border-white/10 pt-2.5">
-                <span className="px-1.5 py-0.5 rounded bg-white/5 text-[9px] font-mono text-yellow-300">
+                <span className="px-1.5 py-0.5 rounded bg-white/5 text-[9px] font-mono text-yellow-300 font-semibold">
                   Java 21 / Spring Boot 4
                 </span>
                 <span className="px-1.5 py-0.5 rounded bg-white/5 text-[9px] font-mono text-neutral-300">
@@ -370,14 +385,14 @@ export default function AboutTabs() {
               </div>
             </div>
 
-            {/* Card 2: AI & Data Science Engineering */}
-            <div className="p-3.5 rounded-2xl bg-black/60 border border-cyan-400/30 hover:border-cyan-400/60 transition-all backdrop-blur-xl flex flex-col justify-between group">
+            {/* Card 2: AI & Data Science Engineering (Warm Golden Amber) */}
+            <div className="p-3.5 rounded-2xl bg-black/60 border border-amber-400/40 hover:border-amber-400/70 transition-all backdrop-blur-xl flex flex-col justify-between group">
               <div>
                 <div className="flex items-center justify-between mb-2.5">
-                  <div className="w-8 h-8 rounded-xl bg-cyan-400/10 border border-cyan-400/25 flex items-center justify-center text-cyan-400 group-hover:scale-110 transition-transform">
+                  <div className="w-8 h-8 rounded-xl bg-amber-400/10 border border-amber-400/30 flex items-center justify-center text-amber-400 group-hover:scale-110 transition-transform">
                     <Cpu className="w-4 h-4" />
                   </div>
-                  <span className="px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-cyan-400/15 border border-cyan-400/30 text-cyan-300">
+                  <span className="px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-amber-400/15 border border-amber-400/30 text-amber-300">
                     AI &amp; DATA SYSTEMS
                   </span>
                 </div>
@@ -393,22 +408,22 @@ export default function AboutTabs() {
 
                 <div className="space-y-1 mb-3 text-[10px] text-neutral-300 font-mono">
                   <div className="flex items-center gap-1.5">
-                    <CheckCircle2 className="w-3 h-3 text-cyan-400 shrink-0" />
+                    <CheckCircle2 className="w-3 h-3 text-amber-400 shrink-0" />
                     <span>LLM APIs &amp; automated parsing</span>
                   </div>
                   <div className="flex items-center gap-1.5">
-                    <CheckCircle2 className="w-3 h-3 text-cyan-400 shrink-0" />
+                    <CheckCircle2 className="w-3 h-3 text-amber-400 shrink-0" />
                     <span>100% data fidelity spreadsheet ETL</span>
                   </div>
                   <div className="flex items-center gap-1.5">
-                    <CheckCircle2 className="w-3 h-3 text-cyan-400 shrink-0" />
+                    <CheckCircle2 className="w-3 h-3 text-amber-400 shrink-0" />
                     <span>PostgreSQL relational indexing</span>
                   </div>
                 </div>
               </div>
 
               <div className="flex flex-wrap gap-1 border-t border-white/10 pt-2.5">
-                <span className="px-1.5 py-0.5 rounded bg-white/5 text-[9px] font-mono text-cyan-300">
+                <span className="px-1.5 py-0.5 rounded bg-white/5 text-[9px] font-mono text-amber-300 font-semibold">
                   Python / TensorFlow
                 </span>
                 <span className="px-1.5 py-0.5 rounded bg-white/5 text-[9px] font-mono text-neutral-300">
@@ -420,15 +435,15 @@ export default function AboutTabs() {
               </div>
             </div>
 
-            {/* Card 3: Modern Full-Stack & DevOps */}
-            <div className="p-3.5 rounded-2xl bg-black/60 border border-purple-400/30 hover:border-purple-400/60 transition-all backdrop-blur-xl flex flex-col justify-between group">
+            {/* Card 3: Full-Stack Architecture & DevOps (Radiant Deep Gold) */}
+            <div className="p-3.5 rounded-2xl bg-black/60 border border-yellow-500/40 hover:border-yellow-500/70 transition-all backdrop-blur-xl flex flex-col justify-between group">
               <div>
                 <div className="flex items-center justify-between mb-2.5">
-                  <div className="w-8 h-8 rounded-xl bg-purple-400/10 border border-purple-400/25 flex items-center justify-center text-purple-400 group-hover:scale-110 transition-transform">
+                  <div className="w-8 h-8 rounded-xl bg-yellow-500/10 border border-yellow-500/30 flex items-center justify-center text-yellow-400 group-hover:scale-110 transition-transform">
                     <Layers className="w-4 h-4" />
                   </div>
-                  <span className="px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-purple-400/15 border border-purple-400/30 text-purple-300">
-                    60 FPS WEB &amp; DEVOPS
+                  <span className="px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-yellow-500/15 border border-yellow-500/30 text-yellow-300">
+                    WEB &amp; DEVOPS
                   </span>
                 </div>
 
@@ -437,28 +452,28 @@ export default function AboutTabs() {
                 </h3>
 
                 <p className="text-[11px] text-neutral-300 font-light leading-relaxed mb-3">
-                  Crafting cinematic, sub-second web platforms with Server Components, WebGL canvases,
+                  Crafting cinematic, sub-second web platforms with Server Components, 60 FPS WebGL canvas rendering,
                   and automated containerized CI/CD delivery pipelines.
                 </p>
 
                 <div className="space-y-1 mb-3 text-[10px] text-neutral-300 font-mono">
                   <div className="flex items-center gap-1.5">
-                    <CheckCircle2 className="w-3 h-3 text-purple-400 shrink-0" />
-                    <span>60 FPS render &amp; sub-second vitals</span>
+                    <CheckCircle2 className="w-3 h-3 text-yellow-400 shrink-0" />
+                    <span>60 FPS render &amp; sub-second Web Vitals</span>
                   </div>
                   <div className="flex items-center gap-1.5">
-                    <CheckCircle2 className="w-3 h-3 text-purple-400 shrink-0" />
+                    <CheckCircle2 className="w-3 h-3 text-yellow-400 shrink-0" />
                     <span>Strict TypeScript domain boundaries</span>
                   </div>
                   <div className="flex items-center gap-1.5">
-                    <CheckCircle2 className="w-3 h-3 text-purple-400 shrink-0" />
+                    <CheckCircle2 className="w-3 h-3 text-yellow-400 shrink-0" />
                     <span>Docker &amp; Jenkins automation</span>
                   </div>
                 </div>
               </div>
 
               <div className="flex flex-wrap gap-1 border-t border-white/10 pt-2.5">
-                <span className="px-1.5 py-0.5 rounded bg-white/5 text-[9px] font-mono text-purple-300">
+                <span className="px-1.5 py-0.5 rounded bg-white/5 text-[9px] font-mono text-yellow-300 font-semibold">
                   Next.js 15 / React 19
                 </span>
                 <span className="px-1.5 py-0.5 rounded bg-white/5 text-[9px] font-mono text-neutral-300">
@@ -471,22 +486,22 @@ export default function AboutTabs() {
             </div>
           </div>
 
-          {/* Impact Telemetry Counter Row */}
+          {/* Impact Telemetry Counter Row (Harmonized Yellow / Amber Shades) */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
             <div className="p-2.5 rounded-xl bg-white/5 border border-white/10 text-center">
               <div className="text-sm sm:text-base font-bold font-mono text-yellow-400">3+ YRS</div>
               <div className="text-[9px] font-mono text-neutral-400">FREELANCE DELIVERY</div>
             </div>
             <div className="p-2.5 rounded-xl bg-white/5 border border-white/10 text-center">
-              <div className="text-sm sm:text-base font-bold font-mono text-cyan-400">15+</div>
+              <div className="text-sm sm:text-base font-bold font-mono text-amber-300">15+</div>
               <div className="text-[9px] font-mono text-neutral-400">PLATFORMS SHIPPED</div>
             </div>
             <div className="p-2.5 rounded-xl bg-white/5 border border-white/10 text-center">
-              <div className="text-sm sm:text-base font-bold font-mono text-purple-400">&gt;85%</div>
+              <div className="text-sm sm:text-base font-bold font-mono text-yellow-500">&gt;85%</div>
               <div className="text-[9px] font-mono text-neutral-400">TURNAROUND CUT</div>
             </div>
             <div className="p-2.5 rounded-xl bg-white/5 border border-white/10 text-center">
-              <div className="text-base sm:text-lg font-bold font-mono text-emerald-400">88%</div>
+              <div className="text-base sm:text-lg font-bold font-mono text-amber-400">88%</div>
               <div className="text-[9px] font-mono text-neutral-400">TEST COVERAGE</div>
             </div>
           </div>
@@ -499,7 +514,7 @@ export default function AboutTabs() {
       {/* TAB 2: DEDICATED PHILOSOPHY & MINDSET MANIFESTO                     */}
       {/* ─────────────────────────────────────────────────────────────────── */}
       {activeTab === "manifesto" && (
-        <div className="space-y-3 animate-fadeIn">
+        <div key="manifesto" className="space-y-3 animate-tab-switch">
           <div className="p-4 rounded-2xl bg-black/60 border border-amber-500/30 backdrop-blur-xl">
             <div className="flex items-center justify-between mb-3 border-b border-white/10 pb-2.5">
               <div className="flex items-center gap-2 text-xs font-mono font-bold text-yellow-400">
@@ -551,48 +566,57 @@ export default function AboutTabs() {
       )}
 
       {/* ─────────────────────────────────────────────────────────────────── */}
-      {/* TAB 3: ACADEMIC ROADMAP                                            */}
+      {/* TAB 3: ACADEMIC ROADMAP (Alternating Shadcn Pattern)                */}
       {/* ─────────────────────────────────────────────────────────────────── */}
       {activeTab === "roadmap" && (
-        <div className="animate-fadeIn p-4 rounded-2xl bg-black/60 border border-white/10 backdrop-blur-xl">
-          <div className="text-xs font-mono font-bold text-yellow-400 mb-3 flex items-center gap-2">
-            <GraduationCap className="w-4 h-4 text-yellow-400" />
-            <span>ACADEMIC &amp; CAREER TIMELINE // VERIFIED MILESTONES</span>
+        <div key="roadmap" className="animate-tab-switch p-4 sm:p-5 rounded-2xl bg-black/60 border border-white/10 backdrop-blur-xl">
+          <div className="flex items-center justify-between mb-4 pb-2 border-b border-white/10">
+            <div className="text-xs font-mono font-bold text-yellow-400 flex items-center gap-2">
+              <GraduationCap className="w-4 h-4 text-yellow-400" />
+              <span>ACADEMIC &amp; CAREER TIMELINE // VERIFIED MILESTONES</span>
+            </div>
+            <span className="text-[10px] font-mono text-neutral-400">
+              5 MILESTONES
+            </span>
           </div>
 
-          <div className="relative pl-6 sm:pl-8 space-y-3.5 before:content-[''] before:absolute before:left-2 sm:before:left-3 before:top-2 before:bottom-2 before:w-[2px] before:bg-gradient-to-b before:from-yellow-400 before:via-amber-500 before:to-yellow-300/20">
-            {roadmapItems.map((item, idx) => (
-              <div key={idx} className="relative group">
-                {/* Glowing Milestone Indicator Ring */}
-                <div className="absolute -left-[27px] sm:-left-[33px] top-1 w-3.5 h-3.5 rounded-full bg-neutral-900 border-2 border-yellow-400 group-hover:scale-125 group-hover:bg-yellow-400 transition-all shadow-md shadow-yellow-400/50 flex items-center justify-center">
-                  <div className="w-1.5 h-1.5 rounded-full bg-yellow-400 group-hover:bg-black transition-colors" />
-                </div>
+          <Timeline defaultValue={5}>
+            {roadmapItems.map((item, idx) => {
+              const isEven = idx % 2 === 1;
+              return (
+                <TimelineItem key={item.id} step={item.id}>
+                  <TimelineIndicator />
 
-                <div className="p-3 rounded-xl bg-white/5 border border-white/5 hover:border-yellow-400/40 hover:bg-white/[0.07] transition-all">
-                  <div className="flex flex-wrap items-center justify-between gap-1.5 mb-1">
-                    <div className="flex items-center gap-2">
-                      <span className="px-2 py-0.5 rounded bg-yellow-400/10 border border-yellow-400/30 text-xs font-mono font-bold text-yellow-400">
-                        {item.period}
-                      </span>
-                      <h4 className="text-xs sm:text-sm font-bold text-white font-display">
-                        {item.title}
-                      </h4>
+                  <div
+                    className={cn(
+                      "w-[calc(50%-1.25rem)] flex flex-col group/card transition-all",
+                      isEven
+                        ? "mr-auto text-right pr-2"
+                        : "ml-auto text-left pl-2"
+                    )}
+                  >
+                    <TimelineHeader className={isEven ? "items-end" : "items-start"}>
+                      <div className="flex items-center gap-1.5 mb-0.5">
+                        <TimelineDate>{item.date}</TimelineDate>
+                        <span className="px-1.5 py-0.2 rounded text-[8px] font-mono font-semibold bg-neutral-800 border border-neutral-700 text-neutral-300">
+                          {item.badge}
+                        </span>
+                      </div>
+                      <TimelineTitle>{item.title}</TimelineTitle>
+                    </TimelineHeader>
+
+                    <div className="text-[10px] font-mono text-amber-300/90 font-medium mt-0.5">
+                      {item.institution}
                     </div>
-                    <span className="px-2 py-0.5 rounded text-[9px] font-mono font-semibold bg-neutral-800 border border-neutral-700 text-neutral-300">
-                      {item.badge}
-                    </span>
-                  </div>
 
-                  <div className="text-[11px] font-mono text-amber-300/90 font-medium mb-1">
-                    {item.institution}
+                    <p className="text-[10px] text-neutral-400 font-light leading-relaxed mt-0.5">
+                      {item.description}
+                    </p>
                   </div>
-                  <p className="text-[11px] text-neutral-400 font-light leading-relaxed">
-                    {item.description}
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div>
+                </TimelineItem>
+              );
+            })}
+          </Timeline>
         </div>
       )}
 
@@ -600,7 +624,7 @@ export default function AboutTabs() {
       {/* TAB 4: HOBBIES & RIGOR                                             */}
       {/* ─────────────────────────────────────────────────────────────────── */}
       {activeTab === "hobbies" && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 animate-fadeIn">
+        <div key="hobbies" className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 animate-tab-switch">
           {hobbiesList.map((hobby, idx) => {
             const Icon = hobby.icon;
             return (
@@ -643,10 +667,10 @@ export default function AboutTabs() {
       )}
 
       {/* ─────────────────────────────────────────────────────────────────── */}
-      {/* TAB 5: INTEL & Q&A (Vertical Stack with True Hover-to-Reveal)      */}
+      {/* TAB 5: INTEL & Q&A                                                 */}
       {/* ─────────────────────────────────────────────────────────────────── */}
       {activeTab === "qa" && (
-        <div className="animate-fadeIn p-4 rounded-2xl bg-black/60 border border-white/10 backdrop-blur-xl">
+        <div key="qa" className="animate-tab-switch p-4 rounded-2xl bg-black/60 border border-white/10 backdrop-blur-xl">
           <div className="text-xs font-mono font-bold text-yellow-400 mb-3 flex items-center justify-between">
             <div className="flex items-center gap-2">
               <HelpCircle className="w-4 h-4 text-yellow-400" />
@@ -686,7 +710,6 @@ export default function AboutTabs() {
                     </div>
                   </div>
 
-                  {/* Strictly Hidden by Default, Smoothly Expands & Glows on Hover / Focus */}
                   <div className="overflow-hidden max-h-0 opacity-0 group-hover:max-h-24 group-hover:opacity-100 transition-all duration-300 ease-in-out">
                     <div className="mt-2 pt-2 border-t border-white/10 text-[11px] font-mono text-yellow-300 leading-relaxed flex items-start gap-1.5">
                       <span className="text-amber-500 font-bold">↳ DECLASSIFIED:</span>
@@ -704,7 +727,7 @@ export default function AboutTabs() {
       {/* TAB 6: FAVORITE YOUTUBE CHANNELS & MINDS                            */}
       {/* ─────────────────────────────────────────────────────────────────── */}
       {activeTab === "youtube" && (
-        <div className="animate-fadeIn p-4 rounded-2xl bg-black/60 border border-white/10 backdrop-blur-xl">
+        <div key="youtube" className="animate-tab-switch p-4 rounded-2xl bg-black/60 border border-white/10 backdrop-blur-xl">
           <div className="text-xs font-mono font-bold text-yellow-400 mb-3 flex items-center justify-between">
             <div className="flex items-center gap-2">
               <YoutubeIcon className="w-4 h-4 text-red-500" />
