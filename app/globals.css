@@ -113,13 +113,13 @@
   text-shadow: 0 0 30px rgba(255, 255, 255, 0.6);
 }
 
-/* Infinite Marquee Animation */
+/* Infinite Marquee Animation (Compositor Promoted) */
 @keyframes logo-loop {
   0% {
-    transform: translateX(0%);
+    transform: translate3d(0%, 0, 0);
   }
   100% {
-    transform: translateX(-50%);
+    transform: translate3d(-50%, 0, 0);
   }
 }
 
@@ -127,40 +127,42 @@
   display: flex;
   width: max-content;
   animation: logo-loop 28s linear infinite;
+  will-change: transform;
+  backface-visibility: hidden;
 }
 
 .animate-logo-loop:hover {
   animation-play-state: paused;
 }
 
-/* Floating Animation */
+/* Floating Animation (Compositor Promoted) */
 @keyframes gentle-float {
   0%, 100% {
-    transform: translateY(0px) rotate(0deg);
+    transform: translate3d(0, 0px, 0) rotate(0deg);
   }
   50% {
-    transform: translateY(-8px) rotate(0.5deg);
+    transform: translate3d(0, -6px, 0) rotate(0.5deg);
   }
 }
 
 .animate-float {
   animation: gentle-float 6s ease-in-out infinite;
+  will-change: transform;
 }
 
-/* Smooth Tab Switch Transition */
+/* Smooth Tactile Tab Switch Transition (Zero Paint Blur, Instant Feedback) */
 @keyframes tab-switch {
   from {
     opacity: 0;
-    transform: translateY(8px) scale(0.99);
-    filter: blur(4px);
+    transform: translate3d(0, 6px, 0) scale(0.985);
   }
   to {
     opacity: 1;
-    transform: translateY(0) scale(1);
-    filter: blur(0);
+    transform: translate3d(0, 0, 0) scale(1);
   }
 }
 
 .animate-tab-switch {
-  animation: tab-switch 340ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: tab-switch 220ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  will-change: transform, opacity;
 }

@@ -38,6 +38,7 @@ export interface LanyardProps {
   imageFit?: "cover" | "contain";
   lanyardImage?: string | null;
   lanyardWidth?: number;
+  active?: boolean;
   name?: string;
   role?: string;
   status?: string;
@@ -55,6 +56,7 @@ export default function Lanyard({
   imageFit = "cover",
   lanyardImage = null,
   lanyardWidth = 1,
+  active = true,
   className = "",
 }: LanyardProps) {
   const [mounted, setMounted] = useState(false);
@@ -79,13 +81,13 @@ export default function Lanyard({
         <Canvas
           camera={{ position: position, fov: fov }}
           dpr={[1, isMobile ? 1.5 : 2]}
-          gl={{ alpha: transparent, antialias: true }}
+          gl={{ alpha: transparent, antialias: true, powerPreference: "high-performance" }}
           onCreated={({ gl }) =>
             gl.setClearColor(new THREE.Color(0x000000), transparent ? 0 : 1)
           }
         >
           <ambientLight intensity={Math.PI} />
-          <Physics gravity={gravity} timeStep={isMobile ? 1 / 30 : 1 / 60}>
+          <Physics gravity={gravity} timeStep={isMobile ? 1 / 30 : 1 / 60} paused={!active}>
             <Band
               isMobile={isMobile}
               frontImage={frontImage}
@@ -93,6 +95,7 @@ export default function Lanyard({
               imageFit={imageFit}
               lanyardImage={lanyardImage}
               lanyardWidth={lanyardWidth}
+              active={active}
             />
           </Physics>
           <Environment blur={0.75}>
@@ -140,6 +143,7 @@ function Band({
   imageFit = "cover",
   lanyardImage = null,
   lanyardWidth = 1,
+  active = true,
 }: {
   maxSpeed?: number;
   minSpeed?: number;
@@ -149,6 +153,7 @@ function Band({
   imageFit?: "cover" | "contain";
   lanyardImage?: string | null;
   lanyardWidth?: number;
+  active?: boolean;
 }) {
   const band = useRef<any>(null);
   const fixed = useRef<any>(null);
@@ -275,6 +280,8 @@ function Band({
   }, [hovered, dragged]);
 
   useFrame((state, delta) => {
+    if (!active && !dragged) return;
+
     if (dragged) {
       vec.set(state.pointer.x, state.pointer.y, 0.5).unproject(state.camera);
       dir.copy(vec).sub(state.camera.position).normalize();

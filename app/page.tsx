@@ -533,6 +533,7 @@ export default function Home() {
                 transparent={true}
                 lanyardWidth={1}
                 frontImage="/assets/lanyard/fahed_badge.svg"
+                active={getSectionVisibility(0) > 0.05}
               />
             </div>
           </div>

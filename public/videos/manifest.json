@@ -1,14 +1,19 @@
 {
   "tiers": {
+    "480p": {
+      "width": 854,
+      "height": 480,
+      "maxEffectiveWidth": 1280
+    },
     "720p": {
       "width": 1280,
       "height": 720,
-      "maxEffectiveWidth": 1280
+      "maxEffectiveWidth": 1920
     },
     "1080p": {
       "width": 1920,
       "height": 1080,
-      "maxEffectiveWidth": 1920
+      "maxEffectiveWidth": 2560
     },
     "2k": {
       "width": 2560,
@@ -22,6 +27,7 @@
       "fps": 60,
       "frameCount": 440,
       "sources": {
+        "480p": "/videos/480p/scene_1.mp4",
         "720p": "/videos/720p/scene_1.mp4",
         "1080p": "/videos/1080p/scene_1.mp4",
         "2k": "/videos/2k/scene_1.mp4"
@@ -32,6 +38,7 @@
       "fps": 60,
       "frameCount": 372,
       "sources": {
+        "480p": "/videos/480p/scene_2.mp4",
         "720p": "/videos/720p/scene_2.mp4",
         "1080p": "/videos/1080p/scene_2.mp4",
         "2k": "/videos/2k/scene_2.mp4"
@@ -42,6 +49,7 @@
       "fps": 60,
       "frameCount": 382,
       "sources": {
+        "480p": "/videos/480p/scene_3.mp4",
         "720p": "/videos/720p/scene_3.mp4",
         "1080p": "/videos/1080p/scene_3.mp4",
         "2k": "/videos/2k/scene_3.mp4"

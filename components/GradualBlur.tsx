@@ -13,18 +13,16 @@ interface GradualBlurProps {
 export default function GradualBlur({
   children,
   visibleProgress,
-  maxBlur = 12,
-  maxTranslateY = 20,
+  maxTranslateY = 16,
   className = "",
 }: GradualBlurProps) {
   // Clamped visibility factor (0 to 1)
   const clamped = Math.max(0, Math.min(1, visibleProgress));
 
-  // Smoothstep easing for silky blur and opacity transition
+  // Smoothstep easing for silky compositor transition
   const smooth = clamped * clamped * (3 - 2 * clamped);
 
   const opacity = smooth;
-  const blur = (1 - smooth) * maxBlur;
   const translateY = (1 - smooth) * maxTranslateY;
 
   if (opacity <= 0.001) {
@@ -33,13 +31,12 @@ export default function GradualBlur({
 
   return (
     <div
-      className={`transition-all duration-75 ease-out ${className}`}
+      className={className}
       style={{
         opacity,
-        filter: blur > 0.2 ? `blur(${blur.toFixed(1)}px)` : "none",
-        transform: `translateY(${translateY.toFixed(1)}px)`,
+        transform: `translate3d(0, ${translateY.toFixed(1)}px, 0)`,
         pointerEvents: opacity > 0.7 ? "auto" : "none",
-        willChange: "opacity, filter, transform",
+        willChange: "transform, opacity",
       }}
     >
       {children}
