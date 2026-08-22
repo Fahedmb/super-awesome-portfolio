@@ -445,7 +445,7 @@ export default function Home() {
         CINEMATIC NARRATIVE OVERLAYS (4 Acts with Gradual Blur)
         ═══════════════════════════════════════════════════════════════════════
       */}
-      <div className="fixed inset-0 z-20 pointer-events-none flex items-center justify-center p-4 sm:p-8 md:p-12 overflow-hidden">
+      <div className="fixed inset-0 z-20 pointer-events-none flex items-center justify-center p-3 sm:p-6 md:p-12 pt-14 pb-14 sm:pt-16 sm:pb-16 overflow-hidden">
         {/* 
           ─────────────────────────────────────────────────────────────────────
           SECTION 0: ORIGIN // THE ASCENT (Light // #FFFFFF)
@@ -453,26 +453,26 @@ export default function Home() {
         */}
         <GradualBlur
           visibleProgress={getSectionVisibility(0)}
-          className="absolute max-w-7xl w-full flex flex-col justify-between"
+          className="absolute max-w-7xl w-full flex flex-col justify-between max-h-[84vh] lg:max-h-none overflow-y-auto lg:overflow-visible pr-0.5"
         >
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center pt-2 lg:pt-4">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-8 items-center pt-1 lg:pt-4">
             {/* Left Narrative Column */}
             <div className="lg:col-span-7 flex flex-col items-start text-neutral-900 z-10">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-900 text-xs font-mono mb-3 backdrop-blur-md">
-                <Sparkles className="w-3.5 h-3.5 text-amber-600 animate-pulse" />
+              <div className="inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-900 text-[10px] sm:text-xs font-mono mb-2 sm:mb-3 backdrop-blur-md">
+                <Sparkles className="w-3 sm:w-3.5 h-3 sm:h-3.5 text-amber-600 animate-pulse" />
                 <span>FAHED MBAREK // FULL-STACK &amp; AI SYSTEMS</span>
               </div>
 
               {/* Bold, Clear, Distinct Software Engineer Title */}
-              <h1 className="text-3xl sm:text-5xl md:text-6xl font-extrabold font-display tracking-tight leading-[1.08] mb-3 text-neutral-900">
+              <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold font-display tracking-tight leading-[1.1] mb-2 sm:mb-3 text-neutral-900">
                 Full-Stack Software Engineer{" "}
-                <span className="block font-editorial italic text-amber-700 font-normal text-2xl sm:text-4xl md:text-5xl mt-1">
+                <span className="block font-editorial italic text-amber-700 font-normal text-xl sm:text-3xl md:text-4xl lg:text-5xl mt-0.5 sm:mt-1">
                   Distributed Backends, AI &amp; Modern Web.
                 </span>
               </h1>
 
-              {/* Generalized Bio without specific university names */}
-              <p className="text-xs sm:text-sm text-neutral-700 max-w-xl leading-relaxed mb-4 font-light">
+              {/* Generalized Bio */}
+              <p className="text-[11px] sm:text-xs md:text-sm text-neutral-700 max-w-xl leading-relaxed mb-3 sm:mb-4 font-light">
                 Full-Stack Software Engineer with a National Engineering Diploma and Data Science background,
                 combining 3+ years of client-facing freelance web delivery (15+ custom platforms) with enterprise
                 systems engineering. Specializing in scalable Java/Spring Boot microservices, modern Next.js &amp; Angular
@@ -480,52 +480,52 @@ export default function Home() {
               </p>
 
               {/* Clean General Qualification Badges */}
-              <div className="flex flex-wrap gap-1.5 mb-6">
-                <span className="px-2.5 py-1 rounded-lg bg-neutral-100 border border-neutral-200 text-neutral-800 text-[11px] font-mono flex items-center gap-1.5">
-                  <GraduationCap className="w-3.5 h-3.5 text-amber-700" />
+              <div className="flex flex-wrap gap-1 sm:gap-1.5 mb-3 sm:mb-5">
+                <span className="px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-lg bg-neutral-100 border border-neutral-200 text-neutral-800 text-[10px] sm:text-[11px] font-mono flex items-center gap-1 sm:gap-1.5">
+                  <GraduationCap className="w-3 sm:w-3.5 h-3 sm:h-3.5 text-amber-700" />
                   <span>NATIONAL ENGINEERING DIPLOMA</span>
                 </span>
-                <span className="px-2.5 py-1 rounded-lg bg-neutral-100 border border-neutral-200 text-neutral-800 text-[11px] font-mono flex items-center gap-1.5">
-                  <Database className="w-3.5 h-3.5 text-amber-700" />
+                <span className="px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-lg bg-neutral-100 border border-neutral-200 text-neutral-800 text-[10px] sm:text-[11px] font-mono flex items-center gap-1 sm:gap-1.5">
+                  <Database className="w-3 sm:w-3.5 h-3 sm:h-3.5 text-amber-700" />
                   <span>DATA SCIENCE BACKGROUND</span>
                 </span>
-                <span className="px-2.5 py-1 rounded-lg bg-amber-500/10 border border-amber-500/20 text-amber-900 text-[11px] font-mono flex items-center gap-1.5">
-                  <Briefcase className="w-3.5 h-3.5 text-amber-700" />
+                <span className="px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-lg bg-amber-500/10 border border-amber-500/20 text-amber-900 text-[10px] sm:text-[11px] font-mono flex items-center gap-1 sm:gap-1.5">
+                  <Briefcase className="w-3 sm:w-3.5 h-3 sm:h-3.5 text-amber-700" />
                   <span>3+ YRS FREELANCE DELIVERY</span>
                 </span>
               </div>
 
               {/* Action Buttons */}
-              <div className="flex flex-wrap items-center gap-3">
+              <div className="flex flex-wrap items-center gap-2 sm:gap-3">
                 <a
                   href="/cv_fahed_mbarek.pdf"
                   download
-                  className="px-5 py-3 rounded-full bg-neutral-900 hover:bg-black text-white text-xs font-mono font-bold tracking-wider transition-all duration-200 active:scale-95 shadow-xl shadow-neutral-900/15 flex items-center gap-2"
+                  className="px-4 sm:px-5 py-2 sm:py-2.5 rounded-full bg-neutral-900 hover:bg-black text-white text-[11px] sm:text-xs font-mono font-bold tracking-wider transition-all duration-200 active:scale-95 shadow-xl shadow-neutral-900/15 flex items-center gap-1.5 sm:gap-2"
                 >
-                  <FileDown className="w-4 h-4 text-yellow-400" />
-                  <span>DOWNLOAD CV (PDF)</span>
+                  <FileDown className="w-3.5 sm:w-4 h-3.5 sm:h-4 text-yellow-400" />
+                  <span>DOWNLOAD CV</span>
                 </a>
 
                 <SpecularButton
                   variant="light"
                   onClick={() => scrollToSection(1)}
-                  className="shadow-md"
+                  className="shadow-md !py-2 sm:!py-2.5 !px-4 sm:!px-5 !text-[11px] sm:!text-xs"
                 >
                   <span>ABOUT ME</span>
-                  <ChevronRight className="w-4 h-4" />
+                  <ChevronRight className="w-3.5 sm:w-4 h-3.5 sm:h-4" />
                 </SpecularButton>
 
                 <button
                   onClick={() => scrollToSection(2)}
-                  className="px-5 py-3 rounded-full border border-neutral-300 bg-white/80 hover:bg-white text-neutral-800 text-xs font-mono font-semibold transition-all duration-200 active:scale-95 shadow-xs cursor-pointer"
+                  className="px-4 sm:px-5 py-2 sm:py-2.5 rounded-full border border-neutral-300 bg-white/80 hover:bg-white text-neutral-800 text-[11px] sm:text-xs font-mono font-semibold transition-all duration-200 active:scale-95 shadow-xs cursor-pointer"
                 >
                   EXPLORE WORKS
                 </button>
               </div>
             </div>
 
-            {/* Right Column: Interactive 3D Lanyard (React Bits + Rapier Physics) */}
-            <div className="lg:col-span-5 flex justify-center items-center pointer-events-auto overflow-visible">
+            {/* Right Column: Interactive 3D Lanyard (Desktop & Large Viewports) */}
+            <div className="hidden lg:flex lg:col-span-5 justify-center items-center pointer-events-auto overflow-visible">
               <Lanyard
                 position={[0, 0, 20]}
                 gravity={[0, -40, 0]}
@@ -539,7 +539,7 @@ export default function Home() {
           </div>
 
           {/* Bottom Tech Logo Loop with Actual Framework Logos */}
-          <div className="mt-4 sm:mt-6">
+          <div className="mt-3 sm:mt-5 shrink-0">
             <LogoLoop theme="light" />
           </div>
         </GradualBlur>
@@ -553,19 +553,19 @@ export default function Home() {
           visibleProgress={getSectionVisibility(1)}
           className="absolute max-w-5xl w-full flex flex-col text-white"
         >
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-yellow-400/10 border border-yellow-400/30 text-yellow-400 text-xs font-mono mb-2 backdrop-blur-md self-start">
-            <Sparkles className="w-3.5 h-3.5" />
+          <div className="inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-full bg-yellow-400/10 border border-yellow-400/30 text-yellow-400 text-[10px] sm:text-xs font-mono mb-1.5 sm:mb-2 backdrop-blur-md self-start">
+            <Sparkles className="w-3 sm:w-3.5 h-3 sm:h-3.5" />
             <span>SECTION 01 // ABOUT ME &amp; ENGINEERING CORE</span>
           </div>
 
-          <h2 className="text-2xl sm:text-4xl font-extrabold font-display tracking-tight mb-2">
+          <h2 className="text-xl sm:text-3xl md:text-4xl font-extrabold font-display tracking-tight mb-1 sm:mb-2">
             The Engineer Behind the Code:{" "}
             <span className="text-electric-yellow glow-yellow font-editorial italic font-normal">
               Foundations, Journey &amp; Persona.
             </span>
           </h2>
 
-          <p className="text-xs sm:text-sm text-neutral-300 max-w-3xl leading-relaxed mb-3.5 font-light">
+          <p className="text-[11px] sm:text-xs md:text-sm text-neutral-300 max-w-3xl leading-relaxed mb-2 sm:mb-3.5 font-light">
             Bridging academic engineering rigor with 3+ years of client-facing freelance web delivery and enterprise systems.
             Explore my core architecture pillars, academic timeline, physical &amp; creative pursuits, and classified intel below.
           </p>
@@ -583,19 +583,19 @@ export default function Home() {
           visibleProgress={getSectionVisibility(2)}
           className="absolute max-w-5xl w-full flex flex-col text-neutral-900"
         >
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-900 text-xs font-mono mb-2 backdrop-blur-md self-start">
-            <Sparkles className="w-3.5 h-3.5 text-amber-700" />
+          <div className="inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-900 text-[10px] sm:text-xs font-mono mb-1.5 sm:mb-2 backdrop-blur-md self-start">
+            <Sparkles className="w-3 sm:w-3.5 h-3 sm:h-3.5 text-amber-700" />
             <span>SECTION 02 // COMPILED ENTERPRISE WORKS &amp; DEMOS</span>
           </div>
 
-          <h2 className="text-2xl sm:text-4xl font-extrabold font-display tracking-tight mb-1.5">
+          <h2 className="text-xl sm:text-3xl md:text-4xl font-extrabold font-display tracking-tight mb-1 sm:mb-1.5">
             Enterprise Platforms &amp;{" "}
             <span className="font-editorial italic text-amber-800 font-normal">
               Recorded Video Demos.
             </span>
           </h2>
 
-          <p className="text-xs sm:text-sm text-neutral-600 max-w-2xl leading-relaxed mb-3 font-light">
+          <p className="text-[11px] sm:text-xs md:text-sm text-neutral-600 max-w-2xl leading-relaxed mb-2 sm:mb-3 font-light">
             Production-grade systems built from scratch with microservices, automated cost reconciliation,
             automotive competency matrices, and embedded video walkthroughs.
           </p>
@@ -613,19 +613,19 @@ export default function Home() {
           visibleProgress={getSectionVisibility(3)}
           className="absolute max-w-4xl w-full flex flex-col text-white"
         >
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-yellow-400/10 border border-yellow-400/30 text-yellow-400 text-xs font-mono mb-2 backdrop-blur-md self-center">
-            <Radio className="w-3.5 h-3.5 animate-pulse" />
+          <div className="inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-full bg-yellow-400/10 border border-yellow-400/30 text-yellow-400 text-[10px] sm:text-xs font-mono mb-1.5 sm:mb-2 backdrop-blur-md self-center">
+            <Radio className="w-3 sm:w-3.5 h-3 sm:h-3.5 animate-pulse" />
             <span>SECTION 03 // CONTACT ME &amp; DIRECT TRANSMISSION</span>
           </div>
 
-          <h2 className="text-2xl sm:text-4xl md:text-5xl font-extrabold font-display tracking-tight text-center mb-2">
+          <h2 className="text-xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold font-display tracking-tight text-center mb-1.5 sm:mb-2">
             Initiate Contact with{" "}
             <span className="text-electric-yellow glow-yellow font-editorial italic font-normal">
               Fahed Mbarek.
             </span>
           </h2>
 
-          <p className="text-xs sm:text-sm text-neutral-300 text-center max-w-lg mx-auto leading-relaxed mb-4 font-light font-mono">
+          <p className="text-[11px] sm:text-xs md:text-sm text-neutral-300 text-center max-w-lg mx-auto leading-relaxed mb-2.5 sm:mb-4 font-light font-mono">
             Open for full-time software engineering roles, enterprise system architecture,
             and client collaborations. Send a message to initiate discussion.
           </p>

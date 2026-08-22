@@ -293,9 +293,9 @@ export default function AboutTabs() {
 
   return (
     <div className="w-full">
-      {/* Centered, Compact, Single-Line Glass Tab Switcher */}
-      <div className="flex justify-center mb-3">
-        <div className="flex items-center gap-1 p-1 rounded-2xl bg-black/85 border border-white/15 backdrop-blur-2xl shadow-xl max-w-fit mx-auto">
+      {/* Centered, Compact, Single-Line Glass Tab Switcher with Mobile Horizontal Scroll */}
+      <div className="flex justify-start sm:justify-center mb-2.5 max-w-full overflow-x-auto no-scrollbar py-0.5 px-0.5">
+        <div className="flex items-center gap-1 p-1 rounded-2xl bg-black/85 border border-white/15 backdrop-blur-2xl shadow-xl flex-nowrap shrink-0 mx-auto">
           {tabs.map((tab) => {
             const Icon = tab.icon;
             const isActive = activeTab === tab.id;
@@ -303,7 +303,7 @@ export default function AboutTabs() {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id as any)}
-                className={`flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl text-[10px] sm:text-[11px] font-mono font-bold tracking-wider transition-all whitespace-nowrap cursor-pointer active:scale-95 ${
+                className={`flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl text-[10px] sm:text-[11px] font-mono font-bold tracking-wider transition-all whitespace-nowrap cursor-pointer active:scale-95 ${
                   isActive
                     ? "bg-[#FFD600] text-black shadow-md shadow-yellow-400/25 font-extrabold"
                     : "text-neutral-300 hover:text-white hover:bg-white/10"
@@ -317,11 +317,13 @@ export default function AboutTabs() {
         </div>
       </div>
 
-      {/* ─────────────────────────────────────────────────────────────────── */}
-      {/* TAB 1: DEDICATED REBRANDED ENGINEERING CORE (Harmonized Yellows)    */}
-      {/* ─────────────────────────────────────────────────────────────────── */}
-      {activeTab === "core" && (
-        <div key="core" className="space-y-3 animate-tab-switch">
+      {/* Responsive Content Container for Mobile Safe Scrolling */}
+      <div className="max-h-[55vh] sm:max-h-[62vh] overflow-y-auto pr-1 space-y-3">
+        {/* ─────────────────────────────────────────────────────────────────── */}
+        {/* TAB 1: DEDICATED REBRANDED ENGINEERING CORE (Harmonized Yellows)    */}
+        {/* ─────────────────────────────────────────────────────────────────── */}
+        {activeTab === "core" && (
+          <div key="core" className="space-y-3 animate-tab-switch">
           {/* Header Banner */}
           <div className="flex items-center justify-between px-1">
             <div className="flex items-center gap-2 text-xs font-mono font-bold text-yellow-400">
@@ -783,6 +785,7 @@ export default function AboutTabs() {
           </div>
         </div>
       )}
+      </div>
     </div>
   );
 }

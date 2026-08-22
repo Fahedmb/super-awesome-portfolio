@@ -232,15 +232,15 @@ export default function DepthCarousel({
       {/* ─────────────────────────────────────────────────────────────────── */}
       {/* SECTION 2 MATCHING LIGHT-THEMED PROJECT TAB NAVBAR                 */}
       {/* ─────────────────────────────────────────────────────────────────── */}
-      <div className="flex justify-center mb-3">
-        <div className="flex items-center gap-1 p-1 rounded-2xl bg-white/90 border border-neutral-300/80 backdrop-blur-xl shadow-md max-w-fit mx-auto overflow-x-auto scrollbar-none">
+      <div className="flex justify-start sm:justify-center mb-2.5 max-w-full overflow-x-auto no-scrollbar py-0.5 px-0.5">
+        <div className="flex items-center gap-1 p-1 rounded-2xl bg-white/90 border border-neutral-300/80 backdrop-blur-xl shadow-md flex-nowrap shrink-0 mx-auto">
           {projects.map((proj, idx) => {
             const isActive = activeIndex === idx;
             return (
               <button
                 key={proj.id}
                 onClick={() => setActiveIndex(idx)}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[10px] sm:text-[11px] font-mono font-bold tracking-wider transition-all whitespace-nowrap cursor-pointer active:scale-95 ${
+                className={`flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl text-[10px] sm:text-[11px] font-mono font-bold tracking-wider transition-all whitespace-nowrap cursor-pointer active:scale-95 ${
                   isActive
                     ? "bg-neutral-900 text-white shadow-md font-extrabold"
                     : "text-neutral-600 hover:text-neutral-950 hover:bg-neutral-100"
@@ -261,7 +261,7 @@ export default function DepthCarousel({
       {/* ─────────────────────────────────────────────────────────────────── */}
       <div
         key={current.id}
-        className="relative rounded-3xl p-5 sm:p-6 bg-white/95 border border-neutral-200/90 shadow-2xl shadow-neutral-900/10 backdrop-blur-2xl text-neutral-900 animate-tab-switch"
+        className="relative rounded-3xl p-4 sm:p-6 bg-white/95 border border-neutral-200/90 shadow-2xl shadow-neutral-900/10 backdrop-blur-2xl text-neutral-900 animate-tab-switch max-h-[58vh] sm:max-h-none overflow-y-auto"
       >
         {/* Card Header */}
         <div className="flex items-center justify-between pb-3 border-b border-neutral-100 mb-3.5">
