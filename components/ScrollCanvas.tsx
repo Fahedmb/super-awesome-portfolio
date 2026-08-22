@@ -69,9 +69,9 @@ export default function ScrollCanvas({ onProgressUpdate }: ScrollCanvasProps) {
 
   const renderVideoFrame = useCallback((video: HTMLVideoElement) => {
     const canvas = canvasRef.current;
-    // Get or create the context ONCE with high quality smoothing
+    // Get or create the context ONCE with high quality smoothing and low-latency desynchronized pipeline
     if (!ctxRef.current && canvas) {
-      const ctx = canvas.getContext("2d", { alpha: false });
+      const ctx = canvas.getContext("2d", { alpha: false, desynchronized: true });
       if (ctx) {
         ctx.imageSmoothingEnabled = true;
         ctx.imageSmoothingQuality = "high";
@@ -105,7 +105,7 @@ export default function ScrollCanvas({ onProgressUpdate }: ScrollCanvasProps) {
     canvas.width = Math.round(window.innerWidth * dpr);
     canvas.height = Math.round(window.innerHeight * dpr);
     // Re-cache context after resize (canvas reset clears it)
-    const ctx = canvas.getContext("2d", { alpha: false });
+    const ctx = canvas.getContext("2d", { alpha: false, desynchronized: true });
     if (ctx) {
       ctx.imageSmoothingEnabled = true;
       ctx.imageSmoothingQuality = "high";
@@ -160,16 +160,12 @@ export default function ScrollCanvas({ onProgressUpdate }: ScrollCanvasProps) {
         renderVideoFrame(video);
       }
 
-      // Instant & silky seek dispatch (All-Intra I-frames enabled)
-      if (Math.abs(video.currentTime - targetTime) > 0.005) {
+      // Direct, deterministic seek dispatch for 60fps All-Intra video
+      if (Math.abs(video.currentTime - targetTime) > 0.003) {
         if (video.seeking) {
           pendingSeekRef.current[sceneKey] = targetTime;
         } else {
-          if (typeof (video as any).fastSeek === "function") {
-            (video as any).fastSeek(targetTime);
-          } else {
-            video.currentTime = targetTime;
-          }
+          video.currentTime = targetTime;
           pendingSeekRef.current[sceneKey] = null;
         }
       }
@@ -278,14 +274,15 @@ export default function ScrollCanvas({ onProgressUpdate }: ScrollCanvasProps) {
           video.crossOrigin = "anonymous";
           video.pause();
 
-          // Keep in DOM but invisible (display:none prevents decoding!)
+          // Keep in active DOM viewport with max GPU decoder priority (prevents Chromium background throttling)
           video.style.position = "fixed";
-          video.style.top = "-9999px";
-          video.style.left = "-9999px";
-          video.style.width = "1px";
-          video.style.height = "1px";
-          video.style.opacity = "0";
+          video.style.inset = "0";
+          video.style.width = "100vw";
+          video.style.height = "100vh";
+          video.style.opacity = "0.0001";
           video.style.pointerEvents = "none";
+          video.style.zIndex = "-9999";
+          video.style.visibility = "visible";
           document.body.appendChild(video);
 
           videosRef.current[sceneKey] = video;
