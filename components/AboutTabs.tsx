@@ -44,6 +44,8 @@ import {
   CheckCircle2,
   ArrowUpRight,
   ArrowRight,
+  ArrowUp,
+  ArrowDown,
 } from "lucide-react";
 
 // Crisp SVG Youtube Icon
@@ -60,11 +62,22 @@ function YoutubeIcon({ className = "w-3.5 h-3.5" }: { className?: string }) {
 }
 
 interface AboutTabsProps {
+  onNavigateToOrigin?: () => void;
   onNavigateToWorks?: () => void;
 }
 
-export default function AboutTabs({ onNavigateToWorks }: AboutTabsProps) {
+export default function AboutTabs({ onNavigateToOrigin, onNavigateToWorks }: AboutTabsProps) {
   const [activeTab, setActiveTab] = useState<"core" | "manifesto" | "roadmap" | "hobbies" | "qa" | "youtube">("core");
+  const scrollContainerRef = React.useRef<HTMLDivElement | null>(null);
+  const [isAtBottom, setIsAtBottom] = useState(false);
+  const [isAtTop, setIsAtTop] = useState(true);
+
+  const handleContainerScroll = () => {
+    if (!scrollContainerRef.current) return;
+    const { scrollTop, scrollHeight, clientHeight } = scrollContainerRef.current;
+    setIsAtTop(scrollTop <= 15);
+    setIsAtBottom(scrollTop + clientHeight >= scrollHeight - 25);
+  };
 
   // Short, clear, meaningful tab titles that fit on one line effortlessly
   const tabs = [
@@ -323,7 +336,21 @@ export default function AboutTabs({ onNavigateToWorks }: AboutTabsProps) {
       </div>
 
       {/* Responsive Content Container for Mobile Safe Scrolling */}
-      <div className="max-h-[55vh] sm:max-h-[62vh] overflow-y-auto pr-1 space-y-3">
+      <div
+        ref={scrollContainerRef}
+        onScroll={handleContainerScroll}
+        className="max-h-[55vh] sm:max-h-[62vh] overflow-y-auto pr-1 space-y-3 relative"
+      >
+        {/* Top Scroll Prompt: Tap to Return to Previous Sector */}
+        {onNavigateToOrigin && (
+          <button
+            onClick={onNavigateToOrigin}
+            className="w-full py-1.5 px-3 mb-1 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-neutral-300 text-[10px] font-mono flex items-center justify-center gap-2 transition-all active:scale-95 cursor-pointer"
+          >
+            <ArrowUp className="w-3 h-3 text-yellow-400 animate-bounce" />
+            <span>RETURN TO ORIGIN // TAP ARROW ↑</span>
+          </button>
+        )}
         {/* ─────────────────────────────────────────────────────────────────── */}
         {/* TAB 1: DEDICATED REBRANDED ENGINEERING CORE (Harmonized Yellows)    */}
         {/* ─────────────────────────────────────────────────────────────────── */}
@@ -793,18 +820,18 @@ export default function AboutTabs({ onNavigateToWorks }: AboutTabsProps) {
 
         {/* Explicit Sector Navigation Transition Prompt */}
         {onNavigateToWorks && (
-          <div className="pt-2 pb-1 flex items-center justify-between border-t border-white/10 mt-3.5">
-            <div className="flex items-center gap-1.5 text-[10px] font-mono text-neutral-400">
-              <span className="w-1.5 h-1.5 rounded-full bg-yellow-400/80" />
-              <span>SECTOR 01 // EXPLORED</span>
-            </div>
+          <div className="pt-3 pb-1 border-t border-white/10 mt-3.5 flex flex-col gap-2">
             <button
               onClick={onNavigateToWorks}
-              className="flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-yellow-400 to-amber-400 text-black text-xs font-mono font-bold tracking-wider hover:brightness-110 transition-all active:scale-95 shadow-lg shadow-yellow-400/20 cursor-pointer"
+              className="w-full py-2.5 px-4 rounded-2xl bg-gradient-to-r from-yellow-400 via-amber-400 to-yellow-300 text-black text-xs font-mono font-bold tracking-wider hover:brightness-110 transition-all active:scale-95 shadow-lg shadow-yellow-400/25 flex items-center justify-center gap-2 cursor-pointer"
             >
-              <span>TRAVEL TO WORKS</span>
-              <ArrowRight className="w-3.5 h-3.5" />
+              <span>NEXT SECTION // TAP TO TRAVEL TO WORKS</span>
+              <ArrowDown className="w-4 h-4 text-black animate-bounce" />
             </button>
+            <div className="flex items-center justify-center gap-1.5 text-[9px] font-mono text-neutral-400">
+              <span className="w-1.5 h-1.5 rounded-full bg-yellow-400/80" />
+              <span>SECTOR 01 COMPLETE</span>
+            </div>
           </div>
         )}
       </div>

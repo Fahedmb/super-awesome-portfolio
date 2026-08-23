@@ -412,7 +412,7 @@ export default function Home() {
         CINEMATIC NARRATIVE OVERLAYS (4 Acts with Gradual Blur)
         ═══════════════════════════════════════════════════════════════════════
       */}
-      <div className="fixed inset-0 z-20 pointer-events-none flex items-center justify-center p-3 sm:p-6 md:p-12 pt-3 pb-16 sm:pt-4 sm:pb-16 md:pt-16 md:pb-16 overflow-hidden">
+      <div className="fixed inset-0 z-20 pointer-events-none flex items-center justify-center p-3 sm:p-6 md:p-12 pt-2 pb-16 sm:pt-4 sm:pb-16 md:pt-16 md:pb-16 overflow-hidden">
         {/* 
           ─────────────────────────────────────────────────────────────────────
           SECTION 0: ORIGIN // THE ASCENT (Light // #FFFFFF)
@@ -420,7 +420,7 @@ export default function Home() {
         */}
         <GradualBlur
           visibleProgress={getSectionVisibility(0)}
-          className="absolute max-w-7xl w-full flex flex-col justify-between max-h-[84vh] lg:max-h-none overflow-y-auto lg:overflow-visible pr-0.5"
+          className="absolute w-[88vw] sm:w-[85vw] md:w-full max-w-6xl flex flex-col justify-between max-h-[82vh] lg:max-h-none overflow-y-auto lg:overflow-visible pr-0.5 mx-auto"
         >
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-8 items-center pt-1 lg:pt-4">
             {/* Left Narrative Column */}
@@ -489,6 +489,15 @@ export default function Home() {
                   EXPLORE WORKS
                 </button>
               </div>
+
+              {/* Mobile Proceed Prompt */}
+              <button
+                onClick={() => scrollToSection(1)}
+                className="w-full py-2.5 px-4 mt-3 rounded-2xl bg-neutral-900 hover:bg-black text-white text-xs font-mono font-bold tracking-wider transition-all active:scale-95 shadow-lg shadow-neutral-900/20 flex items-center justify-center gap-2 cursor-pointer lg:hidden"
+              >
+                <span>NEXT SECTION // TAP TO ABOUT ME</span>
+                <ArrowDown className="w-4 h-4 text-yellow-400 animate-bounce" />
+              </button>
             </div>
 
             {/* Right Column: Interactive 3D Lanyard (Desktop & Large Viewports) */}
@@ -518,7 +527,7 @@ export default function Home() {
         */}
         <GradualBlur
           visibleProgress={getSectionVisibility(1)}
-          className="absolute max-w-5xl w-full flex flex-col text-white"
+          className="absolute w-[88vw] sm:w-[85vw] md:w-full max-w-4xl flex flex-col text-white mx-auto"
         >
           <div className="inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-full bg-yellow-400/10 border border-yellow-400/30 text-yellow-400 text-[10px] sm:text-xs font-mono mb-1.5 sm:mb-2 backdrop-blur-md self-start">
             <Sparkles className="w-3 sm:w-3.5 h-3 sm:h-3.5" />
@@ -538,7 +547,10 @@ export default function Home() {
           </p>
 
           {/* Interactive Multi-Tab Interface: Core Architecture, Academic Roadmap, Hobbies, Q&A */}
-          <AboutTabs onNavigateToWorks={() => scrollToSection(2)} />
+          <AboutTabs
+            onNavigateToOrigin={() => scrollToSection(0)}
+            onNavigateToWorks={() => scrollToSection(2)}
+          />
         </GradualBlur>
 
         {/* 
@@ -548,7 +560,7 @@ export default function Home() {
         */}
         <GradualBlur
           visibleProgress={getSectionVisibility(2)}
-          className="absolute max-w-5xl w-full flex flex-col text-neutral-900"
+          className="absolute w-[88vw] sm:w-[85vw] md:w-full max-w-4xl flex flex-col text-neutral-900 mx-auto"
         >
           <div className="inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-900 text-[10px] sm:text-xs font-mono mb-1.5 sm:mb-2 backdrop-blur-md self-start">
             <Sparkles className="w-3 sm:w-3.5 h-3 sm:h-3.5 text-amber-700" />
@@ -570,6 +582,7 @@ export default function Home() {
           {/* 3D Depth Carousel with Quick Tabs and Video Modals */}
           <DepthCarousel
             onOrderPortfolio={() => scrollToSection(3)}
+            onNavigateToAbout={() => scrollToSection(1)}
             onNavigateToContact={() => scrollToSection(3)}
           />
         </GradualBlur>
@@ -581,7 +594,7 @@ export default function Home() {
         */}
         <GradualBlur
           visibleProgress={getSectionVisibility(3)}
-          className="absolute max-w-4xl w-full flex flex-col text-white"
+          className="absolute w-[88vw] sm:w-[85vw] md:w-full max-w-2xl flex flex-col text-white mx-auto"
         >
           <div className="inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-full bg-yellow-400/10 border border-yellow-400/30 text-yellow-400 text-[10px] sm:text-xs font-mono mb-1.5 sm:mb-2 backdrop-blur-md self-center">
             <Radio className="w-3 sm:w-3.5 h-3 sm:h-3.5 animate-pulse" />
@@ -601,7 +614,10 @@ export default function Home() {
           </p>
 
           {/* Interactive Contact & Telemetry Dispatch Form */}
-          <TransmissionForm onNavigateToOrigin={() => scrollToSection(0)} />
+          <TransmissionForm
+            onNavigateToWorks={() => scrollToSection(2)}
+            onNavigateToOrigin={() => scrollToSection(0)}
+          />
         </GradualBlur>
       </div>
 

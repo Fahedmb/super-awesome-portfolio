@@ -19,10 +19,11 @@ import {
 import SpecularButton from "./SpecularButton";
 
 interface TransmissionFormProps {
+  onNavigateToWorks?: () => void;
   onNavigateToOrigin?: () => void;
 }
 
-export default function TransmissionForm({ onNavigateToOrigin }: TransmissionFormProps) {
+export default function TransmissionForm({ onNavigateToWorks, onNavigateToOrigin }: TransmissionFormProps) {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -67,6 +68,17 @@ export default function TransmissionForm({ onNavigateToOrigin }: TransmissionFor
 
   return (
     <div className="w-full max-w-2xl mx-auto rounded-3xl p-4 sm:p-8 glass-panel-dark text-white border border-white/10 shadow-2xl backdrop-blur-2xl max-h-[60vh] sm:max-h-none overflow-y-auto">
+      {/* Top Scroll Prompt: Tap to Return to Enterprise Works */}
+      {onNavigateToWorks && (
+        <button
+          onClick={onNavigateToWorks}
+          className="w-full py-1.5 px-3 mb-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-neutral-300 text-[10px] font-mono flex items-center justify-center gap-2 transition-all active:scale-95 cursor-pointer"
+        >
+          <ArrowUp className="w-3 h-3 text-yellow-400 animate-bounce" />
+          <span>RETURN TO ENTERPRISE WORKS // TAP ARROW ↑</span>
+        </button>
+      )}
+
       {/* Terminal Header */}
       <div className="flex items-center justify-between pb-3 border-b border-white/10 mb-5">
         <div className="flex items-center gap-2">

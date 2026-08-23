@@ -20,6 +20,8 @@ import {
   Lightbulb,
   Terminal,
   ArrowRight,
+  ArrowUp,
+  ArrowDown,
   Code2,
   Maximize2,
   Radio,
@@ -155,6 +157,7 @@ interface DepthCarouselProps {
   projects?: ProjectItem[];
   className?: string;
   onOrderPortfolio?: () => void;
+  onNavigateToAbout?: () => void;
   onNavigateToContact?: () => void;
 }
 
@@ -162,6 +165,7 @@ export default function DepthCarousel({
   projects = defaultProjects,
   className = "",
   onOrderPortfolio,
+  onNavigateToAbout,
   onNavigateToContact,
 }: DepthCarouselProps) {
   const [activeIndex, setActiveIndex] = useState(0);
@@ -265,6 +269,17 @@ export default function DepthCarousel({
         key={current.id}
         className="relative rounded-3xl p-4 sm:p-6 bg-white/95 border border-neutral-200/90 shadow-2xl shadow-neutral-900/10 backdrop-blur-2xl text-neutral-900 animate-tab-switch max-h-[58vh] sm:max-h-none overflow-y-auto"
       >
+        {/* Top Scroll Prompt: Tap to Return to About Me */}
+        {onNavigateToAbout && (
+          <button
+            onClick={onNavigateToAbout}
+            className="w-full py-1.5 px-3 mb-2.5 rounded-xl bg-neutral-100 hover:bg-neutral-200 border border-neutral-200 text-neutral-700 text-[10px] font-mono flex items-center justify-center gap-2 transition-all active:scale-95 cursor-pointer"
+          >
+            <ArrowUp className="w-3 h-3 text-amber-700 animate-bounce" />
+            <span>RETURN TO ABOUT ME // TAP ARROW ↑</span>
+          </button>
+        )}
+
         {/* Card Header */}
         <div className="flex items-center justify-between pb-3 border-b border-neutral-100 mb-3.5">
           <div className="flex items-center gap-3">
@@ -443,18 +458,18 @@ export default function DepthCarousel({
 
         {/* Explicit Sector Navigation Transition Prompt */}
         {onNavigateToContact && (
-          <div className="pt-3 flex items-center justify-between border-t border-neutral-200/80 mt-3.5">
-            <div className="flex items-center gap-1.5 text-[10px] font-mono text-neutral-500">
-              <span className="w-1.5 h-1.5 rounded-full bg-amber-700/80" />
-              <span>SECTOR 02 // COMPILED</span>
-            </div>
+          <div className="pt-3.5 border-t border-neutral-200/80 mt-3.5 flex flex-col gap-2">
             <button
               onClick={onNavigateToContact}
-              className="flex items-center gap-2 px-4 py-2 rounded-full bg-neutral-900 text-white text-xs font-mono font-bold tracking-wider hover:bg-black transition-all active:scale-95 shadow-md cursor-pointer"
+              className="w-full py-2.5 px-4 rounded-2xl bg-neutral-900 hover:bg-black text-white text-xs font-mono font-bold tracking-wider transition-all active:scale-95 shadow-lg shadow-neutral-900/20 flex items-center justify-center gap-2 cursor-pointer"
             >
-              <span>TRAVEL TO CONTACT ME</span>
-              <ArrowRight className="w-3.5 h-3.5 text-yellow-400" />
+              <span>NEXT SECTION // TAP TO TRANSMISSION CONTACT</span>
+              <ArrowDown className="w-4 h-4 text-yellow-400 animate-bounce" />
             </button>
+            <div className="flex items-center justify-center gap-1.5 text-[9px] font-mono text-neutral-500">
+              <span className="w-1.5 h-1.5 rounded-full bg-amber-700/80" />
+              <span>SECTOR 02 COMPLETE</span>
+            </div>
           </div>
         )}
       </div>
