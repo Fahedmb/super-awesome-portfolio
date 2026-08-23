@@ -232,8 +232,8 @@ export default function Home() {
       {/* Dynamic 60fps Video-Synchronized Background Canvas */}
       <ScrollCanvas onProgressUpdate={handleProgressUpdate} />
 
-      {/* Top Glass Header & Navigation HUD */}
-      <header className="fixed top-0 left-0 right-0 z-40 px-4 sm:px-6 py-3.5 flex items-center justify-between pointer-events-auto">
+      {/* Top Glass Header & Navigation HUD (Desktop & Tablet) */}
+      <header className="hidden md:flex fixed top-0 left-0 right-0 z-40 px-6 py-4 items-center justify-between pointer-events-auto">
         <div className="flex items-center space-x-3">
           <div
             className={`w-8 h-8 rounded-lg flex items-center justify-center backdrop-blur-md transition-colors duration-300 ${
@@ -265,7 +265,7 @@ export default function Home() {
 
         {/* Floating Glass Navigation Pill with Zero-Jitter Grid Overlay */}
         <nav
-          className={`hidden md:flex items-center p-1.5 rounded-full border shadow-2xl transition-all duration-300 ${
+          className={`flex items-center p-1.5 rounded-full border shadow-2xl transition-all duration-300 ${
             isCurrentSectionLight ? "glass-panel-light" : "glass-panel-dark"
           }`}
         >
@@ -281,8 +281,8 @@ export default function Home() {
                 className={`relative px-4 py-1.5 rounded-full text-xs font-mono transition-all duration-300 flex items-center gap-2 cursor-pointer ${
                   isActive
                     ? isCurrentSectionLight
-                      ? "bg-neutral-900 text-white font-bold shadow-md"
-                      : "bg-[#FFD600] text-black font-bold shadow-lg shadow-yellow-400/25"
+                    ? "bg-neutral-900 text-white font-bold shadow-md"
+                    : "bg-[#FFD600] text-black font-bold shadow-lg shadow-yellow-400/25"
                     : isCurrentSectionLight
                     ? "text-neutral-600 hover:text-neutral-900 hover:bg-black/5"
                     : "text-neutral-400 hover:text-white hover:bg-white/5"
@@ -318,7 +318,7 @@ export default function Home() {
           <a
             href="/cv_fahed_mbarek.pdf"
             download
-            className={`hidden sm:flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-mono font-bold transition-all duration-200 active:scale-95 border ${
+            className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-mono font-bold transition-all duration-200 active:scale-95 border ${
               isCurrentSectionLight
                 ? "bg-amber-500/10 border-amber-500/30 text-amber-900 hover:bg-amber-500/20"
                 : "bg-yellow-400/10 border-yellow-400/30 text-yellow-400 hover:bg-yellow-400/20"
@@ -342,7 +342,7 @@ export default function Home() {
 
       {/* Floating Bottom Telemetry & Navigation Controls */}
       <footer className="fixed bottom-0 left-0 right-0 z-40 px-3 sm:px-6 py-2.5 sm:py-4 flex items-center justify-between pointer-events-none">
-        {/* Left: Refined Telemetry HUD with Clear Sector / Phase / Sync */}
+        {/* Left: Refined Telemetry HUD with Clear Sector / Phase */}
         <div
           suppressHydrationWarning
           className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl text-[10px] sm:text-[11px] font-mono pointer-events-auto flex items-center gap-2 sm:gap-3.5 border shadow-lg backdrop-blur-xl transition-all duration-300 ${
@@ -366,37 +366,23 @@ export default function Home() {
               {sectionTitles[activeSection]?.themeLabel}
             </span>
           </div>
-          <div className="h-3 w-[1px] bg-neutral-500/20" />
-          <div className="flex items-center gap-1">
-            <span className="opacity-50 text-[9px]">SYNC:</span>
-            <span className="font-bold font-mono">{Math.round(progressState.progress * 100)}%</span>
-          </div>
         </div>
 
-        {/* Center: Mobile Next Sector Quick Trigger / Desktop Progress Line */}
-        <div className="pointer-events-auto">
-          {/* Mobile Direct Sector Transition Pill */}
-          <button
-            onClick={() => scrollToSection(activeSection < 3 ? activeSection + 1 : 0)}
-            className={`flex md:hidden items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] font-mono font-bold tracking-wider border shadow-md transition-all active:scale-95 cursor-pointer ${
-              isCurrentSectionLight
-                ? "bg-neutral-900 text-white border-neutral-800 shadow-neutral-900/15"
-                : "bg-yellow-400 text-black border-yellow-300 shadow-yellow-400/20"
-            }`}
-          >
-            <span>
-              {activeSection < 3 ? `GO TO ${sectionTitles[activeSection + 1].name}` : "GO TO ORIGIN"}
-            </span>
-            <ChevronRight className="w-3 h-3" />
-          </button>
-
-          {/* Desktop Global Progress Line */}
-          <div className="hidden md:block w-48 h-1.5 bg-black/40 border border-white/10 rounded-full overflow-hidden">
+        {/* Center: Perfectly Centered Animation Progress Meter (Mobile & Desktop) */}
+        <div className="absolute left-1/2 -translate-x-1/2 flex items-center gap-2 px-3 py-1.5 rounded-full border shadow-xl backdrop-blur-2xl pointer-events-auto transition-all duration-300 bg-black/85 border-white/15 text-white">
+          <div className="flex items-center gap-1.5 text-[9px] sm:text-[10px] font-mono tracking-widest text-neutral-400">
+            <span className="w-1.5 h-1.5 rounded-full bg-yellow-400 animate-pulse" />
+            <span className="hidden sm:inline">SYNC</span>
+          </div>
+          <div className="w-20 sm:w-36 md:w-52 h-1.5 bg-white/10 border border-white/10 rounded-full overflow-hidden">
             <div
-              className="h-full bg-gradient-to-r from-yellow-400 via-amber-500 to-yellow-300 transition-all duration-75"
+              className="h-full bg-gradient-to-r from-yellow-400 via-amber-400 to-yellow-300 transition-all duration-75 shadow-[0_0_10px_rgba(255,214,0,0.7)]"
               style={{ width: `${Math.max(4, progressState.progress * 100)}%` }}
             />
           </div>
+          <span className="text-[10px] sm:text-[11px] font-mono font-bold text-yellow-400 tabular-nums">
+            {Math.round(progressState.progress * 100)}%
+          </span>
         </div>
 
         {/* Right: Scene Navigation Buttons */}
@@ -433,7 +419,7 @@ export default function Home() {
         CINEMATIC NARRATIVE OVERLAYS (4 Acts with Gradual Blur)
         ═══════════════════════════════════════════════════════════════════════
       */}
-      <div className="fixed inset-0 z-20 pointer-events-none flex items-center justify-center p-3 sm:p-6 md:p-12 pt-14 pb-14 sm:pt-16 sm:pb-16 overflow-hidden">
+      <div className="fixed inset-0 z-20 pointer-events-none flex items-center justify-center p-3 sm:p-6 md:p-12 pt-3 pb-16 sm:pt-4 sm:pb-16 md:pt-16 md:pb-16 overflow-hidden">
         {/* 
           ─────────────────────────────────────────────────────────────────────
           SECTION 0: ORIGIN // THE ASCENT (Light // #FFFFFF)
