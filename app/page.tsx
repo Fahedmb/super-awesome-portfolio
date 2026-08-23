@@ -98,29 +98,21 @@ export default function Home() {
       isAnimating.current = true;
       const startTime = performance.now();
 
-      // Pacing calibration: 3200ms per section
+      // Cinematic duration: 2000ms for single section, scalable for multi-section jumps
       const sectionsCount = Math.max(1, Math.abs(change) / vh);
       const duration =
-        customDuration ?? Math.min(5200, 3200 + (sectionsCount - 1) * 900);
+        customDuration ?? Math.min(3800, 2000 + (sectionsCount - 1) * 700);
 
-      // Smooth cinematic cruise easing
-      const cinematicCruiseEase = (t: number): number => {
-        if (t < 0.10) {
-          const p = t / 0.10;
-          return 0.10 * (p * p * (3 - 2 * p));
-        } else if (t > 0.90) {
-          const p = (t - 0.90) / 0.10;
-          const smoothOut = p * p * (3 - 2 * p);
-          return 0.90 + 0.10 * smoothOut;
-        } else {
-          return t;
-        }
+      // True C² Continuous Quintic Smoothstep (Perlin) — perfectly continuous velocity with 0 jerk
+      const smoothstep5 = (t: number): number => {
+        const c = Math.max(0, Math.min(1, t));
+        return c * c * c * (c * (c * 6 - 15) + 10);
       };
 
       const animateScroll = (currentTime: number) => {
         const elapsed = currentTime - startTime;
         const rawProgress = Math.min(elapsed / duration, 1);
-        const ease = cinematicCruiseEase(rawProgress);
+        const ease = smoothstep5(rawProgress);
 
         window.scrollTo(0, startY + change * ease);
 
@@ -141,19 +133,15 @@ export default function Home() {
 
   // Multi-modal gesture and interaction handler (Wheel, Touch, Keyboard)
   useEffect(() => {
-    let lastWheelTime = 0;
-
     const handleWheel = (e: WheelEvent) => {
-      const now = performance.now();
-      if (isAnimating.current && now - lastWheelTime < 600) {
-        e.preventDefault();
+      e.preventDefault();
+
+      // If already transitioning between sections, ignore wheel events to prevent animation interruption
+      if (isAnimating.current) {
         return;
       }
 
-      if (Math.abs(e.deltaY) > 12) {
-        e.preventDefault();
-        lastWheelTime = now;
-
+      if (Math.abs(e.deltaY) > 8) {
         const vh = window.innerHeight;
         const currentSection = Math.round(window.scrollY / vh);
         if (e.deltaY > 0 && currentSection < 3) {

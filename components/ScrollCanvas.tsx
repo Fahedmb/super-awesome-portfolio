@@ -160,8 +160,8 @@ export default function ScrollCanvas({ onProgressUpdate }: ScrollCanvasProps) {
         renderVideoFrame(video);
       }
 
-      // Direct, deterministic seek dispatch for 60fps All-Intra video
-      if (Math.abs(video.currentTime - targetTime) > 0.003) {
+      // Non-blocking single-stream seek dispatch for 60fps All-Intra video
+      if (Math.abs(video.currentTime - targetTime) > 0.002) {
         if (video.seeking) {
           pendingSeekRef.current[sceneKey] = targetTime;
         } else {
@@ -172,33 +172,6 @@ export default function ScrollCanvas({ onProgressUpdate }: ScrollCanvasProps) {
 
       // Draw current video frame directly on active canvas
       renderVideoFrame(video);
-
-      // Pre-warm and pre-seek adjacent scene videos at boundary margins
-      if (sectionIndex === 0 && sectionProgress > 0.75) {
-        const nextVid = videosRef.current["scene_2"];
-        if (nextVid && nextVid.readyState >= 2 && nextVid.currentTime > 0.05) {
-          nextVid.currentTime = 0;
-        }
-      } else if (sectionIndex === 1) {
-        if (sectionProgress < 0.25) {
-          const prevVid = videosRef.current["scene_1"];
-          const prevScene = manifest.scenes["scene_1"];
-          if (prevVid && prevScene && prevVid.readyState >= 2) {
-            prevVid.currentTime = Math.max(0, prevScene.duration - 0.033);
-          }
-        } else if (sectionProgress > 0.75) {
-          const nextVid = videosRef.current["scene_3"];
-          if (nextVid && nextVid.readyState >= 2 && nextVid.currentTime > 0.05) {
-            nextVid.currentTime = 0;
-          }
-        }
-      } else if (sectionIndex === 2 && sectionProgress < 0.25) {
-        const prevVid = videosRef.current["scene_2"];
-        const prevScene = manifest.scenes["scene_2"];
-        if (prevVid && prevScene && prevVid.readyState >= 2) {
-          prevVid.currentTime = Math.max(0, prevScene.duration - 0.033);
-        }
-      }
 
       // Calculate frame number for the HUD
       const globalFrameOffset = sceneKeys.slice(0, sectionIndex).reduce((sum, key) => {
