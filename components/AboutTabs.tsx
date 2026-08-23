@@ -43,6 +43,7 @@ import {
   Terminal,
   CheckCircle2,
   ArrowUpRight,
+  ArrowRight,
 } from "lucide-react";
 
 // Crisp SVG Youtube Icon
@@ -58,7 +59,11 @@ function YoutubeIcon({ className = "w-3.5 h-3.5" }: { className?: string }) {
   );
 }
 
-export default function AboutTabs() {
+interface AboutTabsProps {
+  onNavigateToWorks?: () => void;
+}
+
+export default function AboutTabs({ onNavigateToWorks }: AboutTabsProps) {
   const [activeTab, setActiveTab] = useState<"core" | "manifesto" | "roadmap" | "hobbies" | "qa" | "youtube">("core");
 
   // Short, clear, meaningful tab titles that fit on one line effortlessly
@@ -785,6 +790,23 @@ export default function AboutTabs() {
           </div>
         </div>
       )}
+
+        {/* Explicit Sector Navigation Transition Prompt */}
+        {onNavigateToWorks && (
+          <div className="pt-2 pb-1 flex items-center justify-between border-t border-white/10 mt-3.5">
+            <div className="flex items-center gap-1.5 text-[10px] font-mono text-neutral-400">
+              <span className="w-1.5 h-1.5 rounded-full bg-yellow-400/80" />
+              <span>SECTOR 01 // EXPLORED</span>
+            </div>
+            <button
+              onClick={onNavigateToWorks}
+              className="flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-yellow-400 to-amber-400 text-black text-xs font-mono font-bold tracking-wider hover:brightness-110 transition-all active:scale-95 shadow-lg shadow-yellow-400/20 cursor-pointer"
+            >
+              <span>TRAVEL TO WORKS</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

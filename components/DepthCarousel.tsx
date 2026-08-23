@@ -155,12 +155,14 @@ interface DepthCarouselProps {
   projects?: ProjectItem[];
   className?: string;
   onOrderPortfolio?: () => void;
+  onNavigateToContact?: () => void;
 }
 
 export default function DepthCarousel({
   projects = defaultProjects,
   className = "",
   onOrderPortfolio,
+  onNavigateToContact,
 }: DepthCarouselProps) {
   const [activeIndex, setActiveIndex] = useState(0);
   const [activeVideoProject, setActiveVideoProject] = useState<ProjectItem | null>(null);
@@ -438,6 +440,23 @@ export default function DepthCarousel({
             </button>
           )}
         </div>
+
+        {/* Explicit Sector Navigation Transition Prompt */}
+        {onNavigateToContact && (
+          <div className="pt-3 flex items-center justify-between border-t border-neutral-200/80 mt-3.5">
+            <div className="flex items-center gap-1.5 text-[10px] font-mono text-neutral-500">
+              <span className="w-1.5 h-1.5 rounded-full bg-amber-700/80" />
+              <span>SECTOR 02 // COMPILED</span>
+            </div>
+            <button
+              onClick={onNavigateToContact}
+              className="flex items-center gap-2 px-4 py-2 rounded-full bg-neutral-900 text-white text-xs font-mono font-bold tracking-wider hover:bg-black transition-all active:scale-95 shadow-md cursor-pointer"
+            >
+              <span>TRAVEL TO CONTACT ME</span>
+              <ArrowRight className="w-3.5 h-3.5 text-yellow-400" />
+            </button>
+          </div>
+        )}
       </div>
 
       {/* ─────────────────────────────────────────────────────────────────── */}

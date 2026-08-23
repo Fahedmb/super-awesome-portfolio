@@ -14,10 +14,15 @@ import {
   MapPin,
   Copy,
   Check,
+  ArrowUp,
 } from "lucide-react";
 import SpecularButton from "./SpecularButton";
 
-export default function TransmissionForm() {
+interface TransmissionFormProps {
+  onNavigateToOrigin?: () => void;
+}
+
+export default function TransmissionForm({ onNavigateToOrigin }: TransmissionFormProps) {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -275,6 +280,23 @@ export default function TransmissionForm() {
           <span>+216 20 731 135</span>
         </span>
       </div>
+
+      {/* Explicit Sector Navigation Transition Prompt */}
+      {onNavigateToOrigin && (
+        <div className="pt-3 flex items-center justify-between border-t border-white/10 mt-3.5">
+          <div className="flex items-center gap-1.5 text-[10px] font-mono text-neutral-400">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+            <span>SECTOR 03 // DISPATCH READY</span>
+          </div>
+          <button
+            onClick={onNavigateToOrigin}
+            className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 text-white text-xs font-mono font-bold tracking-wider hover:bg-white/20 transition-all active:scale-95 cursor-pointer"
+          >
+            <span>RETURN TO ORIGIN (TOP)</span>
+            <ArrowUp className="w-3.5 h-3.5 text-yellow-400" />
+          </button>
+        </div>
+      )}
     </div>
   );
 }
