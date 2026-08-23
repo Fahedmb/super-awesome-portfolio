@@ -98,21 +98,26 @@ export default function Home() {
       isAnimating.current = true;
       const startTime = performance.now();
 
-      // Cinematic duration: 2000ms for single section, scalable for multi-section jumps
-      const sectionsCount = Math.max(1, Math.abs(change) / vh);
-      const duration =
-        customDuration ?? Math.min(3800, 2000 + (sectionsCount - 1) * 700);
+      // Natural 1:1 real-time video playback duration (zero speedup)
+      const sceneDurations = [7333, 6200, 6367];
+      const fromSec = Math.min(Math.round(startY / vh), 2);
+      const toSec = Math.min(targetIndex, 3);
+      const minSec = Math.min(fromSec, toSec);
+      const maxSec = Math.max(fromSec, toSec);
 
-      // True C² Continuous Quintic Smoothstep (Perlin) — perfectly continuous velocity with 0 jerk
-      const smoothstep5 = (t: number): number => {
-        const c = Math.max(0, Math.min(1, t));
-        return c * c * c * (c * (c * 6 - 15) + 10);
-      };
+      let naturalSpanDuration = 0;
+      for (let s = minSec; s < maxSec && s < sceneDurations.length; s++) {
+        naturalSpanDuration += sceneDurations[s];
+      }
+      if (naturalSpanDuration === 0) naturalSpanDuration = 6600;
+
+      const duration = customDuration ?? naturalSpanDuration;
 
       const animateScroll = (currentTime: number) => {
         const elapsed = currentTime - startTime;
         const rawProgress = Math.min(elapsed / duration, 1);
-        const ease = smoothstep5(rawProgress);
+        // Completely linear 1:1 constant velocity — zero acceleration / zero easing
+        const ease = rawProgress;
 
         window.scrollTo(0, startY + change * ease);
 
