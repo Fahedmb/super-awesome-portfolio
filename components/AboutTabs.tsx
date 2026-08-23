@@ -336,24 +336,10 @@ export default function AboutTabs({ onNavigateToOrigin, onNavigateToWorks }: Abo
       </div>
 
       {/* Responsive Content Container for Mobile Safe Scrolling */}
-      <div
-        ref={scrollContainerRef}
-        onScroll={handleContainerScroll}
-        className="max-h-[55vh] sm:max-h-[62vh] overflow-y-auto pr-1 space-y-3 relative"
-      >
-        {/* Top Scroll Prompt: Tap to Return to Previous Sector */}
-        {onNavigateToOrigin && (
-          <button
-            onClick={onNavigateToOrigin}
-            className="w-full py-1.5 px-3 mb-1 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-neutral-300 text-[10px] font-mono flex items-center justify-center gap-2 transition-all active:scale-95 cursor-pointer"
-          >
-            <ArrowUp className="w-3 h-3 text-yellow-400 animate-bounce" />
-            <span>RETURN TO ORIGIN // TAP ARROW ↑</span>
-          </button>
-        )}
-        {/* ─────────────────────────────────────────────────────────────────── */}
+      <div className="max-h-[52vh] sm:max-h-[58vh] md:max-h-[64vh] overflow-y-auto pr-1 space-y-3 relative">
+        {/* ------------------------------------------------------------------- */}
         {/* TAB 1: DEDICATED REBRANDED ENGINEERING CORE (Harmonized Yellows)    */}
-        {/* ─────────────────────────────────────────────────────────────────── */}
+        {/* ------------------------------------------------------------------- */}
         {activeTab === "core" && (
           <div key="core" className="space-y-3 animate-tab-switch">
           {/* Header Banner */}
@@ -544,9 +530,9 @@ export default function AboutTabs({ onNavigateToOrigin, onNavigateToWorks }: Abo
         </div>
       )}
 
-      {/* ─────────────────────────────────────────────────────────────────── */}
+      {/* ------------------------------------------------------------------- */}
       {/* TAB 2: DEDICATED PHILOSOPHY & MINDSET MANIFESTO                     */}
-      {/* ─────────────────────────────────────────────────────────────────── */}
+      {/* ------------------------------------------------------------------- */}
       {activeTab === "manifesto" && (
         <div key="manifesto" className="space-y-3 animate-tab-switch">
           <div className="p-4 rounded-2xl bg-black/60 border border-amber-500/30 backdrop-blur-xl">
@@ -599,9 +585,9 @@ export default function AboutTabs({ onNavigateToOrigin, onNavigateToWorks }: Abo
         </div>
       )}
 
-      {/* ─────────────────────────────────────────────────────────────────── */}
+      {/* ------------------------------------------------------------------- */}
       {/* TAB 3: ACADEMIC ROADMAP (Alternating Shadcn Pattern)                */}
-      {/* ─────────────────────────────────────────────────────────────────── */}
+      {/* ------------------------------------------------------------------- */}
       {activeTab === "roadmap" && (
         <div key="roadmap" className="animate-tab-switch p-4 sm:p-5 rounded-2xl bg-black/60 border border-white/10 backdrop-blur-xl">
           <div className="flex items-center justify-between mb-4 pb-2 border-b border-white/10">
@@ -654,9 +640,9 @@ export default function AboutTabs({ onNavigateToOrigin, onNavigateToWorks }: Abo
         </div>
       )}
 
-      {/* ─────────────────────────────────────────────────────────────────── */}
+      {/* ------------------------------------------------------------------- */}
       {/* TAB 4: HOBBIES & RIGOR                                             */}
-      {/* ─────────────────────────────────────────────────────────────────── */}
+      {/* ------------------------------------------------------------------- */}
       {activeTab === "hobbies" && (
         <div key="hobbies" className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 animate-tab-switch">
           {hobbiesList.map((hobby, idx) => {
@@ -700,9 +686,9 @@ export default function AboutTabs({ onNavigateToOrigin, onNavigateToWorks }: Abo
         </div>
       )}
 
-      {/* ─────────────────────────────────────────────────────────────────── */}
+      {/* ------------------------------------------------------------------- */}
       {/* TAB 5: INTEL & Q&A                                                 */}
-      {/* ─────────────────────────────────────────────────────────────────── */}
+      {/* ------------------------------------------------------------------- */}
       {activeTab === "qa" && (
         <div key="qa" className="animate-tab-switch p-4 rounded-2xl bg-black/60 border border-white/10 backdrop-blur-xl">
           <div className="text-xs font-mono font-bold text-yellow-400 mb-3 flex items-center justify-between">
@@ -757,9 +743,9 @@ export default function AboutTabs({ onNavigateToOrigin, onNavigateToWorks }: Abo
         </div>
       )}
 
-      {/* ─────────────────────────────────────────────────────────────────── */}
+      {/* ------------------------------------------------------------------- */}
       {/* TAB 6: FAVORITE YOUTUBE CHANNELS & MINDS                            */}
-      {/* ─────────────────────────────────────────────────────────────────── */}
+      {/* ------------------------------------------------------------------- */}
       {activeTab === "youtube" && (
         <div key="youtube" className="animate-tab-switch p-4 rounded-2xl bg-black/60 border border-white/10 backdrop-blur-xl">
           <div className="text-xs font-mono font-bold text-yellow-400 mb-3 flex items-center justify-between">
@@ -817,23 +803,6 @@ export default function AboutTabs({ onNavigateToOrigin, onNavigateToWorks }: Abo
           </div>
         </div>
       )}
-
-        {/* Explicit Sector Navigation Transition Prompt */}
-        {onNavigateToWorks && (
-          <div className="pt-3 pb-1 border-t border-white/10 mt-3.5 flex flex-col gap-2">
-            <button
-              onClick={onNavigateToWorks}
-              className="w-full py-2.5 px-4 rounded-2xl bg-gradient-to-r from-yellow-400 via-amber-400 to-yellow-300 text-black text-xs font-mono font-bold tracking-wider hover:brightness-110 transition-all active:scale-95 shadow-lg shadow-yellow-400/25 flex items-center justify-center gap-2 cursor-pointer"
-            >
-              <span>NEXT SECTION // TAP TO TRAVEL TO WORKS</span>
-              <ArrowDown className="w-4 h-4 text-black animate-bounce" />
-            </button>
-            <div className="flex items-center justify-center gap-1.5 text-[9px] font-mono text-neutral-400">
-              <span className="w-1.5 h-1.5 rounded-full bg-yellow-400/80" />
-              <span>SECTOR 01 COMPLETE</span>
-            </div>
-          </div>
-        )}
       </div>
     </div>
   );

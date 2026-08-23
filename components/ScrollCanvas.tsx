@@ -372,9 +372,9 @@ export default function ScrollCanvas({ onProgressUpdate }: ScrollCanvasProps) {
 
   return (
     <>
-      {/* ─────────────────────────────────────────────────────────────────── */}
+      {/* ------------------------------------------------------------------- */}
       {/* HIGH-TECH COSMIC TELEMETRY INITIALIZER & DISPLAY RECOGNITION LOADER */}
-      {/* ─────────────────────────────────────────────────────────────────── */}
+      {/* ------------------------------------------------------------------- */}
       <div
         className={`fixed inset-0 z-[999999] flex flex-col items-center justify-center bg-neutral-950/98 backdrop-blur-3xl text-white transition-all duration-700 ease-out ${
           isLoaded

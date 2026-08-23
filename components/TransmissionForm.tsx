@@ -67,18 +67,7 @@ export default function TransmissionForm({ onNavigateToWorks, onNavigateToOrigin
   };
 
   return (
-    <div className="w-full max-w-2xl mx-auto rounded-3xl p-4 sm:p-8 glass-panel-dark text-white border border-white/10 shadow-2xl backdrop-blur-2xl max-h-[60vh] sm:max-h-none overflow-y-auto">
-      {/* Top Scroll Prompt: Tap to Return to Enterprise Works */}
-      {onNavigateToWorks && (
-        <button
-          onClick={onNavigateToWorks}
-          className="w-full py-1.5 px-3 mb-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-neutral-300 text-[10px] font-mono flex items-center justify-center gap-2 transition-all active:scale-95 cursor-pointer"
-        >
-          <ArrowUp className="w-3 h-3 text-yellow-400 animate-bounce" />
-          <span>RETURN TO ENTERPRISE WORKS // TAP ARROW ↑</span>
-        </button>
-      )}
-
+    <div className="w-full max-w-2xl mx-auto rounded-3xl p-4 sm:p-8 glass-panel-dark text-white border border-white/10 shadow-2xl backdrop-blur-2xl max-h-[52vh] sm:max-h-[58vh] md:max-h-[64vh] overflow-y-auto">
       {/* Terminal Header */}
       <div className="flex items-center justify-between pb-3 border-b border-white/10 mb-5">
         <div className="flex items-center gap-2">
@@ -292,23 +281,6 @@ export default function TransmissionForm({ onNavigateToWorks, onNavigateToOrigin
           <span>+216 20 731 135</span>
         </span>
       </div>
-
-      {/* Explicit Sector Navigation Transition Prompt */}
-      {onNavigateToOrigin && (
-        <div className="pt-3 flex items-center justify-between border-t border-white/10 mt-3.5">
-          <div className="flex items-center gap-1.5 text-[10px] font-mono text-neutral-400">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-            <span>SECTOR 03 // DISPATCH READY</span>
-          </div>
-          <button
-            onClick={onNavigateToOrigin}
-            className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 text-white text-xs font-mono font-bold tracking-wider hover:bg-white/20 transition-all active:scale-95 cursor-pointer"
-          >
-            <span>RETURN TO ORIGIN (TOP)</span>
-            <ArrowUp className="w-3.5 h-3.5 text-yellow-400" />
-          </button>
-        </div>
-      )}
     </div>
   );
 }

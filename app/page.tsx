@@ -190,14 +190,36 @@ export default function Home() {
       }, 300);
     };
 
+    const handleTouchMove = (e: TouchEvent) => {
+      // Allow internal scrolling inside scrollable sub-containers (.overflow-y-auto or .overflow-x-auto)
+      let target = e.target as HTMLElement | null;
+      let isInsideScrollable = false;
+      while (target && target !== document.body) {
+        if (
+          target.classList?.contains("overflow-y-auto") ||
+          target.classList?.contains("overflow-x-auto")
+        ) {
+          isInsideScrollable = true;
+          break;
+        }
+        target = target.parentElement;
+      }
+      // Block window/page dragging from activating video animations
+      if (!isInsideScrollable) {
+        e.preventDefault();
+      }
+    };
+
     window.addEventListener("wheel", handleWheel, { passive: false });
     window.addEventListener("keydown", handleKeyDown);
     window.addEventListener("scroll", handleScroll, { passive: true });
+    window.addEventListener("touchmove", handleTouchMove, { passive: false });
 
     return () => {
       window.removeEventListener("wheel", handleWheel);
       window.removeEventListener("keydown", handleKeyDown);
       window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("touchmove", handleTouchMove);
       if (animRafRef.current) cancelAnimationFrame(animRafRef.current);
       if (scrollTimeout.current) clearTimeout(scrollTimeout.current);
     };
@@ -407,217 +429,288 @@ export default function Home() {
         </div>
       </footer>
 
-      {/* 
-        ═══════════════════════════════════════════════════════════════════════
-        CINEMATIC NARRATIVE OVERLAYS (4 Acts with Gradual Blur)
-        ═══════════════════════════════════════════════════════════════════════
-      */}
+      {/* ----------------------------------------------------------------- */}
+      {/* CINEMATIC NARRATIVE OVERLAYS (4 Acts with Gradual Blur) */}
+      {/* ----------------------------------------------------------------- */}
       <div className="fixed inset-0 z-20 pointer-events-none flex items-center justify-center p-3 sm:p-6 md:p-12 pt-2 pb-16 sm:pt-4 sm:pb-16 md:pt-16 md:pb-16 overflow-hidden">
-        {/* 
-          ─────────────────────────────────────────────────────────────────────
-          SECTION 0: ORIGIN // THE ASCENT (Light // #FFFFFF)
-          ─────────────────────────────────────────────────────────────────────
-        */}
+        {/* SECTION 0: ORIGIN // THE ASCENT (Light // #FFFFFF) */}
         <GradualBlur
           visibleProgress={getSectionVisibility(0)}
-          className="absolute w-[88vw] sm:w-[85vw] md:w-full max-w-6xl flex flex-col justify-between max-h-[82vh] lg:max-h-none overflow-y-auto lg:overflow-visible pr-0.5 mx-auto"
+          className="absolute w-[88vw] sm:w-[85vw] md:w-full max-w-5xl flex flex-col justify-between max-h-[80vh] md:max-h-[86vh] mx-auto pointer-events-auto"
         >
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-8 items-center pt-1 lg:pt-4">
-            {/* Left Narrative Column */}
-            <div className="lg:col-span-7 flex flex-col items-start text-neutral-900 z-10">
-              <div className="inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-900 text-[10px] sm:text-xs font-mono mb-2 sm:mb-3 backdrop-blur-md">
-                <Sparkles className="w-3 sm:w-3.5 h-3 sm:h-3.5 text-amber-600 animate-pulse" />
-                <span>FAHED MBAREK // FULL-STACK &amp; AI SYSTEMS</span>
+          {/* Scrollable Content Body */}
+          <div className="flex-1 overflow-y-auto pr-1">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-8 items-center pt-1 lg:pt-3">
+              {/* Left Narrative Column */}
+              <div className="lg:col-span-7 flex flex-col items-start text-neutral-900 z-10">
+                <div className="inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-900 text-[10px] sm:text-xs font-mono mb-2 sm:mb-3 backdrop-blur-md">
+                  <Sparkles className="w-3 sm:w-3.5 h-3 sm:h-3.5 text-amber-600 animate-pulse" />
+                  <span>FAHED MBAREK // FULL-STACK &amp; AI SYSTEMS</span>
+                </div>
+
+                {/* Bold, Clear, Distinct Software Engineer Title */}
+                <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold font-display tracking-tight leading-[1.1] mb-2 sm:mb-3 text-neutral-900">
+                  Full-Stack Software Engineer{" "}
+                  <span className="block font-editorial italic text-amber-700 font-normal text-xl sm:text-3xl md:text-4xl lg:text-5xl mt-0.5 sm:mt-1">
+                    Distributed Backends, AI &amp; Modern Web.
+                  </span>
+                </h1>
+
+                {/* Generalized Bio */}
+                <p className="text-[11px] sm:text-xs md:text-sm text-neutral-700 max-w-xl leading-relaxed mb-3 sm:mb-4 font-light">
+                  Full-Stack Software Engineer with a National Engineering Diploma and Data Science background,
+                  combining 3+ years of client-facing freelance web delivery (15+ custom platforms) with enterprise
+                  systems engineering. Specializing in scalable Java/Spring Boot microservices, modern Next.js &amp; Angular
+                  architectures, and AI-enabled integrations.
+                </p>
+
+                {/* Clean General Qualification Badges */}
+                <div className="flex flex-wrap gap-1 sm:gap-1.5 mb-3 sm:mb-5">
+                  <span className="px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-lg bg-neutral-100 border border-neutral-200 text-neutral-800 text-[10px] sm:text-[11px] font-mono flex items-center gap-1 sm:gap-1.5">
+                    <GraduationCap className="w-3 sm:w-3.5 h-3 sm:h-3.5 text-amber-700" />
+                    <span>NATIONAL ENGINEERING DIPLOMA</span>
+                  </span>
+                  <span className="px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-lg bg-neutral-100 border border-neutral-200 text-neutral-800 text-[10px] sm:text-[11px] font-mono flex items-center gap-1 sm:gap-1.5">
+                    <Database className="w-3 sm:w-3.5 h-3 sm:h-3.5 text-amber-700" />
+                    <span>DATA SCIENCE BACKGROUND</span>
+                  </span>
+                  <span className="px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-lg bg-amber-500/10 border border-amber-500/20 text-amber-900 text-[10px] sm:text-[11px] font-mono flex items-center gap-1 sm:gap-1.5">
+                    <Briefcase className="w-3 sm:w-3.5 h-3 sm:h-3.5 text-amber-700" />
+                    <span>3+ YRS FREELANCE DELIVERY</span>
+                  </span>
+                </div>
+
+                {/* Action Buttons */}
+                <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+                  <a
+                    href="/cv_fahed_mbarek.pdf"
+                    download
+                    className="px-4 sm:px-5 py-2 sm:py-2.5 rounded-full bg-neutral-900 hover:bg-black text-white text-[11px] sm:text-xs font-mono font-bold tracking-wider transition-all duration-200 active:scale-95 shadow-xl shadow-neutral-900/15 flex items-center gap-1.5 sm:gap-2"
+                  >
+                    <FileDown className="w-3.5 sm:w-4 h-3.5 sm:h-4 text-yellow-400" />
+                    <span>DOWNLOAD CV</span>
+                  </a>
+
+                  <SpecularButton
+                    variant="light"
+                    onClick={() => scrollToSection(1)}
+                    className="shadow-md !py-2 sm:!py-2.5 !px-4 sm:!px-5 !text-[11px] sm:!text-xs"
+                  >
+                    <span>ABOUT ME</span>
+                    <ChevronRight className="w-3.5 sm:w-4 h-3.5 sm:h-4" />
+                  </SpecularButton>
+
+                  <button
+                    onClick={() => scrollToSection(2)}
+                    className="px-4 sm:px-5 py-2 sm:py-2.5 rounded-full border border-neutral-300 bg-white/80 hover:bg-white text-neutral-800 text-[11px] sm:text-xs font-mono font-semibold transition-all duration-200 active:scale-95 shadow-xs cursor-pointer"
+                  >
+                    EXPLORE WORKS
+                  </button>
+                </div>
               </div>
 
-              {/* Bold, Clear, Distinct Software Engineer Title */}
-              <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold font-display tracking-tight leading-[1.1] mb-2 sm:mb-3 text-neutral-900">
-                Full-Stack Software Engineer{" "}
-                <span className="block font-editorial italic text-amber-700 font-normal text-xl sm:text-3xl md:text-4xl lg:text-5xl mt-0.5 sm:mt-1">
-                  Distributed Backends, AI &amp; Modern Web.
-                </span>
-              </h1>
-
-              {/* Generalized Bio */}
-              <p className="text-[11px] sm:text-xs md:text-sm text-neutral-700 max-w-xl leading-relaxed mb-3 sm:mb-4 font-light">
-                Full-Stack Software Engineer with a National Engineering Diploma and Data Science background,
-                combining 3+ years of client-facing freelance web delivery (15+ custom platforms) with enterprise
-                systems engineering. Specializing in scalable Java/Spring Boot microservices, modern Next.js &amp; Angular
-                architectures, and AI-enabled integrations.
-              </p>
-
-              {/* Clean General Qualification Badges */}
-              <div className="flex flex-wrap gap-1 sm:gap-1.5 mb-3 sm:mb-5">
-                <span className="px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-lg bg-neutral-100 border border-neutral-200 text-neutral-800 text-[10px] sm:text-[11px] font-mono flex items-center gap-1 sm:gap-1.5">
-                  <GraduationCap className="w-3 sm:w-3.5 h-3 sm:h-3.5 text-amber-700" />
-                  <span>NATIONAL ENGINEERING DIPLOMA</span>
-                </span>
-                <span className="px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-lg bg-neutral-100 border border-neutral-200 text-neutral-800 text-[10px] sm:text-[11px] font-mono flex items-center gap-1 sm:gap-1.5">
-                  <Database className="w-3 sm:w-3.5 h-3 sm:h-3.5 text-amber-700" />
-                  <span>DATA SCIENCE BACKGROUND</span>
-                </span>
-                <span className="px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-lg bg-amber-500/10 border border-amber-500/20 text-amber-900 text-[10px] sm:text-[11px] font-mono flex items-center gap-1 sm:gap-1.5">
-                  <Briefcase className="w-3 sm:w-3.5 h-3 sm:h-3.5 text-amber-700" />
-                  <span>3+ YRS FREELANCE DELIVERY</span>
-                </span>
+              {/* Right Column: Interactive 3D Lanyard (Desktop & Large Viewports) */}
+              <div className="hidden lg:flex lg:col-span-5 justify-center items-center pointer-events-auto overflow-visible">
+                <Lanyard
+                  position={[0, 0, 20]}
+                  gravity={[0, -40, 0]}
+                  fov={20}
+                  transparent={true}
+                  lanyardWidth={1}
+                  frontImage="/assets/lanyard/fahed_badge.svg"
+                  active={getSectionVisibility(0) > 0.05}
+                />
               </div>
-
-              {/* Action Buttons */}
-              <div className="flex flex-wrap items-center gap-2 sm:gap-3">
-                <a
-                  href="/cv_fahed_mbarek.pdf"
-                  download
-                  className="px-4 sm:px-5 py-2 sm:py-2.5 rounded-full bg-neutral-900 hover:bg-black text-white text-[11px] sm:text-xs font-mono font-bold tracking-wider transition-all duration-200 active:scale-95 shadow-xl shadow-neutral-900/15 flex items-center gap-1.5 sm:gap-2"
-                >
-                  <FileDown className="w-3.5 sm:w-4 h-3.5 sm:h-4 text-yellow-400" />
-                  <span>DOWNLOAD CV</span>
-                </a>
-
-                <SpecularButton
-                  variant="light"
-                  onClick={() => scrollToSection(1)}
-                  className="shadow-md !py-2 sm:!py-2.5 !px-4 sm:!px-5 !text-[11px] sm:!text-xs"
-                >
-                  <span>ABOUT ME</span>
-                  <ChevronRight className="w-3.5 sm:w-4 h-3.5 sm:h-4" />
-                </SpecularButton>
-
-                <button
-                  onClick={() => scrollToSection(2)}
-                  className="px-4 sm:px-5 py-2 sm:py-2.5 rounded-full border border-neutral-300 bg-white/80 hover:bg-white text-neutral-800 text-[11px] sm:text-xs font-mono font-semibold transition-all duration-200 active:scale-95 shadow-xs cursor-pointer"
-                >
-                  EXPLORE WORKS
-                </button>
-              </div>
-
-              {/* Mobile Proceed Prompt */}
-              <button
-                onClick={() => scrollToSection(1)}
-                className="w-full py-2.5 px-4 mt-3 rounded-2xl bg-neutral-900 hover:bg-black text-white text-xs font-mono font-bold tracking-wider transition-all active:scale-95 shadow-lg shadow-neutral-900/20 flex items-center justify-center gap-2 cursor-pointer lg:hidden"
-              >
-                <span>NEXT SECTION // TAP TO ABOUT ME</span>
-                <ArrowDown className="w-4 h-4 text-yellow-400 animate-bounce" />
-              </button>
             </div>
 
-            {/* Right Column: Interactive 3D Lanyard (Desktop & Large Viewports) */}
-            <div className="hidden lg:flex lg:col-span-5 justify-center items-center pointer-events-auto overflow-visible">
-              <Lanyard
-                position={[0, 0, 20]}
-                gravity={[0, -40, 0]}
-                fov={20}
-                transparent={true}
-                lanyardWidth={1}
-                frontImage="/assets/lanyard/fahed_badge.svg"
-                active={getSectionVisibility(0) > 0.05}
-              />
+            {/* Bottom Tech Logo Loop */}
+            <div className="mt-3 sm:mt-4 shrink-0">
+              <LogoLoop theme="light" />
             </div>
           </div>
 
-          {/* Bottom Tech Logo Loop with Actual Framework Logos */}
-          <div className="mt-3 sm:mt-5 shrink-0">
-            <LogoLoop theme="light" />
-          </div>
+          {/* Absolute Bottom Navigation Bar */}
+          <button
+            onClick={() => scrollToSection(1)}
+            className="w-full py-2.5 sm:py-3 px-4 sm:px-5 rounded-2xl bg-neutral-900 hover:bg-black text-white text-xs font-mono font-bold tracking-wider flex items-center justify-between transition-all active:scale-98 shadow-xl shadow-neutral-900/25 cursor-pointer shrink-0 mt-2 pointer-events-auto"
+          >
+            <div className="flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-yellow-400 animate-pulse" />
+              <span>NEXT SECTOR: 01 ABOUT ME &amp; ENGINEERING CORE</span>
+            </div>
+            <div className="flex items-center gap-1.5 text-yellow-400 font-bold">
+              <span>TRAVEL</span>
+              <ArrowDown className="w-4 h-4 text-yellow-400 animate-bounce" />
+            </div>
+          </button>
         </GradualBlur>
 
-        {/* 
-          ─────────────────────────────────────────────────────────────────────
-          SECTION 1: ABOUT ME // THE SINGULARITY (Noir // #000000)
-          ─────────────────────────────────────────────────────────────────────
-        */}
+        {/* SECTION 1: ABOUT ME // THE SINGULARITY (Noir // #000000) */}
         <GradualBlur
           visibleProgress={getSectionVisibility(1)}
-          className="absolute w-[88vw] sm:w-[85vw] md:w-full max-w-4xl flex flex-col text-white mx-auto"
+          className="absolute w-[88vw] sm:w-[85vw] md:w-full max-w-4xl flex flex-col justify-between max-h-[80vh] md:max-h-[86vh] text-white mx-auto pointer-events-auto"
         >
-          <div className="inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-full bg-yellow-400/10 border border-yellow-400/30 text-yellow-400 text-[10px] sm:text-xs font-mono mb-1.5 sm:mb-2 backdrop-blur-md self-start">
-            <Sparkles className="w-3 sm:w-3.5 h-3 sm:h-3.5" />
-            <span>SECTION 01 // ABOUT ME &amp; ENGINEERING CORE</span>
+          {/* Absolute Top Navigation Bar */}
+          <button
+            onClick={() => scrollToSection(0)}
+            className="w-full py-2 px-4 rounded-2xl bg-black/80 hover:bg-black border border-white/15 backdrop-blur-xl text-neutral-300 hover:text-white text-xs font-mono font-bold tracking-wider flex items-center justify-between transition-all active:scale-98 shadow-lg cursor-pointer shrink-0 mb-2 pointer-events-auto"
+          >
+            <div className="flex items-center gap-2">
+              <ArrowUp className="w-3.5 h-3.5 text-yellow-400 animate-pulse" />
+              <span>PREVIOUS SECTOR: 00 ORIGIN</span>
+            </div>
+            <span className="text-[10px] font-mono text-yellow-400 font-bold">RETURN ↑</span>
+          </button>
+
+          {/* Scrollable Content Body */}
+          <div className="flex-1 overflow-y-auto pr-1">
+            <div className="inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-full bg-yellow-400/10 border border-yellow-400/30 text-yellow-400 text-[10px] sm:text-xs font-mono mb-1.5 sm:mb-2 backdrop-blur-md self-start">
+              <Sparkles className="w-3 sm:w-3.5 h-3 sm:h-3.5" />
+              <span>SECTION 01 // ABOUT ME &amp; ENGINEERING CORE</span>
+            </div>
+
+            <h2 className="text-xl sm:text-3xl md:text-4xl font-extrabold font-display tracking-tight mb-1 sm:mb-2">
+              The Engineer Behind the Code:{" "}
+              <span className="text-electric-yellow glow-yellow font-editorial italic font-normal">
+                Foundations, Journey &amp; Persona.
+              </span>
+            </h2>
+
+            <p className="text-[11px] sm:text-xs md:text-sm text-neutral-300 max-w-3xl leading-relaxed mb-2 sm:mb-3 font-light">
+              Bridging academic engineering rigor with 3+ years of client-facing freelance web delivery and enterprise systems.
+              Explore my core architecture pillars, academic timeline, physical &amp; creative pursuits, and classified intel below.
+            </p>
+
+            {/* Interactive Multi-Tab Interface: Core Architecture, Academic Roadmap, Hobbies, Q&A */}
+            <AboutTabs />
           </div>
 
-          <h2 className="text-xl sm:text-3xl md:text-4xl font-extrabold font-display tracking-tight mb-1 sm:mb-2">
-            The Engineer Behind the Code:{" "}
-            <span className="text-electric-yellow glow-yellow font-editorial italic font-normal">
-              Foundations, Journey &amp; Persona.
-            </span>
-          </h2>
-
-          <p className="text-[11px] sm:text-xs md:text-sm text-neutral-300 max-w-3xl leading-relaxed mb-2 sm:mb-3.5 font-light">
-            Bridging academic engineering rigor with 3+ years of client-facing freelance web delivery and enterprise systems.
-            Explore my core architecture pillars, academic timeline, physical &amp; creative pursuits, and classified intel below.
-          </p>
-
-          {/* Interactive Multi-Tab Interface: Core Architecture, Academic Roadmap, Hobbies, Q&A */}
-          <AboutTabs
-            onNavigateToOrigin={() => scrollToSection(0)}
-            onNavigateToWorks={() => scrollToSection(2)}
-          />
+          {/* Absolute Bottom Navigation Bar */}
+          <button
+            onClick={() => scrollToSection(2)}
+            className="w-full py-2.5 sm:py-3 px-4 sm:px-5 rounded-2xl bg-[#FFD600] hover:bg-[#FFE033] text-black text-xs font-mono font-extrabold tracking-wider flex items-center justify-between transition-all active:scale-98 shadow-xl shadow-yellow-400/30 cursor-pointer shrink-0 mt-2 pointer-events-auto"
+          >
+            <div className="flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-black animate-pulse" />
+              <span>NEXT SECTOR: 02 COMPILED ENTERPRISE WORKS</span>
+            </div>
+            <div className="flex items-center gap-1.5 text-black font-extrabold">
+              <span>TRAVEL</span>
+              <ArrowDown className="w-4 h-4 text-black animate-bounce" />
+            </div>
+          </button>
         </GradualBlur>
 
-        {/* 
-          ─────────────────────────────────────────────────────────────────────
-          SECTION 2: WORKS // COMPILED PROJECTS (Gallery White // #F8F9FA)
-          ─────────────────────────────────────────────────────────────────────
-        */}
+        {/* SECTION 2: WORKS // COMPILED PROJECTS (Gallery White // #F8F9FA) */}
         <GradualBlur
           visibleProgress={getSectionVisibility(2)}
-          className="absolute w-[88vw] sm:w-[85vw] md:w-full max-w-4xl flex flex-col text-neutral-900 mx-auto"
+          className="absolute w-[88vw] sm:w-[85vw] md:w-full max-w-4xl flex flex-col justify-between max-h-[80vh] md:max-h-[86vh] text-neutral-900 mx-auto pointer-events-auto"
         >
-          <div className="inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-900 text-[10px] sm:text-xs font-mono mb-1.5 sm:mb-2 backdrop-blur-md self-start">
-            <Sparkles className="w-3 sm:w-3.5 h-3 sm:h-3.5 text-amber-700" />
-            <span>SECTION 02 // COMPILED ENTERPRISE WORKS &amp; DEMOS</span>
+          {/* Absolute Top Navigation Bar */}
+          <button
+            onClick={() => scrollToSection(1)}
+            className="w-full py-2 px-4 rounded-2xl bg-white/90 hover:bg-white border border-neutral-300 backdrop-blur-xl text-neutral-800 text-xs font-mono font-bold tracking-wider flex items-center justify-between transition-all active:scale-98 shadow-md cursor-pointer shrink-0 mb-2 pointer-events-auto"
+          >
+            <div className="flex items-center gap-2">
+              <ArrowUp className="w-3.5 h-3.5 text-amber-700 animate-pulse" />
+              <span>PREVIOUS SECTOR: 01 ABOUT ME</span>
+            </div>
+            <span className="text-[10px] font-mono text-amber-800 font-bold">RETURN ↑</span>
+          </button>
+
+          {/* Scrollable Content Body */}
+          <div className="flex-1 overflow-y-auto pr-1">
+            <div className="inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-900 text-[10px] sm:text-xs font-mono mb-1.5 sm:mb-2 backdrop-blur-md self-start">
+              <Sparkles className="w-3 sm:w-3.5 h-3 sm:h-3.5 text-amber-700" />
+              <span>SECTION 02 // COMPILED ENTERPRISE WORKS &amp; DEMOS</span>
+            </div>
+
+            <h2 className="text-xl sm:text-3xl md:text-4xl font-extrabold font-display tracking-tight mb-1 sm:mb-1.5">
+              Enterprise Platforms &amp;{" "}
+              <span className="font-editorial italic text-amber-800 font-normal">
+                Recorded Video Demos.
+              </span>
+            </h2>
+
+            <p className="text-[11px] sm:text-xs md:text-sm text-neutral-600 max-w-2xl leading-relaxed mb-2 sm:mb-2.5 font-light">
+              Production-grade systems built from scratch with microservices, automated cost reconciliation,
+              automotive competency matrices, and embedded video walkthroughs.
+            </p>
+
+            {/* 3D Depth Carousel with Quick Tabs and Video Modals */}
+            <DepthCarousel onOrderPortfolio={() => scrollToSection(3)} />
           </div>
 
-          <h2 className="text-xl sm:text-3xl md:text-4xl font-extrabold font-display tracking-tight mb-1 sm:mb-1.5">
-            Enterprise Platforms &amp;{" "}
-            <span className="font-editorial italic text-amber-800 font-normal">
-              Recorded Video Demos.
-            </span>
-          </h2>
-
-          <p className="text-[11px] sm:text-xs md:text-sm text-neutral-600 max-w-2xl leading-relaxed mb-2 sm:mb-3 font-light">
-            Production-grade systems built from scratch with microservices, automated cost reconciliation,
-            automotive competency matrices, and embedded video walkthroughs.
-          </p>
-
-          {/* 3D Depth Carousel with Quick Tabs and Video Modals */}
-          <DepthCarousel
-            onOrderPortfolio={() => scrollToSection(3)}
-            onNavigateToAbout={() => scrollToSection(1)}
-            onNavigateToContact={() => scrollToSection(3)}
-          />
+          {/* Absolute Bottom Navigation Bar */}
+          <button
+            onClick={() => scrollToSection(3)}
+            className="w-full py-2.5 sm:py-3 px-4 sm:px-5 rounded-2xl bg-neutral-900 hover:bg-black text-white text-xs font-mono font-bold tracking-wider flex items-center justify-between transition-all active:scale-98 shadow-xl shadow-neutral-900/25 cursor-pointer shrink-0 mt-2 pointer-events-auto"
+          >
+            <div className="flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-yellow-400 animate-pulse" />
+              <span>NEXT SECTOR: 03 CONTACT ME &amp; TRANSMISSION</span>
+            </div>
+            <div className="flex items-center gap-1.5 text-yellow-400 font-bold">
+              <span>TRAVEL</span>
+              <ArrowDown className="w-4 h-4 text-yellow-400 animate-bounce" />
+            </div>
+          </button>
         </GradualBlur>
 
-        {/* 
-          ─────────────────────────────────────────────────────────────────────
-          SECTION 3: CONTACT ME // DIRECT TRANSMISSION (Void Noir // #000000)
-          ─────────────────────────────────────────────────────────────────────
-        */}
+        {/* SECTION 3: CONTACT ME // DIRECT TRANSMISSION (Void Noir // #000000) */}
         <GradualBlur
           visibleProgress={getSectionVisibility(3)}
-          className="absolute w-[88vw] sm:w-[85vw] md:w-full max-w-2xl flex flex-col text-white mx-auto"
+          className="absolute w-[88vw] sm:w-[85vw] md:w-full max-w-2xl flex flex-col justify-between max-h-[80vh] md:max-h-[86vh] text-white mx-auto pointer-events-auto"
         >
-          <div className="inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-full bg-yellow-400/10 border border-yellow-400/30 text-yellow-400 text-[10px] sm:text-xs font-mono mb-1.5 sm:mb-2 backdrop-blur-md self-center">
-            <Radio className="w-3 sm:w-3.5 h-3 sm:h-3.5 animate-pulse" />
-            <span>SECTION 03 // CONTACT ME &amp; DIRECT TRANSMISSION</span>
+          {/* Absolute Top Navigation Bar */}
+          <button
+            onClick={() => scrollToSection(2)}
+            className="w-full py-2 px-4 rounded-2xl bg-black/80 hover:bg-black border border-white/15 backdrop-blur-xl text-neutral-300 hover:text-white text-xs font-mono font-bold tracking-wider flex items-center justify-between transition-all active:scale-98 shadow-lg cursor-pointer shrink-0 mb-2 pointer-events-auto"
+          >
+            <div className="flex items-center gap-2">
+              <ArrowUp className="w-3.5 h-3.5 text-yellow-400 animate-pulse" />
+              <span>PREVIOUS SECTOR: 02 COMPILED WORKS</span>
+            </div>
+            <span className="text-[10px] font-mono text-yellow-400 font-bold">RETURN ↑</span>
+          </button>
+
+          {/* Scrollable Content Body */}
+          <div className="flex-1 overflow-y-auto pr-1">
+            <div className="inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-full bg-yellow-400/10 border border-yellow-400/30 text-yellow-400 text-[10px] sm:text-xs font-mono mb-1.5 sm:mb-2 backdrop-blur-md self-center">
+              <Radio className="w-3 sm:w-3.5 h-3 sm:h-3.5 animate-pulse" />
+              <span>SECTION 03 // CONTACT ME &amp; DIRECT TRANSMISSION</span>
+            </div>
+
+            <h2 className="text-xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold font-display tracking-tight text-center mb-1.5 sm:mb-2">
+              Initiate Contact with{" "}
+              <span className="text-electric-yellow glow-yellow font-editorial italic font-normal">
+                Fahed Mbarek.
+              </span>
+            </h2>
+
+            <p className="text-[11px] sm:text-xs md:text-sm text-neutral-300 text-center max-w-lg mx-auto leading-relaxed mb-2.5 sm:mb-3 font-light font-mono">
+              Open for full-time software engineering roles, enterprise system architecture,
+              and client collaborations. Send a message to initiate discussion.
+            </p>
+
+            {/* Interactive Contact & Telemetry Dispatch Form */}
+            <TransmissionForm />
           </div>
 
-          <h2 className="text-xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold font-display tracking-tight text-center mb-1.5 sm:mb-2">
-            Initiate Contact with{" "}
-            <span className="text-electric-yellow glow-yellow font-editorial italic font-normal">
-              Fahed Mbarek.
+          {/* Absolute Bottom Navigation Bar */}
+          <button
+            onClick={() => scrollToSection(0)}
+            className="w-full py-2.5 sm:py-3 px-4 sm:px-5 rounded-2xl bg-white/10 hover:bg-white/20 border border-white/20 text-white text-xs font-mono font-bold tracking-wider flex items-center justify-between transition-all active:scale-98 shadow-xl backdrop-blur-xl cursor-pointer shrink-0 mt-2 pointer-events-auto"
+          >
+            <div className="flex items-center gap-2">
+              <Orbit className="w-4 h-4 text-yellow-400 animate-spin" />
+              <span>RETURN TO ORIGIN // SECTOR 00</span>
+            </div>
+            <span className="text-xs font-mono text-yellow-400 font-bold flex items-center gap-1.5">
+              <span>TOP</span>
+              <ArrowUp className="w-4 h-4 text-yellow-400 animate-bounce" />
             </span>
-          </h2>
-
-          <p className="text-[11px] sm:text-xs md:text-sm text-neutral-300 text-center max-w-lg mx-auto leading-relaxed mb-2.5 sm:mb-4 font-light font-mono">
-            Open for full-time software engineering roles, enterprise system architecture,
-            and client collaborations. Send a message to initiate discussion.
-          </p>
-
-          {/* Interactive Contact & Telemetry Dispatch Form */}
-          <TransmissionForm
-            onNavigateToWorks={() => scrollToSection(2)}
-            onNavigateToOrigin={() => scrollToSection(0)}
-          />
+          </button>
         </GradualBlur>
       </div>
 

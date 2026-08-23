@@ -235,9 +235,9 @@ export default function DepthCarousel({
 
   return (
     <div className={`relative w-full max-w-4xl mx-auto ${className}`}>
-      {/* ─────────────────────────────────────────────────────────────────── */}
+      {/* ------------------------------------------------------------------- */}
       {/* SECTION 2 MATCHING LIGHT-THEMED PROJECT TAB NAVBAR                 */}
-      {/* ─────────────────────────────────────────────────────────────────── */}
+      {/* ------------------------------------------------------------------- */}
       <div className="flex justify-start sm:justify-center mb-2.5 max-w-full overflow-x-auto no-scrollbar py-0.5 px-0.5">
         <div className="flex items-center gap-1 p-1 rounded-2xl bg-white/90 border border-neutral-300/80 backdrop-blur-xl shadow-md flex-nowrap shrink-0 mx-auto">
           {projects.map((proj, idx) => {
@@ -262,24 +262,13 @@ export default function DepthCarousel({
         </div>
       </div>
 
-      {/* ─────────────────────────────────────────────────────────────────── */}
+      {/* ------------------------------------------------------------------- */}
       {/* STRUCTURED PROJECT CARD CONTAINER                                  */}
-      {/* ─────────────────────────────────────────────────────────────────── */}
+      {/* ------------------------------------------------------------------- */}
       <div
         key={current.id}
-        className="relative rounded-3xl p-4 sm:p-6 bg-white/95 border border-neutral-200/90 shadow-2xl shadow-neutral-900/10 backdrop-blur-2xl text-neutral-900 animate-tab-switch max-h-[58vh] sm:max-h-none overflow-y-auto"
+        className="relative rounded-3xl p-4 sm:p-6 bg-white/95 border border-neutral-200/90 shadow-2xl shadow-neutral-900/10 backdrop-blur-2xl text-neutral-900 animate-tab-switch max-h-[52vh] sm:max-h-[58vh] md:max-h-[64vh] overflow-y-auto"
       >
-        {/* Top Scroll Prompt: Tap to Return to About Me */}
-        {onNavigateToAbout && (
-          <button
-            onClick={onNavigateToAbout}
-            className="w-full py-1.5 px-3 mb-2.5 rounded-xl bg-neutral-100 hover:bg-neutral-200 border border-neutral-200 text-neutral-700 text-[10px] font-mono flex items-center justify-center gap-2 transition-all active:scale-95 cursor-pointer"
-          >
-            <ArrowUp className="w-3 h-3 text-amber-700 animate-bounce" />
-            <span>RETURN TO ABOUT ME // TAP ARROW ↑</span>
-          </button>
-        )}
-
         {/* Card Header */}
         <div className="flex items-center justify-between pb-3 border-b border-neutral-100 mb-3.5">
           <div className="flex items-center gap-3">
@@ -397,9 +386,9 @@ export default function DepthCarousel({
           </div>
         </div>
 
-        {/* ─────────────────────────────────────────────────────────────────── */}
+        {/* ------------------------------------------------------------------- */}
         {/* ACTION BUTTONS & DEMOS                                              */}
-        {/* ─────────────────────────────────────────────────────────────────── */}
+        {/* ------------------------------------------------------------------- */}
         <div className="flex flex-wrap items-center gap-2 pt-3 border-t border-neutral-100">
           {/* Watch Video Demo Modal Trigger (Projects 1 to 4) */}
           {current.youtubeId && (
@@ -455,28 +444,11 @@ export default function DepthCarousel({
             </button>
           )}
         </div>
-
-        {/* Explicit Sector Navigation Transition Prompt */}
-        {onNavigateToContact && (
-          <div className="pt-3.5 border-t border-neutral-200/80 mt-3.5 flex flex-col gap-2">
-            <button
-              onClick={onNavigateToContact}
-              className="w-full py-2.5 px-4 rounded-2xl bg-neutral-900 hover:bg-black text-white text-xs font-mono font-bold tracking-wider transition-all active:scale-95 shadow-lg shadow-neutral-900/20 flex items-center justify-center gap-2 cursor-pointer"
-            >
-              <span>NEXT SECTION // TAP TO TRANSMISSION CONTACT</span>
-              <ArrowDown className="w-4 h-4 text-yellow-400 animate-bounce" />
-            </button>
-            <div className="flex items-center justify-center gap-1.5 text-[9px] font-mono text-neutral-500">
-              <span className="w-1.5 h-1.5 rounded-full bg-amber-700/80" />
-              <span>SECTOR 02 COMPLETE</span>
-            </div>
-          </div>
-        )}
       </div>
 
-      {/* ─────────────────────────────────────────────────────────────────── */}
+      {/* ------------------------------------------------------------------- */}
       {/* CUSTOM HIGH-TECH VIDEO PLAYER MODAL WITH PORTAL (FULL SCREEN BLUR)  */}
-      {/* ─────────────────────────────────────────────────────────────────── */}
+      {/* ------------------------------------------------------------------- */}
       {mounted &&
         activeVideoProject &&
         activeVideoProject.youtubeId &&
