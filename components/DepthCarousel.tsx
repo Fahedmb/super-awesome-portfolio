@@ -267,7 +267,7 @@ export default function DepthCarousel({
       {/* ------------------------------------------------------------------- */}
       <div
         key={current.id}
-        className="relative rounded-3xl p-4 sm:p-6 bg-white/95 border border-neutral-200/90 shadow-2xl shadow-neutral-900/10 backdrop-blur-2xl text-neutral-900 animate-tab-switch max-h-[58vh] sm:max-h-[64vh] md:max-h-[70vh] overflow-y-auto"
+        className="relative rounded-3xl p-4 sm:p-5 bg-white/95 border border-neutral-200/90 shadow-2xl shadow-neutral-900/10 backdrop-blur-2xl text-neutral-900 animate-tab-switch"
       >
         {/* Card Header */}
         <div className="flex items-center justify-between pb-3 border-b border-neutral-100 mb-3.5">

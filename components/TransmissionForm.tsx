@@ -67,7 +67,7 @@ export default function TransmissionForm({ onNavigateToWorks, onNavigateToOrigin
   };
 
   return (
-    <div className="w-full max-w-3xl mx-auto rounded-3xl p-4 sm:p-8 glass-panel-dark text-white border border-white/10 shadow-2xl backdrop-blur-2xl max-h-[58vh] sm:max-h-[66vh] md:max-h-[72vh] overflow-y-auto">
+    <div className="w-full max-w-3xl mx-auto rounded-3xl p-4 sm:p-6 lg:p-7 glass-panel-dark text-white border border-white/10 shadow-2xl backdrop-blur-2xl">
       {/* Terminal Header */}
       <div className="flex items-center justify-between pb-3 border-b border-white/10 mb-5">
         <div className="flex items-center gap-2">

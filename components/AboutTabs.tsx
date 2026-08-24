@@ -335,8 +335,8 @@ export default function AboutTabs({ onNavigateToOrigin, onNavigateToWorks }: Abo
         </div>
       </div>
 
-      {/* Responsive Content Container for Mobile Safe Scrolling */}
-      <div className="max-h-[58vh] sm:max-h-[64vh] md:max-h-[70vh] overflow-y-auto pr-1 space-y-3 relative">
+      {/* Responsive Content Container without artificial height clamp */}
+      <div className="space-y-2.5 sm:space-y-3 relative">
         {/* ------------------------------------------------------------------- */}
         {/* TAB 1: DEDICATED REBRANDED ENGINEERING CORE (Harmonized Yellows)    */}
         {/* ------------------------------------------------------------------- */}

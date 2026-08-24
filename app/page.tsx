@@ -432,11 +432,11 @@ export default function Home() {
       {/* ----------------------------------------------------------------- */}
       {/* CINEMATIC NARRATIVE OVERLAYS (4 Acts with Gradual Blur) */}
       {/* ----------------------------------------------------------------- */}
-      <div className="fixed inset-0 z-20 pointer-events-none flex items-center justify-center p-2 sm:p-4 md:p-8 pt-2 pb-14 sm:pt-4 sm:pb-16 md:pt-14 md:pb-16 overflow-hidden">
+      <div className="fixed inset-0 z-20 pointer-events-none flex items-center justify-center p-2 sm:p-4 md:p-6 lg:p-8 pt-1 sm:pt-2 md:pt-14 pb-14 sm:pb-16 overflow-hidden">
         {/* SECTION 0: ORIGIN // THE ASCENT (Light // #FFFFFF) */}
         <GradualBlur
           visibleProgress={getSectionVisibility(0)}
-          className="absolute w-[96vw] sm:w-[94vw] md:w-full max-w-7xl flex flex-col justify-between max-h-[85vh] md:max-h-[88vh] mx-auto pointer-events-auto"
+          className="absolute w-[96vw] sm:w-[94vw] md:w-full max-w-7xl flex flex-col justify-between max-h-[88vh] lg:max-h-[92vh] mx-auto pointer-events-auto"
         >
           {/* Scrollable Content Body */}
           <div className="flex-1 overflow-y-auto pr-1">
@@ -532,7 +532,7 @@ export default function Home() {
           {/* Absolute Bottom Navigation Bar */}
           <button
             onClick={() => scrollToSection(1)}
-            className="w-full py-2.5 sm:py-3 px-4 sm:px-5 rounded-2xl bg-neutral-900 hover:bg-black text-white text-xs font-mono font-bold tracking-wider flex items-center justify-between transition-all active:scale-98 shadow-xl shadow-neutral-900/25 cursor-pointer shrink-0 mt-2 pointer-events-auto"
+            className="w-full py-2 sm:py-2.5 px-4 sm:px-5 rounded-2xl bg-neutral-900 hover:bg-black text-white text-xs font-mono font-bold tracking-wider flex items-center justify-between transition-all active:scale-98 shadow-xl shadow-neutral-900/25 cursor-pointer shrink-0 mt-1.5 pointer-events-auto"
           >
             <div className="flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-yellow-400 animate-pulse" />
@@ -548,12 +548,12 @@ export default function Home() {
         {/* SECTION 1: ABOUT ME // THE SINGULARITY (Noir // #000000) */}
         <GradualBlur
           visibleProgress={getSectionVisibility(1)}
-          className="absolute w-[96vw] sm:w-[94vw] md:w-full max-w-6xl flex flex-col justify-between max-h-[85vh] md:max-h-[88vh] text-white mx-auto pointer-events-auto"
+          className="absolute w-[96vw] sm:w-[94vw] md:w-full max-w-7xl flex flex-col justify-between max-h-[88vh] lg:max-h-[92vh] text-white mx-auto pointer-events-auto"
         >
           {/* Absolute Top Navigation Bar */}
           <button
             onClick={() => scrollToSection(0)}
-            className="w-full py-2 px-4 rounded-2xl bg-black/80 hover:bg-black border border-white/15 backdrop-blur-xl text-neutral-300 hover:text-white text-xs font-mono font-bold tracking-wider flex items-center justify-between transition-all active:scale-98 shadow-lg cursor-pointer shrink-0 mb-2 pointer-events-auto"
+            className="w-full py-1.5 px-4 rounded-2xl bg-black/80 hover:bg-black border border-white/15 backdrop-blur-xl text-neutral-300 hover:text-white text-xs font-mono font-bold tracking-wider flex items-center justify-between transition-all active:scale-98 shadow-lg cursor-pointer shrink-0 mb-1.5 pointer-events-auto"
           >
             <div className="flex items-center gap-2">
               <ArrowUp className="w-3.5 h-3.5 text-yellow-400 animate-pulse" />
@@ -564,19 +564,19 @@ export default function Home() {
 
           {/* Scrollable Content Body */}
           <div className="flex-1 overflow-y-auto pr-1">
-            <div className="inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-full bg-yellow-400/10 border border-yellow-400/30 text-yellow-400 text-[10px] sm:text-xs font-mono mb-1.5 sm:mb-2 backdrop-blur-md self-start">
+            <div className="inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-0.5 rounded-full bg-yellow-400/10 border border-yellow-400/30 text-yellow-400 text-[10px] sm:text-xs font-mono mb-1 backdrop-blur-md self-start">
               <Sparkles className="w-3 sm:w-3.5 h-3 sm:h-3.5" />
               <span>SECTION 01 // ABOUT ME &amp; ENGINEERING CORE</span>
             </div>
 
-            <h2 className="text-xl sm:text-3xl md:text-4xl font-extrabold font-display tracking-tight mb-1 sm:mb-2">
+            <h2 className="text-lg sm:text-2xl md:text-3xl font-extrabold font-display tracking-tight mb-0.5 sm:mb-1">
               The Engineer Behind the Code:{" "}
               <span className="text-electric-yellow glow-yellow font-editorial italic font-normal">
                 Foundations, Journey &amp; Persona.
               </span>
             </h2>
 
-            <p className="text-[11px] sm:text-xs md:text-sm text-neutral-300 max-w-3xl leading-relaxed mb-2 sm:mb-3 font-light">
+            <p className="text-[11px] sm:text-xs text-neutral-300 max-w-3xl leading-relaxed mb-1.5 sm:mb-2 font-light">
               Bridging academic engineering rigor with 3+ years of client-facing freelance web delivery and enterprise systems.
               Explore my core architecture pillars, academic timeline, physical &amp; creative pursuits, and classified intel below.
             </p>
@@ -588,7 +588,7 @@ export default function Home() {
           {/* Absolute Bottom Navigation Bar */}
           <button
             onClick={() => scrollToSection(2)}
-            className="w-full py-2.5 sm:py-3 px-4 sm:px-5 rounded-2xl bg-[#FFD600] hover:bg-[#FFE033] text-black text-xs font-mono font-extrabold tracking-wider flex items-center justify-between transition-all active:scale-98 shadow-xl shadow-yellow-400/30 cursor-pointer shrink-0 mt-2 pointer-events-auto"
+            className="w-full py-2 sm:py-2.5 px-4 sm:px-5 rounded-2xl bg-[#FFD600] hover:bg-[#FFE033] text-black text-xs font-mono font-extrabold tracking-wider flex items-center justify-between transition-all active:scale-98 shadow-xl shadow-yellow-400/30 cursor-pointer shrink-0 mt-1.5 pointer-events-auto"
           >
             <div className="flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-black animate-pulse" />
@@ -604,12 +604,12 @@ export default function Home() {
         {/* SECTION 2: WORKS // COMPILED PROJECTS (Gallery White // #F8F9FA) */}
         <GradualBlur
           visibleProgress={getSectionVisibility(2)}
-          className="absolute w-[96vw] sm:w-[94vw] md:w-full max-w-6xl flex flex-col justify-between max-h-[85vh] md:max-h-[88vh] text-neutral-900 mx-auto pointer-events-auto"
+          className="absolute w-[96vw] sm:w-[94vw] md:w-full max-w-7xl flex flex-col justify-between max-h-[88vh] lg:max-h-[92vh] text-neutral-900 mx-auto pointer-events-auto"
         >
           {/* Absolute Top Navigation Bar */}
           <button
             onClick={() => scrollToSection(1)}
-            className="w-full py-2 px-4 rounded-2xl bg-white/90 hover:bg-white border border-neutral-300 backdrop-blur-xl text-neutral-800 text-xs font-mono font-bold tracking-wider flex items-center justify-between transition-all active:scale-98 shadow-md cursor-pointer shrink-0 mb-2 pointer-events-auto"
+            className="w-full py-1.5 px-4 rounded-2xl bg-white/90 hover:bg-white border border-neutral-300 backdrop-blur-xl text-neutral-800 text-xs font-mono font-bold tracking-wider flex items-center justify-between transition-all active:scale-98 shadow-md cursor-pointer shrink-0 mb-1.5 pointer-events-auto"
           >
             <div className="flex items-center gap-2">
               <ArrowUp className="w-3.5 h-3.5 text-amber-700 animate-pulse" />
@@ -620,19 +620,19 @@ export default function Home() {
 
           {/* Scrollable Content Body */}
           <div className="flex-1 overflow-y-auto pr-1">
-            <div className="inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-900 text-[10px] sm:text-xs font-mono mb-1.5 sm:mb-2 backdrop-blur-md self-start">
+            <div className="inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-0.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-900 text-[10px] sm:text-xs font-mono mb-1 backdrop-blur-md self-start">
               <Sparkles className="w-3 sm:w-3.5 h-3 sm:h-3.5 text-amber-700" />
               <span>SECTION 02 // COMPILED ENTERPRISE WORKS &amp; DEMOS</span>
             </div>
 
-            <h2 className="text-xl sm:text-3xl md:text-4xl font-extrabold font-display tracking-tight mb-1 sm:mb-1.5">
+            <h2 className="text-lg sm:text-2xl md:text-3xl font-extrabold font-display tracking-tight mb-0.5 sm:mb-1">
               Enterprise Platforms &amp;{" "}
               <span className="font-editorial italic text-amber-800 font-normal">
                 Recorded Video Demos.
               </span>
             </h2>
 
-            <p className="text-[11px] sm:text-xs md:text-sm text-neutral-600 max-w-2xl leading-relaxed mb-2 sm:mb-2.5 font-light">
+            <p className="text-[11px] sm:text-xs text-neutral-600 max-w-2xl leading-relaxed mb-1.5 sm:mb-2 font-light">
               Production-grade systems built from scratch with microservices, automated cost reconciliation,
               automotive competency matrices, and embedded video walkthroughs.
             </p>
@@ -644,7 +644,7 @@ export default function Home() {
           {/* Absolute Bottom Navigation Bar */}
           <button
             onClick={() => scrollToSection(3)}
-            className="w-full py-2.5 sm:py-3 px-4 sm:px-5 rounded-2xl bg-neutral-900 hover:bg-black text-white text-xs font-mono font-bold tracking-wider flex items-center justify-between transition-all active:scale-98 shadow-xl shadow-neutral-900/25 cursor-pointer shrink-0 mt-2 pointer-events-auto"
+            className="w-full py-2 sm:py-2.5 px-4 sm:px-5 rounded-2xl bg-neutral-900 hover:bg-black text-white text-xs font-mono font-bold tracking-wider flex items-center justify-between transition-all active:scale-98 shadow-xl shadow-neutral-900/25 cursor-pointer shrink-0 mt-1.5 pointer-events-auto"
           >
             <div className="flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-yellow-400 animate-pulse" />
@@ -660,12 +660,12 @@ export default function Home() {
         {/* SECTION 3: CONTACT ME // DIRECT TRANSMISSION (Void Noir // #000000) */}
         <GradualBlur
           visibleProgress={getSectionVisibility(3)}
-          className="absolute w-[96vw] sm:w-[94vw] md:w-full max-w-4xl flex flex-col justify-between max-h-[85vh] md:max-h-[88vh] text-white mx-auto pointer-events-auto"
+          className="absolute w-[96vw] sm:w-[94vw] md:w-full max-w-4xl flex flex-col justify-between max-h-[88vh] lg:max-h-[92vh] text-white mx-auto pointer-events-auto"
         >
           {/* Absolute Top Navigation Bar */}
           <button
             onClick={() => scrollToSection(2)}
-            className="w-full py-2 px-4 rounded-2xl bg-black/80 hover:bg-black border border-white/15 backdrop-blur-xl text-neutral-300 hover:text-white text-xs font-mono font-bold tracking-wider flex items-center justify-between transition-all active:scale-98 shadow-lg cursor-pointer shrink-0 mb-2 pointer-events-auto"
+            className="w-full py-1.5 px-4 rounded-2xl bg-black/80 hover:bg-black border border-white/15 backdrop-blur-xl text-neutral-300 hover:text-white text-xs font-mono font-bold tracking-wider flex items-center justify-between transition-all active:scale-98 shadow-lg cursor-pointer shrink-0 mb-1.5 pointer-events-auto"
           >
             <div className="flex items-center gap-2">
               <ArrowUp className="w-3.5 h-3.5 text-yellow-400 animate-pulse" />
@@ -676,19 +676,19 @@ export default function Home() {
 
           {/* Scrollable Content Body */}
           <div className="flex-1 overflow-y-auto pr-1">
-            <div className="inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-full bg-yellow-400/10 border border-yellow-400/30 text-yellow-400 text-[10px] sm:text-xs font-mono mb-1.5 sm:mb-2 backdrop-blur-md self-center">
+            <div className="inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-0.5 rounded-full bg-yellow-400/10 border border-yellow-400/30 text-yellow-400 text-[10px] sm:text-xs font-mono mb-1 backdrop-blur-md self-center">
               <Radio className="w-3 sm:w-3.5 h-3 sm:h-3.5 animate-pulse" />
               <span>SECTION 03 // CONTACT ME &amp; DIRECT TRANSMISSION</span>
             </div>
 
-            <h2 className="text-xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold font-display tracking-tight text-center mb-1.5 sm:mb-2">
+            <h2 className="text-lg sm:text-2xl md:text-3xl lg:text-4xl font-extrabold font-display tracking-tight text-center mb-1 sm:mb-1.5">
               Initiate Contact with{" "}
               <span className="text-electric-yellow glow-yellow font-editorial italic font-normal">
                 Fahed Mbarek.
               </span>
             </h2>
 
-            <p className="text-[11px] sm:text-xs md:text-sm text-neutral-300 text-center max-w-lg mx-auto leading-relaxed mb-2.5 sm:mb-3 font-light font-mono">
+            <p className="text-[11px] sm:text-xs text-neutral-300 text-center max-w-lg mx-auto leading-relaxed mb-2 sm:mb-2.5 font-light font-mono">
               Open for full-time software engineering roles, enterprise system architecture,
               and client collaborations. Send a message to initiate discussion.
             </p>
@@ -700,7 +700,7 @@ export default function Home() {
           {/* Absolute Bottom Navigation Bar */}
           <button
             onClick={() => scrollToSection(0)}
-            className="w-full py-2.5 sm:py-3 px-4 sm:px-5 rounded-2xl bg-white/10 hover:bg-white/20 border border-white/20 text-white text-xs font-mono font-bold tracking-wider flex items-center justify-between transition-all active:scale-98 shadow-xl backdrop-blur-xl cursor-pointer shrink-0 mt-2 pointer-events-auto"
+            className="w-full py-2 sm:py-2.5 px-4 sm:px-5 rounded-2xl bg-white/10 hover:bg-white/20 border border-white/20 text-white text-xs font-mono font-bold tracking-wider flex items-center justify-between transition-all active:scale-98 shadow-xl backdrop-blur-xl cursor-pointer shrink-0 mt-1.5 pointer-events-auto"
           >
             <div className="flex items-center gap-2">
               <Orbit className="w-4 h-4 text-yellow-400 animate-spin" />
