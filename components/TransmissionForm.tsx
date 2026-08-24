@@ -110,8 +110,8 @@ export default function TransmissionForm({ onNavigateToWorks, onNavigateToOrigin
               SEND ANOTHER MESSAGE
             </button>
             <a
-              href="/cv_fahed_mbarek.pdf"
-              download
+              href="/Resume_Fahed_Mbarek.pdf"
+              download="Resume_Fahed_Mbarek.pdf"
               className="px-4 py-2 rounded-full text-xs font-mono bg-yellow-400 text-black font-bold hover:bg-yellow-300 transition-all flex items-center gap-1.5"
             >
               <FileDown className="w-3.5 h-3.5" />
@@ -193,8 +193,8 @@ export default function TransmissionForm({ onNavigateToWorks, onNavigateToOrigin
           <div className="pt-2 flex flex-col sm:flex-row items-center justify-between gap-3">
             <div className="flex items-center gap-2">
               <a
-                href="/cv_fahed_mbarek.pdf"
-                download
+                href="/Resume_Fahed_Mbarek.pdf"
+                download="Resume_Fahed_Mbarek.pdf"
                 className="px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-mono font-semibold transition-all flex items-center gap-1.5 active:scale-95"
               >
                 <FileDown className="w-3.5 h-3.5 text-yellow-400" />

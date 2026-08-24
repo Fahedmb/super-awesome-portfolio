@@ -12,7 +12,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 1.0,
     },
     {
-      url: `${baseUrl}/cv_fahed_mbarek.pdf`,
+      url: `${baseUrl}/Resume_Fahed_Mbarek.pdf`,
       lastModified: currentDate,
       changeFrequency: "monthly",
       priority: 0.8,

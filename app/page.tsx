@@ -331,8 +331,8 @@ export default function Home() {
         {/* Quick Header Actions: CV Download & Contact */}
         <div className="flex items-center gap-2">
           <a
-            href="/cv_fahed_mbarek.pdf"
-            download
+            href="/Resume_Fahed_Mbarek.pdf"
+            download="Resume_Fahed_Mbarek.pdf"
             className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-mono font-bold transition-all duration-200 active:scale-95 border ${
               isCurrentSectionLight
                 ? "bg-amber-500/10 border-amber-500/30 text-amber-900 hover:bg-amber-500/20"
@@ -483,8 +483,8 @@ export default function Home() {
                 {/* Action Buttons */}
                 <div className="flex flex-wrap items-center gap-2 sm:gap-3">
                   <a
-                    href="/cv_fahed_mbarek.pdf"
-                    download
+                    href="/Resume_Fahed_Mbarek.pdf"
+                    download="Resume_Fahed_Mbarek.pdf"
                     className="px-4 sm:px-5 py-2 sm:py-2.5 rounded-full bg-neutral-900 hover:bg-black text-white text-[11px] sm:text-xs font-mono font-bold tracking-wider transition-all duration-200 active:scale-95 shadow-xl shadow-neutral-900/15 flex items-center gap-1.5 sm:gap-2"
                   >
                     <FileDown className="w-3.5 sm:w-4 h-3.5 sm:h-4 text-yellow-400" />
