@@ -432,11 +432,11 @@ export default function Home() {
       {/* ----------------------------------------------------------------- */}
       {/* CINEMATIC NARRATIVE OVERLAYS (4 Acts with Gradual Blur) */}
       {/* ----------------------------------------------------------------- */}
-      <div className="fixed inset-0 z-20 pointer-events-none flex items-center justify-center p-3 sm:p-6 md:p-12 pt-2 pb-16 sm:pt-4 sm:pb-16 md:pt-16 md:pb-16 overflow-hidden">
+      <div className="fixed inset-0 z-20 pointer-events-none flex items-center justify-center p-2 sm:p-4 md:p-8 pt-2 pb-14 sm:pt-4 sm:pb-16 md:pt-14 md:pb-16 overflow-hidden">
         {/* SECTION 0: ORIGIN // THE ASCENT (Light // #FFFFFF) */}
         <GradualBlur
           visibleProgress={getSectionVisibility(0)}
-          className="absolute w-[88vw] sm:w-[85vw] md:w-full max-w-5xl flex flex-col justify-between max-h-[80vh] md:max-h-[86vh] mx-auto pointer-events-auto"
+          className="absolute w-[96vw] sm:w-[94vw] md:w-full max-w-7xl flex flex-col justify-between max-h-[85vh] md:max-h-[88vh] mx-auto pointer-events-auto"
         >
           {/* Scrollable Content Body */}
           <div className="flex-1 overflow-y-auto pr-1">
@@ -548,7 +548,7 @@ export default function Home() {
         {/* SECTION 1: ABOUT ME // THE SINGULARITY (Noir // #000000) */}
         <GradualBlur
           visibleProgress={getSectionVisibility(1)}
-          className="absolute w-[88vw] sm:w-[85vw] md:w-full max-w-4xl flex flex-col justify-between max-h-[80vh] md:max-h-[86vh] text-white mx-auto pointer-events-auto"
+          className="absolute w-[96vw] sm:w-[94vw] md:w-full max-w-6xl flex flex-col justify-between max-h-[85vh] md:max-h-[88vh] text-white mx-auto pointer-events-auto"
         >
           {/* Absolute Top Navigation Bar */}
           <button
@@ -604,7 +604,7 @@ export default function Home() {
         {/* SECTION 2: WORKS // COMPILED PROJECTS (Gallery White // #F8F9FA) */}
         <GradualBlur
           visibleProgress={getSectionVisibility(2)}
-          className="absolute w-[88vw] sm:w-[85vw] md:w-full max-w-4xl flex flex-col justify-between max-h-[80vh] md:max-h-[86vh] text-neutral-900 mx-auto pointer-events-auto"
+          className="absolute w-[96vw] sm:w-[94vw] md:w-full max-w-6xl flex flex-col justify-between max-h-[85vh] md:max-h-[88vh] text-neutral-900 mx-auto pointer-events-auto"
         >
           {/* Absolute Top Navigation Bar */}
           <button
@@ -660,7 +660,7 @@ export default function Home() {
         {/* SECTION 3: CONTACT ME // DIRECT TRANSMISSION (Void Noir // #000000) */}
         <GradualBlur
           visibleProgress={getSectionVisibility(3)}
-          className="absolute w-[88vw] sm:w-[85vw] md:w-full max-w-2xl flex flex-col justify-between max-h-[80vh] md:max-h-[86vh] text-white mx-auto pointer-events-auto"
+          className="absolute w-[96vw] sm:w-[94vw] md:w-full max-w-4xl flex flex-col justify-between max-h-[85vh] md:max-h-[88vh] text-white mx-auto pointer-events-auto"
         >
           {/* Absolute Top Navigation Bar */}
           <button
