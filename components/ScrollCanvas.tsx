@@ -27,6 +27,7 @@ interface VideoManifest {
 }
 
 interface ScrollCanvasProps {
+  activeSection?: number;
   onProgressUpdate?: (data: {
     progress: number;
     currentFrame: number;
@@ -53,7 +54,10 @@ function selectTier(): string {
   }
 }
 
-export default function ScrollCanvas({ onProgressUpdate }: ScrollCanvasProps) {
+export default function ScrollCanvas({
+  activeSection = 0,
+  onProgressUpdate,
+}: ScrollCanvasProps) {
   const [deviceInfo] = useState<DeviceInfo>(() => detectDevice());
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const ctxRef = useRef<CanvasRenderingContext2D | null>(null); // Cache context!
@@ -399,25 +403,14 @@ export default function ScrollCanvas({ onProgressUpdate }: ScrollCanvasProps) {
   }, [isLoaded, handleResize, handleScroll]);
 
   if (deviceInfo.isMobile) {
+    const isLight = activeSection === 0 || activeSection === 2;
     return (
       <div
-        className="fixed inset-0 w-full h-full -z-10 bg-neutral-950 overflow-hidden pointer-events-none"
+        className={`fixed inset-0 w-full h-full -z-10 transition-colors duration-700 ease-in-out pointer-events-none ${
+          isLight ? "bg-[#ffffff]" : "bg-[#0a0a0c]"
+        }`}
         aria-hidden="true"
-      >
-        {/* Mobile Ambient Spatial Lighting */}
-        <div className="absolute -top-32 -left-32 w-80 h-80 rounded-full bg-yellow-500/10 blur-[100px]" />
-        <div className="absolute top-1/3 -right-32 w-80 h-80 rounded-full bg-amber-500/10 blur-[100px]" />
-        <div className="absolute -bottom-32 left-1/3 w-80 h-80 rounded-full bg-yellow-400/5 blur-[120px]" />
-        {/* Subtle Cybernetic Grid */}
-        <div
-          className="absolute inset-0 opacity-[0.035]"
-          style={{
-            backgroundImage:
-              "linear-gradient(rgba(255,255,255,0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.3) 1px, transparent 1px)",
-            backgroundSize: "40px 40px",
-          }}
-        />
-      </div>
+      />
     );
   }
 

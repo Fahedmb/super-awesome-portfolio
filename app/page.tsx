@@ -94,18 +94,21 @@ export default function Home() {
         cancelAnimationFrame(animRafRef.current);
       }
 
-      // Mobile Device Fast-Track: 320ms responsive cubic-bezier smooth transition without video waiting
+      // Mobile Device Fast-Track: 350ms responsive cubic-bezier smooth transition with fade
       if (dev.isMobile) {
         setIsTransitioning(true);
         isAnimating.current = true;
         const startTime = performance.now();
-        const duration = 320;
+        const duration = 350;
 
         const animateMobile = (currentTime: number) => {
           const elapsed = currentTime - startTime;
           const progress = Math.min(elapsed / duration, 1);
-          // Cubic ease-out
-          const ease = 1 - Math.pow(1 - progress, 3);
+          // Smooth ease-in-out
+          const ease =
+            progress < 0.5
+              ? 2 * progress * progress
+              : 1 - Math.pow(-2 * progress + 2, 2) / 2;
 
           window.scrollTo(0, startY + change * ease);
 
@@ -222,6 +225,18 @@ export default function Home() {
       }, 150);
     };
 
+    let touchStartY = 0;
+    let touchStartX = 0;
+    let isTouchActive = false;
+
+    const handleTouchStart = (e: TouchEvent) => {
+      if (e.touches.length > 0) {
+        touchStartY = e.touches[0].clientY;
+        touchStartX = e.touches[0].clientX;
+        isTouchActive = true;
+      }
+    };
+
     const handleTouchMove = (e: TouchEvent) => {
       // Allow internal scrolling inside scrollable sub-containers (.overflow-y-auto or .overflow-x-auto)
       let target = e.target as HTMLElement | null;
@@ -236,22 +251,44 @@ export default function Home() {
         }
         target = target.parentElement;
       }
-      // Block window/page dragging from activating video animations
-      if (!isInsideScrollable) {
+      if (!isInsideScrollable && !detectDevice().isMobile) {
         e.preventDefault();
+      }
+    };
+
+    const handleTouchEnd = (e: TouchEvent) => {
+      if (!isTouchActive || e.changedTouches.length === 0 || isAnimating.current) return;
+      isTouchActive = false;
+
+      const deltaY = touchStartY - e.changedTouches[0].clientY;
+      const deltaX = touchStartX - e.changedTouches[0].clientX;
+
+      // Detect deliberate vertical swipe (> 35px threshold and predominantly vertical)
+      if (Math.abs(deltaY) > 35 && Math.abs(deltaY) > Math.abs(deltaX) * 1.1) {
+        const vh = window.innerHeight;
+        const currentSection = Math.round(window.scrollY / vh);
+        if (deltaY > 0 && currentSection < 3) {
+          scrollToSection(currentSection + 1);
+        } else if (deltaY < 0 && currentSection > 0) {
+          scrollToSection(currentSection - 1);
+        }
       }
     };
 
     window.addEventListener("wheel", handleWheel, { passive: false });
     window.addEventListener("keydown", handleKeyDown);
     window.addEventListener("scroll", handleScroll, { passive: true });
-    window.addEventListener("touchmove", handleTouchMove, { passive: false });
+    window.addEventListener("touchstart", handleTouchStart, { passive: true });
+    window.addEventListener("touchmove", handleTouchMove, { passive: true });
+    window.addEventListener("touchend", handleTouchEnd, { passive: true });
 
     return () => {
       window.removeEventListener("wheel", handleWheel);
       window.removeEventListener("keydown", handleKeyDown);
       window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("touchstart", handleTouchStart);
       window.removeEventListener("touchmove", handleTouchMove);
+      window.removeEventListener("touchend", handleTouchEnd);
       if (animRafRef.current) cancelAnimationFrame(animRafRef.current);
       if (scrollTimeout.current) clearTimeout(scrollTimeout.current);
     };
@@ -277,8 +314,8 @@ export default function Home() {
 
   return (
     <main className="relative min-h-screen font-sans selection:bg-yellow-400 selection:text-black">
-      {/* Dynamic 60fps Video-Synchronized Background Canvas */}
-      <ScrollCanvas onProgressUpdate={handleProgressUpdate} />
+      {/* Dynamic 60fps Video-Synchronized / Adaptive Mobile Background Canvas */}
+      <ScrollCanvas activeSection={activeSection} onProgressUpdate={handleProgressUpdate} />
 
       {/* Top Glass Header & Navigation HUD (Desktop & Tablet) */}
       <header className="hidden md:flex fixed top-0 left-0 right-0 z-40 px-6 py-4 items-center justify-between pointer-events-auto">
@@ -438,8 +475,8 @@ export default function Home() {
           </span>
         </div>
 
-        {/* Right: Scene Navigation Buttons */}
-        <div className="flex items-center space-x-1.5 sm:space-x-2 pointer-events-auto">
+        {/* Right: Scene Navigation Buttons (Desktop Only) */}
+        <div className="hidden md:flex items-center space-x-1.5 sm:space-x-2 pointer-events-auto">
           <button
             onClick={() => scrollToSection(activeSection - 1)}
             disabled={activeSection <= 0}
@@ -532,7 +569,7 @@ export default function Home() {
                   <SpecularButton
                     variant="light"
                     onClick={() => scrollToSection(1)}
-                    className="shadow-md !py-2 sm:!py-2.5 !px-4 sm:!px-5 !text-[11px] sm:!text-xs"
+                    className="hidden md:inline-flex shadow-md !py-2 sm:!py-2.5 !px-4 sm:!px-5 !text-[11px] sm:!text-xs"
                   >
                     <span>ABOUT ME</span>
                     <ChevronRight className="w-3.5 sm:w-4 h-3.5 sm:h-4" />
@@ -540,7 +577,7 @@ export default function Home() {
 
                   <button
                     onClick={() => scrollToSection(2)}
-                    className="px-4 sm:px-5 py-2 sm:py-2.5 rounded-full border border-neutral-300 bg-white/80 hover:bg-white text-neutral-800 text-[11px] sm:text-xs font-mono font-semibold transition-all duration-200 active:scale-95 shadow-xs cursor-pointer"
+                    className="hidden md:inline-flex px-4 sm:px-5 py-2 sm:py-2.5 rounded-full border border-neutral-300 bg-white/80 hover:bg-white text-neutral-800 text-[11px] sm:text-xs font-mono font-semibold transition-all duration-200 active:scale-95 shadow-xs cursor-pointer"
                   >
                     EXPLORE WORKS
                   </button>
@@ -567,10 +604,10 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Absolute Bottom Navigation Bar */}
+          {/* Absolute Bottom Navigation Bar (Desktop Only) */}
           <button
             onClick={() => scrollToSection(1)}
-            className="w-full py-2 sm:py-2.5 px-4 sm:px-5 rounded-2xl bg-neutral-900 hover:bg-black text-white text-xs font-mono font-bold tracking-wider flex items-center justify-between transition-all active:scale-98 shadow-xl shadow-neutral-900/25 cursor-pointer shrink-0 mt-1.5 pointer-events-auto"
+            className="hidden md:flex w-full py-2 sm:py-2.5 px-4 sm:px-5 rounded-2xl bg-neutral-900 hover:bg-black text-white text-xs font-mono font-bold tracking-wider items-center justify-between transition-all active:scale-98 shadow-xl shadow-neutral-900/25 cursor-pointer shrink-0 mt-1.5 pointer-events-auto"
           >
             <div className="flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-yellow-400 animate-pulse" />
@@ -588,10 +625,10 @@ export default function Home() {
           visibleProgress={getSectionVisibility(1)}
           className="absolute w-[96vw] sm:w-[94vw] md:w-full max-w-7xl flex flex-col justify-between max-h-[88vh] lg:max-h-[92vh] text-white mx-auto pointer-events-auto"
         >
-          {/* Absolute Top Navigation Bar */}
+          {/* Absolute Top Navigation Bar (Desktop Only) */}
           <button
             onClick={() => scrollToSection(0)}
-            className="w-full py-1.5 px-4 rounded-2xl bg-black/80 hover:bg-black border border-white/15 backdrop-blur-xl text-neutral-300 hover:text-white text-xs font-mono font-bold tracking-wider flex items-center justify-between transition-all active:scale-98 shadow-lg cursor-pointer shrink-0 mb-1.5 pointer-events-auto"
+            className="hidden md:flex w-full py-1.5 px-4 rounded-2xl bg-black/80 hover:bg-black border border-white/15 backdrop-blur-xl text-neutral-300 hover:text-white text-xs font-mono font-bold tracking-wider items-center justify-between transition-all active:scale-98 shadow-lg cursor-pointer shrink-0 mb-1.5 pointer-events-auto"
           >
             <div className="flex items-center gap-2">
               <ArrowUp className="w-3.5 h-3.5 text-yellow-400 animate-pulse" />
@@ -623,10 +660,10 @@ export default function Home() {
             <AboutTabs />
           </div>
 
-          {/* Absolute Bottom Navigation Bar */}
+          {/* Absolute Bottom Navigation Bar (Desktop Only) */}
           <button
             onClick={() => scrollToSection(2)}
-            className="w-full py-2 sm:py-2.5 px-4 sm:px-5 rounded-2xl bg-[#FFD600] hover:bg-[#FFE033] text-black text-xs font-mono font-extrabold tracking-wider flex items-center justify-between transition-all active:scale-98 shadow-xl shadow-yellow-400/30 cursor-pointer shrink-0 mt-1.5 pointer-events-auto"
+            className="hidden md:flex w-full py-2 sm:py-2.5 px-4 sm:px-5 rounded-2xl bg-[#FFD600] hover:bg-[#FFE033] text-black text-xs font-mono font-extrabold tracking-wider items-center justify-between transition-all active:scale-98 shadow-xl shadow-yellow-400/30 cursor-pointer shrink-0 mt-1.5 pointer-events-auto"
           >
             <div className="flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-black animate-pulse" />
@@ -644,10 +681,10 @@ export default function Home() {
           visibleProgress={getSectionVisibility(2)}
           className="absolute w-[96vw] sm:w-[94vw] md:w-full max-w-7xl flex flex-col justify-between max-h-[88vh] lg:max-h-[92vh] text-neutral-900 mx-auto pointer-events-auto"
         >
-          {/* Absolute Top Navigation Bar */}
+          {/* Absolute Top Navigation Bar (Desktop Only) */}
           <button
             onClick={() => scrollToSection(1)}
-            className="w-full py-1.5 px-4 rounded-2xl bg-white/90 hover:bg-white border border-neutral-300 backdrop-blur-xl text-neutral-800 text-xs font-mono font-bold tracking-wider flex items-center justify-between transition-all active:scale-98 shadow-md cursor-pointer shrink-0 mb-1.5 pointer-events-auto"
+            className="hidden md:flex w-full py-1.5 px-4 rounded-2xl bg-white/90 hover:bg-white border border-neutral-300 backdrop-blur-xl text-neutral-800 text-xs font-mono font-bold tracking-wider items-center justify-between transition-all active:scale-98 shadow-md cursor-pointer shrink-0 mb-1.5 pointer-events-auto"
           >
             <div className="flex items-center gap-2">
               <ArrowUp className="w-3.5 h-3.5 text-amber-700 animate-pulse" />
@@ -679,10 +716,10 @@ export default function Home() {
             <DepthCarousel onOrderPortfolio={() => scrollToSection(3)} />
           </div>
 
-          {/* Absolute Bottom Navigation Bar */}
+          {/* Absolute Bottom Navigation Bar (Desktop Only) */}
           <button
             onClick={() => scrollToSection(3)}
-            className="w-full py-2 sm:py-2.5 px-4 sm:px-5 rounded-2xl bg-neutral-900 hover:bg-black text-white text-xs font-mono font-bold tracking-wider flex items-center justify-between transition-all active:scale-98 shadow-xl shadow-neutral-900/25 cursor-pointer shrink-0 mt-1.5 pointer-events-auto"
+            className="hidden md:flex w-full py-2 sm:py-2.5 px-4 sm:px-5 rounded-2xl bg-neutral-900 hover:bg-black text-white text-xs font-mono font-bold tracking-wider items-center justify-between transition-all active:scale-98 shadow-xl shadow-neutral-900/25 cursor-pointer shrink-0 mt-1.5 pointer-events-auto"
           >
             <div className="flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-yellow-400 animate-pulse" />
@@ -700,10 +737,10 @@ export default function Home() {
           visibleProgress={getSectionVisibility(3)}
           className="absolute w-[96vw] sm:w-[94vw] md:w-full max-w-4xl flex flex-col justify-between max-h-[88vh] lg:max-h-[92vh] text-white mx-auto pointer-events-auto"
         >
-          {/* Absolute Top Navigation Bar */}
+          {/* Absolute Top Navigation Bar (Desktop Only) */}
           <button
             onClick={() => scrollToSection(2)}
-            className="w-full py-1.5 px-4 rounded-2xl bg-black/80 hover:bg-black border border-white/15 backdrop-blur-xl text-neutral-300 hover:text-white text-xs font-mono font-bold tracking-wider flex items-center justify-between transition-all active:scale-98 shadow-lg cursor-pointer shrink-0 mb-1.5 pointer-events-auto"
+            className="hidden md:flex w-full py-1.5 px-4 rounded-2xl bg-black/80 hover:bg-black border border-white/15 backdrop-blur-xl text-neutral-300 hover:text-white text-xs font-mono font-bold tracking-wider items-center justify-between transition-all active:scale-98 shadow-lg cursor-pointer shrink-0 mb-1.5 pointer-events-auto"
           >
             <div className="flex items-center gap-2">
               <ArrowUp className="w-3.5 h-3.5 text-yellow-400 animate-pulse" />
@@ -735,10 +772,10 @@ export default function Home() {
             <TransmissionForm />
           </div>
 
-          {/* Absolute Bottom Navigation Bar */}
+          {/* Absolute Bottom Navigation Bar (Desktop Only) */}
           <button
             onClick={() => scrollToSection(0)}
-            className="w-full py-2 sm:py-2.5 px-4 sm:px-5 rounded-2xl bg-white/10 hover:bg-white/20 border border-white/20 text-white text-xs font-mono font-bold tracking-wider flex items-center justify-between transition-all active:scale-98 shadow-xl backdrop-blur-xl cursor-pointer shrink-0 mt-1.5 pointer-events-auto"
+            className="hidden md:flex w-full py-2 sm:py-2.5 px-4 sm:px-5 rounded-2xl bg-white/10 hover:bg-white/20 border border-white/20 text-white text-xs font-mono font-bold tracking-wider items-center justify-between transition-all active:scale-98 shadow-xl backdrop-blur-xl cursor-pointer shrink-0 mt-1.5 pointer-events-auto"
           >
             <div className="flex items-center gap-2">
               <Orbit className="w-4 h-4 text-yellow-400 animate-spin" />
