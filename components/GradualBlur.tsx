@@ -13,29 +13,17 @@ interface GradualBlurProps {
 export default function GradualBlur({
   children,
   visibleProgress,
-  maxTranslateY = 16,
   className = "",
 }: GradualBlurProps) {
-  // Clamped visibility factor (0 to 1)
-  const clamped = Math.max(0, Math.min(1, visibleProgress));
-
-  // Smoothstep easing for silky compositor transition
-  const smooth = clamped * clamped * (3 - 2 * clamped);
-
-  const opacity = smooth;
-  const translateY = (1 - smooth) * maxTranslateY;
-
-  if (opacity <= 0.001) {
+  if (visibleProgress <= 0.001) {
     return null;
   }
 
   return (
     <div
-      className={className}
+      className={`${className} animate-section-entrance`}
       style={{
-        opacity,
-        transform: `translate3d(0, ${translateY.toFixed(1)}px, 0)`,
-        pointerEvents: opacity > 0.7 ? "auto" : "none",
+        pointerEvents: "auto",
         willChange: "transform, opacity",
       }}
     >

@@ -41,6 +41,7 @@ export default function Home() {
   const scrollTimeout = useRef<NodeJS.Timeout | null>(null);
 
   const [activeSection, setActiveSection] = useState<number>(0);
+  const [isTransitioning, setIsTransitioning] = useState<boolean>(false);
   const [hoveredNav, setHoveredNav] = useState<number | null>(null);
   const progressRef = useRef<ProgressData>({
     progress: 0,
@@ -68,7 +69,11 @@ export default function Home() {
       const startY = window.scrollY;
       const change = targetY - startY;
 
-      if (Math.abs(change) < 2) return;
+      if (Math.abs(change) < 2) {
+        setActiveSection(targetIndex);
+        setIsTransitioning(false);
+        return;
+      }
 
       // Respect accessibility preferences
       const prefersReducedMotion =
@@ -78,6 +83,7 @@ export default function Home() {
       if (prefersReducedMotion) {
         window.scrollTo(0, targetY);
         setActiveSection(targetIndex);
+        setIsTransitioning(false);
         return;
       }
 
@@ -85,6 +91,7 @@ export default function Home() {
         cancelAnimationFrame(animRafRef.current);
       }
 
+      setIsTransitioning(true);
       isAnimating.current = true;
       const startTime = performance.now();
 
@@ -118,6 +125,7 @@ export default function Home() {
           isAnimating.current = false;
           animRafRef.current = null;
           setActiveSection(targetIndex);
+          setIsTransitioning(false);
         }
       };
 
@@ -168,16 +176,16 @@ export default function Home() {
 
     const handleScroll = () => {
       const vh = window.innerHeight;
-      const current = Math.round(window.scrollY / vh);
-      setActiveSection(current);
 
       if (isAnimating.current) return;
+
+      setIsTransitioning(true);
 
       if (scrollTimeout.current) clearTimeout(scrollTimeout.current);
       scrollTimeout.current = setTimeout(() => {
         const nearest = Math.round(window.scrollY / vh);
         scrollToSection(nearest);
-      }, 300);
+      }, 150);
     };
 
     const handleTouchMove = (e: TouchEvent) => {
@@ -224,20 +232,11 @@ export default function Home() {
     if (progressTextRef.current) {
       progressTextRef.current.textContent = `${Math.round(data.progress * 100)}%`;
     }
-    // Only trigger React re-render on actual section change
-    const sectionFloat = data.progress * 3;
-    const newActive = Math.round(sectionFloat);
-    setActiveSection((prev) => (prev !== newActive ? newActive : prev));
   }, []);
 
-  // Smooth visibility for GradualBlur based on active section (no per-frame recalc)
-  const sectionFloat = activeSection;
-
   const getSectionVisibility = (index: number) => {
-    const dist = Math.abs(sectionFloat - index);
-    const threshold = 0.12; // 12% window around checkpoint
-    if (dist >= threshold) return 0;
-    return 1 - dist / threshold;
+    if (isTransitioning) return 0;
+    return activeSection === index ? 1 : 0;
   };
 
   const isCurrentSectionLight = activeSection === 0 || activeSection === 2;
@@ -371,14 +370,18 @@ export default function Home() {
                 isCurrentSectionLight ? "text-amber-800" : "text-yellow-400"
               }`}
             >
-              {sectionTitles[activeSection]?.num} {sectionTitles[activeSection]?.name}
+              {isTransitioning
+                ? "TRANSIT..."
+                : `${sectionTitles[activeSection]?.num} ${sectionTitles[activeSection]?.name}`}
             </span>
           </div>
           <div className="hidden md:block h-3 w-[1px] bg-neutral-500/20" />
           <div className="hidden md:flex items-center gap-1.5">
             <span className="opacity-50">PHASE:</span>{" "}
             <span className="font-semibold tracking-wider">
-              {sectionTitles[activeSection]?.themeLabel}
+              {isTransitioning
+                ? "SYNCHRONIZING STREAM"
+                : sectionTitles[activeSection]?.themeLabel}
             </span>
           </div>
         </div>
