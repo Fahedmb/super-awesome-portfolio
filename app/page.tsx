@@ -9,6 +9,7 @@ import DepthCarousel from "@/components/DepthCarousel";
 import TransmissionForm from "@/components/TransmissionForm";
 import GradualBlur from "@/components/GradualBlur";
 import AboutTabs from "@/components/AboutTabs";
+import { detectDevice } from "@/lib/device";
 
 const Lanyard = dynamic(() => import("@/components/Lanyard"), {
   ssr: false,
@@ -75,6 +76,8 @@ export default function Home() {
         return;
       }
 
+      const dev = detectDevice();
+
       // Respect accessibility preferences
       const prefersReducedMotion =
         typeof window !== "undefined" &&
@@ -91,6 +94,37 @@ export default function Home() {
         cancelAnimationFrame(animRafRef.current);
       }
 
+      // Mobile Device Fast-Track: 320ms responsive cubic-bezier smooth transition without video waiting
+      if (dev.isMobile) {
+        setIsTransitioning(true);
+        isAnimating.current = true;
+        const startTime = performance.now();
+        const duration = 320;
+
+        const animateMobile = (currentTime: number) => {
+          const elapsed = currentTime - startTime;
+          const progress = Math.min(elapsed / duration, 1);
+          // Cubic ease-out
+          const ease = 1 - Math.pow(1 - progress, 3);
+
+          window.scrollTo(0, startY + change * ease);
+
+          if (progress < 1) {
+            animRafRef.current = requestAnimationFrame(animateMobile);
+          } else {
+            window.scrollTo(0, targetY);
+            isAnimating.current = false;
+            animRafRef.current = null;
+            setActiveSection(targetIndex);
+            setIsTransitioning(false);
+          }
+        };
+
+        animRafRef.current = requestAnimationFrame(animateMobile);
+        return;
+      }
+
+      // Desktop (Windows PC, Mac, Linux): Full 1:1 real-time 60fps video playback
       setIsTransitioning(true);
       isAnimating.current = true;
       const startTime = performance.now();

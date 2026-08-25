@@ -2,6 +2,7 @@
 
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import { Monitor, Cpu, Sparkles } from "lucide-react";
+import { detectDevice, DeviceInfo } from "@/lib/device";
 
 // Types
 interface TierInfo {
@@ -53,11 +54,12 @@ function selectTier(): string {
 }
 
 export default function ScrollCanvas({ onProgressUpdate }: ScrollCanvasProps) {
+  const [deviceInfo] = useState<DeviceInfo>(() => detectDevice());
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const ctxRef = useRef<CanvasRenderingContext2D | null>(null); // Cache context!
-  const [isLoaded, setIsLoaded] = useState(false);
-  const [loadProgress, setLoadProgress] = useState(0);
-  const [showLoader, setShowLoader] = useState(true);
+  const [isLoaded, setIsLoaded] = useState(() => detectDevice().isMobile);
+  const [loadProgress, setLoadProgress] = useState(() => (detectDevice().isMobile ? 100 : 0));
+  const [showLoader, setShowLoader] = useState(() => !detectDevice().isMobile);
 
   useEffect(() => {
     if (isLoaded) {
@@ -131,7 +133,16 @@ export default function ScrollCanvas({ onProgressUpdate }: ScrollCanvasProps) {
   const applyProgress = useCallback(
     (scrollRatio: number) => {
       const manifest = manifestRef.current;
-      if (!manifest) return;
+      if (!manifest) {
+        onProgressUpdate?.({
+          progress: scrollRatio,
+          currentFrame: Math.round(scrollRatio * 1194),
+          totalFrames: 1194,
+          currentScene: "scene_1",
+          sceneProgress: scrollRatio,
+        });
+        return;
+      }
 
       const sectionFloat = scrollRatio * 3; // 0.0 to 3.0
 
@@ -220,6 +231,11 @@ export default function ScrollCanvas({ onProgressUpdate }: ScrollCanvasProps) {
   // Load videos on mount
   useEffect(() => {
     let isCancelled = false;
+
+    // Mobile Device Check: Skip video fetching, decoding, and DOM elements entirely!
+    if (deviceInfo.isMobile) {
+      return;
+    }
 
     async function initVideos() {
       // 1. Fetch manifest
@@ -364,7 +380,7 @@ export default function ScrollCanvas({ onProgressUpdate }: ScrollCanvasProps) {
       });
       videosRef.current = {};
     };
-  }, [renderVideoFrame]);
+  }, [renderVideoFrame, deviceInfo.isMobile]);
 
   // Setup scroll + resize listeners (after loaded)
   useEffect(() => {
@@ -381,6 +397,29 @@ export default function ScrollCanvas({ onProgressUpdate }: ScrollCanvasProps) {
       if (rafIdRef.current) cancelAnimationFrame(rafIdRef.current);
     };
   }, [isLoaded, handleResize, handleScroll]);
+
+  if (deviceInfo.isMobile) {
+    return (
+      <div
+        className="fixed inset-0 w-full h-full -z-10 bg-neutral-950 overflow-hidden pointer-events-none"
+        aria-hidden="true"
+      >
+        {/* Mobile Ambient Spatial Lighting */}
+        <div className="absolute -top-32 -left-32 w-80 h-80 rounded-full bg-yellow-500/10 blur-[100px]" />
+        <div className="absolute top-1/3 -right-32 w-80 h-80 rounded-full bg-amber-500/10 blur-[100px]" />
+        <div className="absolute -bottom-32 left-1/3 w-80 h-80 rounded-full bg-yellow-400/5 blur-[120px]" />
+        {/* Subtle Cybernetic Grid */}
+        <div
+          className="absolute inset-0 opacity-[0.035]"
+          style={{
+            backgroundImage:
+              "linear-gradient(rgba(255,255,255,0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.3) 1px, transparent 1px)",
+            backgroundSize: "40px 40px",
+          }}
+        />
+      </div>
+    );
+  }
 
   return (
     <>
@@ -408,14 +447,14 @@ export default function ScrollCanvas({ onProgressUpdate }: ScrollCanvasProps) {
 
           {/* Top Status Telemetry Pill */}
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-yellow-400/10 border border-yellow-400/25 text-yellow-300 text-[10px] font-mono tracking-widest uppercase mb-6">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
             <span>INITIALIZING HARDWARE CANVAS</span>
           </div>
 
           {/* High-Tech Orbital Indicator */}
           <div className="relative w-28 h-28 mb-6 flex items-center justify-center">
             {/* Ambient Pulse Ring */}
-            <div className="absolute inset-0 rounded-full border border-yellow-400/15 animate-ping [animation-duration:3s]" />
+            <div className="absolute inset-0 rounded-full border border-yellow-400/15 animate-pulse [animation-duration:3s]" />
             {/* Outer Dashed Orbit */}
             <div className="absolute inset-0 rounded-full border border-dashed border-yellow-400/30 animate-spin [animation-duration:14s]" />
             {/* Inner High-Speed Accent Arc */}
@@ -442,9 +481,9 @@ export default function ScrollCanvas({ onProgressUpdate }: ScrollCanvasProps) {
             <div className="p-2.5 rounded-xl bg-black/50 border border-white/10 flex items-center gap-2">
               <Monitor className="w-4 h-4 text-yellow-400 shrink-0" />
               <div className="min-w-0">
-                <div className="text-[9px] font-mono text-neutral-400 leading-none mb-1">DISPLAY TIER</div>
+                <div className="text-[9px] font-mono text-neutral-400 leading-none mb-1">SYSTEM ARCHITECTURE</div>
                 <div className="text-[10px] font-mono font-bold text-white truncate">
-                  {selectedTier ? `${selectedTier.toUpperCase()} STREAM` : "DETECTING..."}
+                  {deviceInfo.osName.toUpperCase()}
                 </div>
               </div>
             </div>
@@ -454,7 +493,7 @@ export default function ScrollCanvas({ onProgressUpdate }: ScrollCanvasProps) {
               <div className="min-w-0">
                 <div className="text-[9px] font-mono text-neutral-400 leading-none mb-1">DECODER PIPELINE</div>
                 <div className="text-[10px] font-mono font-bold text-yellow-300 truncate">
-                  ALL-INTRA 60FPS
+                  {selectedTier ? `${selectedTier.toUpperCase()} // 60FPS` : "INITIALIZING..."}
                 </div>
               </div>
             </div>
