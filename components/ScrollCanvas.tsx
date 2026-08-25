@@ -319,21 +319,6 @@ export default function ScrollCanvas({
               }
             });
 
-            // Use requestVideoFrameCallback if available for smoother rendering
-            const videoWithRvfc = video as HTMLVideoElement & {
-              requestVideoFrameCallback?: (callback: () => void) => number;
-            };
-            if (typeof videoWithRvfc.requestVideoFrameCallback === "function") {
-              const onVideoFrame = () => {
-                if (isCancelled) return;
-                if (activeSceneRef.current === sceneKey) {
-                  renderVideoFrame(video);
-                }
-                videoWithRvfc.requestVideoFrameCallback?.(onVideoFrame);
-              };
-              videoWithRvfc.requestVideoFrameCallback(onVideoFrame);
-            }
-
             resolve();
           };
           video.addEventListener("canplaythrough", onCanPlay);
