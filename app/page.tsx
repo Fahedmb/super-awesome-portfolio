@@ -36,10 +36,20 @@ interface ProgressData {
   sceneProgress: number;
 }
 
+interface PendingTransition {
+  direction: "next" | "prev";
+  targetSection: number;
+  timestamp: number;
+}
+
 export default function Home() {
   const isAnimating = useRef(false);
   const animRafRef = useRef<number | null>(null);
   const scrollTimeout = useRef<NodeJS.Timeout | null>(null);
+
+  const [pendingTransition, setPendingTransition] = useState<PendingTransition | null>(null);
+  const pendingTransitionRef = useRef<PendingTransition | null>(null);
+  const pendingTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   const [activeSection, setActiveSection] = useState<number>(0);
   const [isTransitioning, setIsTransitioning] = useState<boolean>(false);
@@ -64,6 +74,10 @@ export default function Home() {
   // Smooth cinematic transition engine (3.2s duration per scene)
   const scrollToSection = useCallback(
     (index: number, customDuration?: number) => {
+      if (pendingTimerRef.current) clearTimeout(pendingTimerRef.current);
+      pendingTransitionRef.current = null;
+      setPendingTransition(null);
+
       const vh = window.innerHeight;
       const targetIndex = Math.max(0, Math.min(index, 3));
       const targetY = targetIndex * vh;
@@ -212,9 +226,8 @@ export default function Home() {
     };
 
     const handleScroll = () => {
+      if (detectDevice().isMobile || isAnimating.current) return;
       const vh = window.innerHeight;
-
-      if (isAnimating.current) return;
 
       setIsTransitioning(true);
 
@@ -263,14 +276,93 @@ export default function Home() {
       const deltaY = touchStartY - e.changedTouches[0].clientY;
       const deltaX = touchStartX - e.changedTouches[0].clientX;
 
-      // Detect deliberate vertical swipe (> 35px threshold and predominantly vertical)
-      if (Math.abs(deltaY) > 35 && Math.abs(deltaY) > Math.abs(deltaX) * 1.1) {
-        const vh = window.innerHeight;
-        const currentSection = Math.round(window.scrollY / vh);
-        if (deltaY > 0 && currentSection < 3) {
-          scrollToSection(currentSection + 1);
-        } else if (deltaY < 0 && currentSection > 0) {
-          scrollToSection(currentSection - 1);
+      // Generous deadzone / margin: must be at least 70px and predominantly vertical (1.4x horizontal)
+      if (Math.abs(deltaY) < 70 || Math.abs(deltaY) < Math.abs(deltaX) * 1.4) {
+        return;
+      }
+
+      // Check if user is scrolling inside a scrollable sub-container
+      let target = e.target as HTMLElement | null;
+      let scrollableEl: HTMLElement | null = null;
+      while (target && target !== document.body) {
+        if (
+          target.classList?.contains("overflow-y-auto") ||
+          target.classList?.contains("overflow-x-auto")
+        ) {
+          scrollableEl = target;
+          break;
+        }
+        target = target.parentElement;
+      }
+
+      if (scrollableEl) {
+        const { scrollTop, scrollHeight, clientHeight } = scrollableEl;
+        const isAtTop = scrollTop <= 15;
+        const isAtBottom = scrollTop + clientHeight >= scrollHeight - 15;
+
+        // If swiping down (to scroll up) but not at top of container, let user scroll inside
+        if (deltaY < 0 && !isAtTop) return;
+        // If swiping up (to scroll down) but not at bottom of container, let user scroll inside
+        if (deltaY > 0 && !isAtBottom) return;
+      }
+
+      const currentSection = activeSection;
+
+      if (deltaY > 0 && currentSection < 3) {
+        // Swiping towards next section
+        const targetSection = currentSection + 1;
+        const now = Date.now();
+
+        if (
+          pendingTransitionRef.current &&
+          pendingTransitionRef.current.direction === "next" &&
+          pendingTransitionRef.current.targetSection === targetSection &&
+          now - pendingTransitionRef.current.timestamp < 2800
+        ) {
+          // Double scroll confirmed!
+          if (pendingTimerRef.current) clearTimeout(pendingTimerRef.current);
+          pendingTransitionRef.current = null;
+          setPendingTransition(null);
+          scrollToSection(targetSection);
+        } else {
+          // 1st scroll: Arm double-scroll confirmation with UI indicator
+          const pending: PendingTransition = { direction: "next", targetSection, timestamp: now };
+          pendingTransitionRef.current = pending;
+          setPendingTransition(pending);
+
+          if (pendingTimerRef.current) clearTimeout(pendingTimerRef.current);
+          pendingTimerRef.current = setTimeout(() => {
+            pendingTransitionRef.current = null;
+            setPendingTransition(null);
+          }, 2800);
+        }
+      } else if (deltaY < 0 && currentSection > 0) {
+        // Swiping towards previous section
+        const targetSection = currentSection - 1;
+        const now = Date.now();
+
+        if (
+          pendingTransitionRef.current &&
+          pendingTransitionRef.current.direction === "prev" &&
+          pendingTransitionRef.current.targetSection === targetSection &&
+          now - pendingTransitionRef.current.timestamp < 2800
+        ) {
+          // Double scroll confirmed!
+          if (pendingTimerRef.current) clearTimeout(pendingTimerRef.current);
+          pendingTransitionRef.current = null;
+          setPendingTransition(null);
+          scrollToSection(targetSection);
+        } else {
+          // 1st scroll: Arm double-scroll confirmation with UI indicator
+          const pending: PendingTransition = { direction: "prev", targetSection, timestamp: now };
+          pendingTransitionRef.current = pending;
+          setPendingTransition(pending);
+
+          if (pendingTimerRef.current) clearTimeout(pendingTimerRef.current);
+          pendingTimerRef.current = setTimeout(() => {
+            pendingTransitionRef.current = null;
+            setPendingTransition(null);
+          }, 2800);
         }
       }
     };
@@ -291,8 +383,9 @@ export default function Home() {
       window.removeEventListener("touchend", handleTouchEnd);
       if (animRafRef.current) cancelAnimationFrame(animRafRef.current);
       if (scrollTimeout.current) clearTimeout(scrollTimeout.current);
+      if (pendingTimerRef.current) clearTimeout(pendingTimerRef.current);
     };
-  }, [scrollToSection]);
+  }, [scrollToSection, activeSection]);
 
   const handleProgressUpdate = useCallback((data: ProgressData) => {
     progressRef.current = data;
@@ -503,6 +596,36 @@ export default function Home() {
           </button>
         </div>
       </footer>
+
+      {/* Mobile Double-Scroll Confirmation Floating HUD Indicator */}
+      {pendingTransition && (
+        <div
+          onClick={() => {
+            if (pendingTimerRef.current) clearTimeout(pendingTimerRef.current);
+            pendingTransitionRef.current = null;
+            const target = pendingTransition.targetSection;
+            setPendingTransition(null);
+            scrollToSection(target);
+          }}
+          className={`fixed z-50 left-1/2 -translate-x-1/2 px-4 py-2 rounded-full border shadow-2xl backdrop-blur-2xl flex items-center gap-2.5 pointer-events-auto cursor-pointer animate-section-entrance transition-all duration-300 ${
+            pendingTransition.direction === "next" ? "bottom-16 sm:bottom-20" : "top-4 sm:top-6"
+          } ${
+            isCurrentSectionLight
+              ? "bg-neutral-900/95 border-amber-500/50 text-white shadow-xl shadow-black/40"
+              : "bg-neutral-950/95 border-yellow-400/60 text-white shadow-xl shadow-yellow-500/20"
+          }`}
+        >
+          <span className="w-2 h-2 rounded-full bg-yellow-400 animate-ping" />
+          <span className="text-[11px] sm:text-xs font-mono font-bold tracking-wide">
+            {pendingTransition.direction === "next"
+              ? `Swipe again for ${sectionTitles[pendingTransition.targetSection]?.num} ${sectionTitles[pendingTransition.targetSection]?.name} ↓`
+              : `Swipe again for ${sectionTitles[pendingTransition.targetSection]?.num} ${sectionTitles[pendingTransition.targetSection]?.name} ↑`}
+          </span>
+          <span className="px-2 py-0.5 rounded-md bg-yellow-400 text-black text-[9px] font-mono font-extrabold uppercase tracking-wider shadow-sm">
+            TAP TO GO
+          </span>
+        </div>
+      )}
 
       {/* ----------------------------------------------------------------- */}
       {/* CINEMATIC NARRATIVE OVERLAYS (4 Acts with Gradual Blur) */}
