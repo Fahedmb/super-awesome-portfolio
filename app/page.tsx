@@ -607,21 +607,28 @@ export default function Home() {
             setPendingTransition(null);
             scrollToSection(target);
           }}
-          className={`fixed z-50 left-1/2 -translate-x-1/2 px-4 py-2 rounded-full border shadow-2xl backdrop-blur-2xl flex items-center gap-2.5 pointer-events-auto cursor-pointer animate-section-entrance transition-all duration-300 ${
+          className={`fixed z-50 left-1/2 -translate-x-1/2 w-[92vw] max-w-md px-4 sm:px-5 py-2.5 sm:py-3 rounded-2xl border shadow-2xl backdrop-blur-2xl flex items-center justify-between pointer-events-auto cursor-pointer animate-section-entrance transition-all duration-300 active:scale-[0.98] ${
             pendingTransition.direction === "next" ? "bottom-16 sm:bottom-20" : "top-4 sm:top-6"
           } ${
             isCurrentSectionLight
-              ? "bg-neutral-900/95 border-amber-500/50 text-white shadow-xl shadow-black/40"
-              : "bg-neutral-950/95 border-yellow-400/60 text-white shadow-xl shadow-yellow-500/20"
+              ? "bg-neutral-950/95 border-amber-500/50 text-white shadow-2xl shadow-black/50"
+              : "bg-neutral-950/95 border-yellow-400/60 text-white shadow-2xl shadow-yellow-500/25"
           }`}
         >
-          <span className="w-2 h-2 rounded-full bg-yellow-400 animate-ping" />
-          <span className="text-[11px] sm:text-xs font-mono font-bold tracking-wide">
-            {pendingTransition.direction === "next"
-              ? `Swipe again for ${sectionTitles[pendingTransition.targetSection]?.num} ${sectionTitles[pendingTransition.targetSection]?.name} ↓`
-              : `Swipe again for ${sectionTitles[pendingTransition.targetSection]?.num} ${sectionTitles[pendingTransition.targetSection]?.name} ↑`}
-          </span>
-          <span className="px-2 py-0.5 rounded-md bg-yellow-400 text-black text-[9px] font-mono font-extrabold uppercase tracking-wider shadow-sm">
+          <div className="flex items-center gap-2.5 min-w-0">
+            <span className="w-2.5 h-2.5 rounded-full bg-yellow-400 animate-pulse shrink-0 shadow-[0_0_8px_rgba(255,214,0,0.8)]" />
+            <div className="flex flex-col text-left min-w-0">
+              <span className="text-[9px] font-mono text-neutral-400 tracking-wider uppercase">
+                {pendingTransition.direction === "next" ? "CONFIRM NEXT SECTOR" : "CONFIRM PREVIOUS SECTOR"}
+              </span>
+              <span className="text-xs sm:text-[13px] font-mono font-bold text-white tracking-wide truncate">
+                {pendingTransition.direction === "next"
+                  ? `Swipe again for ${sectionTitles[pendingTransition.targetSection]?.num} ${sectionTitles[pendingTransition.targetSection]?.name} ↓`
+                  : `Swipe again for ${sectionTitles[pendingTransition.targetSection]?.num} ${sectionTitles[pendingTransition.targetSection]?.name} ↑`}
+              </span>
+            </div>
+          </div>
+          <span className="shrink-0 px-3 py-1 rounded-xl bg-[#FFD600] text-black text-[10px] sm:text-[11px] font-mono font-black uppercase tracking-wider shadow-md hover:bg-yellow-300 transition-colors">
             TAP TO GO
           </span>
         </div>
