@@ -46,7 +46,6 @@ interface PendingTransition {
 export default function Home() {
   const isAnimating = useRef(false);
   const animRafRef = useRef<number | null>(null);
-  const scrollTimeout = useRef<NodeJS.Timeout | null>(null);
 
   const [is3DMode, setIs3DMode] = useState<boolean>(() => {
     if (typeof window === "undefined") return false;
@@ -84,7 +83,6 @@ export default function Home() {
   const pendingTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   const [activeSection, setActiveSection] = useState<number>(0);
-  const [isTransitioning, setIsTransitioning] = useState<boolean>(false);
   const [hoveredNav, setHoveredNav] = useState<number | null>(null);
   const progressRef = useRef<ProgressData>({
     progress: 0,
@@ -118,7 +116,6 @@ export default function Home() {
 
       if (Math.abs(change) < 2) {
         setActiveSection(targetIndex);
-        setIsTransitioning(false);
         return;
       }
 
@@ -132,7 +129,6 @@ export default function Home() {
       if (prefersReducedMotion) {
         window.scrollTo(0, targetY);
         setActiveSection(targetIndex);
-        setIsTransitioning(false);
         return;
       }
 
@@ -142,7 +138,6 @@ export default function Home() {
 
       // Simple Mode (Default) OR Mobile Device: 350ms responsive cubic-bezier smooth transition with fade
       if (!is3DMode || dev.isMobile) {
-        setIsTransitioning(true);
         isAnimating.current = true;
         const startTime = performance.now();
         const duration = 350;
@@ -165,7 +160,6 @@ export default function Home() {
             isAnimating.current = false;
             animRafRef.current = null;
             setActiveSection(targetIndex);
-            setIsTransitioning(false);
           }
         };
 
@@ -174,7 +168,6 @@ export default function Home() {
       }
 
       // Desktop 3D Mode: Full 1:1 real-time 60fps video playback
-      setIsTransitioning(true);
       isAnimating.current = true;
       const startTime = performance.now();
 
@@ -208,7 +201,6 @@ export default function Home() {
           isAnimating.current = false;
           animRafRef.current = null;
           setActiveSection(targetIndex);
-          setIsTransitioning(false);
         }
       };
 
@@ -258,16 +250,12 @@ export default function Home() {
     };
 
     const handleScroll = () => {
-      if (detectDevice().isMobile || isAnimating.current) return;
+      if (isAnimating.current) return;
       const vh = window.innerHeight;
-
-      setIsTransitioning(true);
-
-      if (scrollTimeout.current) clearTimeout(scrollTimeout.current);
-      scrollTimeout.current = setTimeout(() => {
-        const nearest = Math.round(window.scrollY / vh);
-        scrollToSection(nearest);
-      }, 150);
+      const nearest = Math.max(0, Math.min(3, Math.round(window.scrollY / vh)));
+      if (nearest !== activeSection) {
+        setActiveSection(nearest);
+      }
     };
 
     let touchStartY = 0;
@@ -414,14 +402,13 @@ export default function Home() {
       window.removeEventListener("touchmove", handleTouchMove);
       window.removeEventListener("touchend", handleTouchEnd);
       if (animRafRef.current) cancelAnimationFrame(animRafRef.current);
-      if (scrollTimeout.current) clearTimeout(scrollTimeout.current);
       if (pendingTimerRef.current) clearTimeout(pendingTimerRef.current);
     };
   }, [scrollToSection, activeSection]);
 
   const handleProgressUpdate = useCallback((data: ProgressData) => {
     progressRef.current = data;
-    // Direct DOM writes — zero React re-renders
+    // Direct DOM writes — zero React re-renders in 3D Mode
     if (progressBarRef.current) {
       progressBarRef.current.style.width = `${Math.max(4, data.progress * 100)}%`;
     }
@@ -430,8 +417,20 @@ export default function Home() {
     }
   }, []);
 
+  // Update progress meter bar in Simple Mode
+  useEffect(() => {
+    if (!is3DMode) {
+      const pct = Math.round(((activeSection + 1) / 4) * 100);
+      if (progressBarRef.current) {
+        progressBarRef.current.style.width = `${pct}%`;
+      }
+      if (progressTextRef.current) {
+        progressTextRef.current.textContent = `${pct}%`;
+      }
+    }
+  }, [activeSection, is3DMode]);
+
   const getSectionVisibility = (index: number) => {
-    if (isTransitioning) return 0;
     return activeSection === index ? 1 : 0;
   };
 
@@ -587,18 +586,14 @@ export default function Home() {
                 isCurrentSectionLight ? "text-amber-800" : "text-yellow-400"
               }`}
             >
-              {isTransitioning
-                ? "TRANSIT..."
-                : `${sectionTitles[activeSection]?.num} ${sectionTitles[activeSection]?.name}`}
+              {`${sectionTitles[activeSection]?.num} ${sectionTitles[activeSection]?.name}`}
             </span>
           </div>
           <div className="hidden md:block h-3 w-[1px] bg-neutral-500/20" />
           <div className="hidden md:flex items-center gap-1.5">
             <span className="opacity-50">PHASE:</span>{" "}
             <span className="font-semibold tracking-wider">
-              {isTransitioning
-                ? "SYNCHRONIZING STREAM"
-                : sectionTitles[activeSection]?.themeLabel}
+              {sectionTitles[activeSection]?.themeLabel}
             </span>
           </div>
         </div>
@@ -700,7 +695,7 @@ export default function Home() {
           <div className="flex-1 overflow-y-auto pr-1">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-8 items-center pt-1 lg:pt-3">
               {/* Left Narrative Column */}
-              <div className={`flex flex-col items-start text-neutral-900 z-10 ${is3DMode ? "lg:col-span-7" : "lg:col-span-12 max-w-4xl"}`}>
+              <div className="lg:col-span-7 flex flex-col items-start text-neutral-900 z-10">
                 <div className="inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-900 text-[10px] sm:text-xs font-mono mb-2 sm:mb-3 backdrop-blur-md">
                   <Sparkles className="w-3 sm:w-3.5 h-3 sm:h-3.5 text-amber-600 animate-pulse" />
                   <span>FAHED MBAREK // FULL-STACK &amp; AI SYSTEMS</span>
@@ -767,9 +762,9 @@ export default function Home() {
                 </div>
               </div>
 
-              {/* Right Column: Interactive 3D Lanyard (Desktop 3D Mode Only) */}
-              {is3DMode && (
-                <div className="hidden lg:flex lg:col-span-5 justify-center items-center pointer-events-auto overflow-visible">
+              {/* Right Column: Lanyard Badge (Interactive 3D in 3D Mode, Crisp Static Badge in Simple Mode) */}
+              <div className="hidden lg:flex lg:col-span-5 justify-center items-center pointer-events-auto overflow-visible">
+                {is3DMode ? (
                   <Lanyard
                     position={[0, 0, 20]}
                     gravity={[0, -40, 0]}
@@ -779,8 +774,18 @@ export default function Home() {
                     frontImage="/assets/lanyard/fahed_badge.svg"
                     active={getSectionVisibility(0) > 0.05}
                   />
-                </div>
-              )}
+                ) : (
+                  <div className="relative flex flex-col items-center justify-center p-2 transition-transform duration-300 hover:scale-105">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src="/assets/lanyard/fahed_badge.svg"
+                      alt="Fahed Mbarek Badge"
+                      className="w-64 sm:w-72 md:w-80 h-auto drop-shadow-2xl select-none pointer-events-none"
+                      draggable={false}
+                    />
+                  </div>
+                )}
+              </div>
             </div>
 
             {/* Bottom Tech Logo Loop */}
