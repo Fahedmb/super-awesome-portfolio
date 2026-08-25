@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState } from "react";
-import BorderGlowCard from "./BorderGlowCard";
 import EasterEggDecoder from "./EasterEggDecoder";
 import {
   Timeline,
@@ -17,7 +16,6 @@ import {
   Cpu,
   Layers,
   GraduationCap,
-  Briefcase,
   Dumbbell,
   Music,
   Gamepad2,
@@ -28,24 +26,17 @@ import {
   Swords,
   Calendar,
   Flame,
-  Sparkles,
   Zap,
   Quote,
   Compass,
   Lightbulb,
   Video,
   ExternalLink,
-  ShieldAlert,
-  ChevronRight,
   Eye,
   Lock,
   Server,
   Terminal,
   CheckCircle2,
-  ArrowUpRight,
-  ArrowRight,
-  ArrowUp,
-  ArrowDown,
 } from "lucide-react";
 
 // Crisp SVG Youtube Icon
@@ -66,18 +57,8 @@ interface AboutTabsProps {
   onNavigateToWorks?: () => void;
 }
 
-export default function AboutTabs({ onNavigateToOrigin, onNavigateToWorks }: AboutTabsProps) {
+export default function AboutTabs({}: AboutTabsProps) {
   const [activeTab, setActiveTab] = useState<"core" | "manifesto" | "roadmap" | "hobbies" | "qa" | "youtube">("core");
-  const scrollContainerRef = React.useRef<HTMLDivElement | null>(null);
-  const [isAtBottom, setIsAtBottom] = useState(false);
-  const [isAtTop, setIsAtTop] = useState(true);
-
-  const handleContainerScroll = () => {
-    if (!scrollContainerRef.current) return;
-    const { scrollTop, scrollHeight, clientHeight } = scrollContainerRef.current;
-    setIsAtTop(scrollTop <= 15);
-    setIsAtBottom(scrollTop + clientHeight >= scrollHeight - 25);
-  };
 
   // Short, clear, meaningful tab titles that fit on one line effortlessly
   const tabs = [
@@ -320,7 +301,7 @@ export default function AboutTabs({ onNavigateToOrigin, onNavigateToWorks }: Abo
             return (
               <button
                 key={tab.id}
-                onClick={() => setActiveTab(tab.id as any)}
+                onClick={() => setActiveTab(tab.id)}
                 className={`flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl text-[10px] sm:text-[11px] font-mono font-bold tracking-wider transition-all whitespace-nowrap cursor-pointer active:scale-95 ${
                   isActive
                     ? "bg-[#FFD600] text-black shadow-md shadow-yellow-400/25 font-extrabold"

@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React from "react";
 import { cn } from "@/lib/utils";
@@ -9,7 +9,6 @@ export interface TimelineProps extends React.HTMLAttributes<HTMLOListElement> {
 }
 
 export function Timeline({
-  defaultValue = 5,
   orientation = "vertical",
   className,
   children,
@@ -36,7 +35,6 @@ export interface TimelineItemProps extends React.HTMLAttributes<HTMLLIElement> {
 
 export function TimelineItem({
   step,
-  side = "right",
   className,
   children,
   ...props

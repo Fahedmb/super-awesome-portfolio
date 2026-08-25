@@ -9,7 +9,7 @@
 
   html {
     color-scheme: dark light;
-    scroll-behavior: smooth;
+    scroll-behavior: auto;
   }
 
   body {
@@ -165,4 +165,14 @@
 .animate-tab-switch {
   animation: tab-switch 220ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
   will-change: transform, opacity;
+}
+
+/* Accessibility: Respect reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

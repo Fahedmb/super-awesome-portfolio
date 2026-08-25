@@ -5,9 +5,7 @@ import dynamic from "next/dynamic";
 import ScrollCanvas from "@/components/ScrollCanvas";
 import SpecularButton from "@/components/SpecularButton";
 import LogoLoop from "@/components/LogoLoop";
-import BorderGlowCard from "@/components/BorderGlowCard";
 import DepthCarousel from "@/components/DepthCarousel";
-import EasterEggDecoder from "@/components/EasterEggDecoder";
 import TransmissionForm from "@/components/TransmissionForm";
 import GradualBlur from "@/components/GradualBlur";
 import AboutTabs from "@/components/AboutTabs";
@@ -21,17 +19,12 @@ import {
   ArrowUp,
   ChevronRight,
   Sparkles,
-  Code2,
   Orbit,
   Radio,
-  Cpu,
-  Layers,
   FileDown,
   GraduationCap,
   Briefcase,
   Database,
-  CheckCircle,
-  ExternalLink,
 } from "lucide-react";
 
 interface ProgressData {
@@ -47,20 +40,17 @@ export default function Home() {
   const animRafRef = useRef<number | null>(null);
   const scrollTimeout = useRef<NodeJS.Timeout | null>(null);
 
-  const [mounted, setMounted] = useState(false);
   const [activeSection, setActiveSection] = useState<number>(0);
   const [hoveredNav, setHoveredNav] = useState<number | null>(null);
-  const [progressState, setProgressState] = useState<ProgressData>({
+  const progressRef = useRef<ProgressData>({
     progress: 0,
     currentFrame: 0,
     totalFrames: 1194,
     currentScene: "scene_1",
     sceneProgress: 0,
   });
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  const progressBarRef = useRef<HTMLDivElement>(null);
+  const progressTextRef = useRef<HTMLSpanElement>(null);
 
   const sectionTitles = [
     { num: "00", name: "ORIGIN", themeLabel: "THE ASCENT", subtitle: "Genesis" },
@@ -226,12 +216,22 @@ export default function Home() {
   }, [scrollToSection]);
 
   const handleProgressUpdate = useCallback((data: ProgressData) => {
-    setProgressState(data);
+    progressRef.current = data;
+    // Direct DOM writes — zero React re-renders
+    if (progressBarRef.current) {
+      progressBarRef.current.style.width = `${Math.max(4, data.progress * 100)}%`;
+    }
+    if (progressTextRef.current) {
+      progressTextRef.current.textContent = `${Math.round(data.progress * 100)}%`;
+    }
+    // Only trigger React re-render on actual section change
+    const sectionFloat = data.progress * 3;
+    const newActive = Math.round(sectionFloat);
+    setActiveSection((prev) => (prev !== newActive ? newActive : prev));
   }, []);
 
-  // Smooth visibility for GradualBlur based on scroll position
-  const progressRatio = progressState.progress;
-  const sectionFloat = progressRatio * 3;
+  // Smooth visibility for GradualBlur based on active section (no per-frame recalc)
+  const sectionFloat = activeSection;
 
   const getSectionVisibility = (index: number) => {
     const dist = Math.abs(sectionFloat - index);
@@ -265,14 +265,14 @@ export default function Home() {
                 isCurrentSectionLight ? "text-neutral-900" : "text-white"
               }`}
             >
-              FAHED MBAREK <span className="font-normal opacity-60">// FULL-STACK &amp; AI</span>
+              FAHED MBAREK <span className="font-normal opacity-60">{"// FULL-STACK & AI"}</span>
             </div>
             <div
               className={`text-[10px] flex items-center gap-1.5 font-mono ${
                 isCurrentSectionLight ? "text-neutral-600" : "text-neutral-400"
               }`}
             >
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping" />
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
               TUNISIA (UTC+1) // OPEN FOR ROLES &amp; VENTURES
             </div>
           </div>
@@ -391,12 +391,13 @@ export default function Home() {
           </div>
           <div className="w-20 sm:w-36 md:w-52 h-1.5 bg-white/10 border border-white/10 rounded-full overflow-hidden">
             <div
+              ref={progressBarRef}
               className="h-full bg-gradient-to-r from-yellow-400 via-amber-400 to-yellow-300 transition-all duration-75 shadow-[0_0_10px_rgba(255,214,0,0.7)]"
-              style={{ width: `${Math.max(4, progressState.progress * 100)}%` }}
+              style={{ width: "4%" }}
             />
           </div>
-          <span className="text-[10px] sm:text-[11px] font-mono font-bold text-yellow-400 tabular-nums">
-            {Math.round(progressState.progress * 100)}%
+          <span ref={progressTextRef} className="text-[10px] sm:text-[11px] font-mono font-bold text-yellow-400 tabular-nums">
+            0%
           </span>
         </div>
 
@@ -404,7 +405,7 @@ export default function Home() {
         <div className="flex items-center space-x-1.5 sm:space-x-2 pointer-events-auto">
           <button
             onClick={() => scrollToSection(activeSection - 1)}
-            disabled={mounted ? activeSection <= 0 : false}
+            disabled={activeSection <= 0}
             className={`p-2 sm:p-2.5 rounded-xl border transition-all disabled:opacity-30 disabled:pointer-events-none cursor-pointer ${
               isCurrentSectionLight
                 ? "glass-panel-light text-neutral-800 hover:bg-neutral-200"
@@ -416,7 +417,7 @@ export default function Home() {
           </button>
           <button
             onClick={() => scrollToSection(activeSection + 1)}
-            disabled={mounted ? activeSection >= 3 : false}
+            disabled={activeSection >= 3}
             className={`p-2 sm:p-2.5 rounded-xl border transition-all disabled:opacity-30 disabled:pointer-events-none cursor-pointer ${
               isCurrentSectionLight
                 ? "glass-panel-light text-neutral-800 hover:bg-neutral-200"

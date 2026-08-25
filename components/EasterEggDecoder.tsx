@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Sparkles, Key, Check } from "lucide-react";
+import { Sparkles, Key } from "lucide-react";
 
 export default function EasterEggDecoder() {
   const [isDecoded, setIsDecoded] = useState(false);

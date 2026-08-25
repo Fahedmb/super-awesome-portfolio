@@ -20,11 +20,7 @@ import {
   Lightbulb,
   Terminal,
   ArrowRight,
-  ArrowUp,
-  ArrowDown,
   Code2,
-  Maximize2,
-  Radio,
 } from "lucide-react";
 
 export interface ProjectItem {
@@ -165,16 +161,9 @@ export default function DepthCarousel({
   projects = defaultProjects,
   className = "",
   onOrderPortfolio,
-  onNavigateToAbout,
-  onNavigateToContact,
 }: DepthCarouselProps) {
   const [activeIndex, setActiveIndex] = useState(0);
   const [activeVideoProject, setActiveVideoProject] = useState<ProjectItem | null>(null);
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   // Close video modal on ESC key
   useEffect(() => {
@@ -449,7 +438,7 @@ export default function DepthCarousel({
       {/* ------------------------------------------------------------------- */}
       {/* CUSTOM HIGH-TECH VIDEO PLAYER MODAL WITH PORTAL (FULL SCREEN BLUR)  */}
       {/* ------------------------------------------------------------------- */}
-      {mounted &&
+      {typeof document !== "undefined" &&
         activeVideoProject &&
         activeVideoProject.youtubeId &&
         createPortal(

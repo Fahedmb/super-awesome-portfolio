@@ -8,13 +8,11 @@ import {
   Globe,
   Share2,
   Mail,
-  Sparkles,
   FileDown,
   Phone,
   MapPin,
   Copy,
   Check,
-  ArrowUp,
 } from "lucide-react";
 import SpecularButton from "./SpecularButton";
 
@@ -23,7 +21,7 @@ interface TransmissionFormProps {
   onNavigateToOrigin?: () => void;
 }
 
-export default function TransmissionForm({ onNavigateToWorks, onNavigateToOrigin }: TransmissionFormProps) {
+export default function TransmissionForm({}: TransmissionFormProps) {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -35,8 +33,9 @@ export default function TransmissionForm({ onNavigateToWorks, onNavigateToOrigin
   const [copiedEmail, setCopiedEmail] = useState(false);
 
   React.useEffect(() => {
-    const handleOrderEvent = (e: any) => {
-      const detail = e.detail || {};
+    const handleOrderEvent = (e: Event) => {
+      const customEvent = e as CustomEvent<{ frequency?: string; message?: string }>;
+      const detail = customEvent.detail || {};
       setFormData((prev) => ({
         ...prev,
         frequency: detail.frequency || "Freelance Web Platform Delivery",
@@ -77,7 +76,7 @@ export default function TransmissionForm({ onNavigateToWorks, onNavigateToOrigin
           </span>
         </div>
         <div className="flex items-center gap-2 text-[10px] font-mono text-emerald-400">
-          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
+          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
           <span>OPEN FOR ROLES &amp; PROJECTS</span>
         </div>
       </div>

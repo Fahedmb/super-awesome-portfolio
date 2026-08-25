@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef, useState, useCallback } from "react";
-import { Orbit, Monitor, Cpu, Sparkles, Zap, Layers } from "lucide-react";
+import { Monitor, Cpu, Sparkles } from "lucide-react";
 
 // Types
 interface TierInfo {
@@ -39,7 +39,7 @@ interface ScrollCanvasProps {
 // - 720p / Mobile displays (<= 1280px): use "480p"
 // - 1080p displays (1281px - 1920px): use "720p"
 // - 2K displays (1921px - 2560px) & 4K+: use "1080p"
-function selectTier(_manifest: VideoManifest): string {
+function selectTier(): string {
   if (typeof window === "undefined") return "720p";
 
   const effectiveWidth = window.innerWidth * (window.devicePixelRatio || 1);
@@ -57,6 +57,15 @@ export default function ScrollCanvas({ onProgressUpdate }: ScrollCanvasProps) {
   const ctxRef = useRef<CanvasRenderingContext2D | null>(null); // Cache context!
   const [isLoaded, setIsLoaded] = useState(false);
   const [loadProgress, setLoadProgress] = useState(0);
+  const [showLoader, setShowLoader] = useState(true);
+
+  useEffect(() => {
+    if (isLoaded) {
+      const timer = setTimeout(() => setShowLoader(false), 700);
+      return () => clearTimeout(timer);
+    }
+  }, [isLoaded]);
+
   const [selectedTier, setSelectedTier] = useState<string>("");
 
   // Video refs - one <video> per scene
@@ -221,7 +230,7 @@ export default function ScrollCanvas({ onProgressUpdate }: ScrollCanvasProps) {
       manifestRef.current = manifest;
 
       // 2. Select resolution tier based on screen size
-      const tier = selectTier(manifest);
+      const tier = selectTier();
       setSelectedTier(tier);
       console.log(
         `[ScrollCanvas] Selected tier: ${tier} (effective width: ${
@@ -249,13 +258,13 @@ export default function ScrollCanvas({ onProgressUpdate }: ScrollCanvasProps) {
 
           // Keep in active DOM viewport with max GPU decoder priority (prevents Chromium background throttling)
           video.style.position = "fixed";
-          video.style.inset = "0";
-          video.style.width = "100vw";
-          video.style.height = "100vh";
-          video.style.opacity = "0.0001";
+          video.style.top = "-9999px";
+          video.style.left = "0";
+          video.style.width = "1px";
+          video.style.height = "1px";
+          video.style.opacity = "0";
           video.style.pointerEvents = "none";
           video.style.zIndex = "-9999";
-          video.style.visibility = "visible";
           document.body.appendChild(video);
 
           videosRef.current[sceneKey] = video;
@@ -295,15 +304,18 @@ export default function ScrollCanvas({ onProgressUpdate }: ScrollCanvasProps) {
             });
 
             // Use requestVideoFrameCallback if available for smoother rendering
-            if ("requestVideoFrameCallback" in video) {
+            const videoWithRvfc = video as HTMLVideoElement & {
+              requestVideoFrameCallback?: (callback: () => void) => number;
+            };
+            if (typeof videoWithRvfc.requestVideoFrameCallback === "function") {
               const onVideoFrame = () => {
                 if (isCancelled) return;
                 if (activeSceneRef.current === sceneKey) {
                   renderVideoFrame(video);
                 }
-                (video as any).requestVideoFrameCallback(onVideoFrame);
+                videoWithRvfc.requestVideoFrameCallback?.(onVideoFrame);
               };
-              (video as any).requestVideoFrameCallback(onVideoFrame);
+              videoWithRvfc.requestVideoFrameCallback(onVideoFrame);
             }
 
             resolve();
@@ -375,6 +387,7 @@ export default function ScrollCanvas({ onProgressUpdate }: ScrollCanvasProps) {
       {/* ------------------------------------------------------------------- */}
       {/* HIGH-TECH COSMIC TELEMETRY INITIALIZER & DISPLAY RECOGNITION LOADER */}
       {/* ------------------------------------------------------------------- */}
+      {showLoader && (
       <div
         className={`fixed inset-0 z-[999999] flex flex-col items-center justify-center bg-neutral-950/98 backdrop-blur-3xl text-white transition-all duration-700 ease-out ${
           isLoaded
@@ -418,7 +431,7 @@ export default function ScrollCanvas({ onProgressUpdate }: ScrollCanvasProps) {
 
           {/* Title & Stream Identification */}
           <h2 className="text-base sm:text-lg font-bold font-display text-white tracking-tight mb-1">
-            FAHED MBAREK <span className="font-editorial italic font-normal text-amber-400 text-sm sm:text-base">// SYSTEMS</span>
+            FAHED MBAREK <span className="font-editorial italic font-normal text-amber-400 text-sm sm:text-base">{"// SYSTEMS"}</span>
           </h2>
           <p className="text-[11px] font-mono text-neutral-400 mb-5">
             Loading Video-Synchronized Interactive Architecture
@@ -465,13 +478,13 @@ export default function ScrollCanvas({ onProgressUpdate }: ScrollCanvasProps) {
           </div>
         </div>
       </div>
+      )}
 
       <canvas
         ref={canvasRef}
         className="fixed inset-0 w-full h-full -z-10 bg-neutral-950 transition-opacity duration-500"
         style={{
           opacity: isLoaded ? 1 : 0,
-          willChange: "transform"
         }}
       />
     </>

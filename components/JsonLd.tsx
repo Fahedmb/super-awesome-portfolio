@@ -254,7 +254,7 @@ export function JsonLd() {
     ],
   };
 
-  const escapeJsonLd = (data: any) =>
+  const escapeJsonLd = (data: unknown) =>
     JSON.stringify(data).replace(/</g, "\\u003c");
 
   return (

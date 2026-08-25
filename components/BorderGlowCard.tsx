@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useCallback } from "react";
 
 interface BorderGlowCardProps {
   children: React.ReactNode;
@@ -14,17 +14,17 @@ export default function BorderGlowCard({
   glowColor = "rgba(255, 214, 0, 0.45)", // Electric Mustard
 }: BorderGlowCardProps) {
   const cardRef = useRef<HTMLDivElement>(null);
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const [isHovered, setIsHovered] = useState(false);
 
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     if (!cardRef.current) return;
     const rect = cardRef.current.getBoundingClientRect();
-    setMousePos({
-      x: e.clientX - rect.left,
-      y: e.clientY - rect.top,
-    });
-  };
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    // Direct DOM write — no React re-render
+    cardRef.current.style.background =
+      `radial-gradient(280px circle at ${x}px ${y}px, ${glowColor}, rgba(255,255,255,0.06) 60%, transparent 100%)`;
+  }, [glowColor]);
 
   return (
     <div
@@ -35,7 +35,7 @@ export default function BorderGlowCard({
       className={`relative rounded-2xl p-[1px] overflow-hidden transition-all duration-300 ${className}`}
       style={{
         background: isHovered
-          ? `radial-gradient(280px circle at ${mousePos.x}px ${mousePos.y}px, ${glowColor}, rgba(255,255,255,0.06) 60%, transparent 100%)`
+          ? undefined  // Controlled by direct DOM writes in handleMouseMove
           : "rgba(255, 255, 255, 0.08)",
       }}
     >

@@ -1,4 +1,4 @@
-/* eslint-disable react/no-unknown-property */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import React, { useEffect, useMemo, useRef, useState, Suspense } from "react";
@@ -17,13 +17,6 @@ import * as THREE from "three";
 import "./Lanyard.css";
 
 extend({ MeshLineGeometry, MeshLineMaterial });
-
-declare module "@react-three/fiber" {
-  interface ThreeElements {
-    meshLineGeometry: any;
-    meshLineMaterial: any;
-  }
-}
 
 const FRONT_UV_RECT = { x: 0, y: 0, w: 0.5, h: 0.755 };
 const BACK_UV_RECT = { x: 0.5, y: 0, w: 0.5, h: 0.757 };
@@ -59,21 +52,15 @@ export default function Lanyard({
   active = true,
   className = "",
 }: LanyardProps) {
-  const [mounted, setMounted] = useState(false);
   const [isMobile, setIsMobile] = useState(() =>
     typeof window !== "undefined" ? window.innerWidth < 768 : false
   );
 
   useEffect(() => {
-    setMounted(true);
     const handleResize = () => setIsMobile(window.innerWidth < 768);
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
-
-  if (!mounted) {
-    return <div className={`lanyard-wrapper ${className}`} />;
-  }
 
   return (
     <div className={`lanyard-wrapper ${className}`}>
@@ -81,6 +68,7 @@ export default function Lanyard({
         <Canvas
           camera={{ position: position, fov: fov }}
           dpr={[1, isMobile ? 1.5 : 2]}
+          frameloop={active ? "always" : "demand"}
           gl={{ alpha: transparent, antialias: true, powerPreference: "high-performance" }}
           onCreated={({ gl }) =>
             gl.setClearColor(new THREE.Color(0x000000), transparent ? 0 : 1)
@@ -176,27 +164,42 @@ function Band({
   };
 
   const { nodes, materials } = useGLTF("/assets/lanyard/card.glb") as any;
-  const texture = useTexture(lanyardImage || "/assets/lanyard/lanyard.png");
+  const texture = useTexture(lanyardImage || "/assets/lanyard/lanyard.png", (t) => {
+    const tex = t as THREE.Texture;
+    tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
+  });
 
   const [frontTex, setFrontTex] = useState<THREE.Texture | null>(null);
   const [backTex, setBackTex] = useState<THREE.Texture | null>(null);
 
   useEffect(() => {
     if (!frontImage) {
-      setFrontTex(null);
       return;
     }
+    let cancelled = false;
     const loader = new THREE.TextureLoader();
-    loader.load(frontImage, (t) => setFrontTex(t));
+    loader.load(frontImage, (t) => {
+      if (!cancelled) setFrontTex(t);
+    });
+    return () => {
+      cancelled = true;
+      setFrontTex(null);
+    };
   }, [frontImage]);
 
   useEffect(() => {
     if (!backImage) {
-      setBackTex(null);
       return;
     }
+    let cancelled = false;
     const loader = new THREE.TextureLoader();
-    loader.load(backImage, (t) => setBackTex(t));
+    loader.load(backImage, (t) => {
+      if (!cancelled) setBackTex(t);
+    });
+    return () => {
+      cancelled = true;
+      setBackTex(null);
+    };
   }, [backImage]);
 
   const cardMap = useMemo(() => {
@@ -249,15 +252,16 @@ function Band({
     return composite;
   }, [frontImage, backImage, imageFit, frontTex, backTex, materials]);
 
-  const [curve] = useState(
-    () =>
-      new THREE.CatmullRomCurve3([
-        new THREE.Vector3(),
-        new THREE.Vector3(),
-        new THREE.Vector3(),
-        new THREE.Vector3(),
-      ])
-  );
+  const curve = useMemo(() => {
+    const c = new THREE.CatmullRomCurve3([
+      new THREE.Vector3(),
+      new THREE.Vector3(),
+      new THREE.Vector3(),
+      new THREE.Vector3(),
+    ]);
+    c.curveType = "chordal";
+    return c;
+  }, []);
 
   const [dragged, drag] = useState<THREE.Vector3 | false>(false);
   const [hovered, hover] = useState(false);
@@ -317,9 +321,6 @@ function Band({
     }
   });
 
-  curve.curveType = "chordal";
-  texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
-
   // Sizing calibration: scale S = 2.4 (mobile) or 3.0 (desktop)
   const S = isMobile ? 2.4 : 3.0;
   // In card.glb: clamp ring top loop is at local Y = 1.229.
@@ -357,11 +358,11 @@ function Band({
             onPointerOver={() => hover(true)}
             onPointerOut={() => hover(false)}
             onPointerUp={(e) => {
-              (e.target as any).releasePointerCapture(e.pointerId);
+              (e.target as HTMLElement)?.releasePointerCapture?.(e.pointerId);
               drag(false);
             }}
             onPointerDown={(e) => {
-              (e.target as any).setPointerCapture(e.pointerId);
+              (e.target as HTMLElement)?.setPointerCapture?.(e.pointerId);
               drag(
                 new THREE.Vector3()
                   .copy(e.point)
