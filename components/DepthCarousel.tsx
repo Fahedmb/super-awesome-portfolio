@@ -144,7 +144,8 @@ const defaultProjects: ProjectItem[] = [
     tags: ["Next.js 15", "React 19", "Three.js / Rapier", "HTML5 Canvas", "Tailwind CSS v4", "TypeScript"],
     metrics: "60 FPS RENDER • 0 LAYOUT JANK • SUB-SECOND VITALS",
     icon: "zap",
-    isPrivate: false,
+    githubUrl: "https://github.com/Fahedmb",
+    isPrivate: true,
     isPortfolioProduct: true,
   },
 ];
@@ -265,9 +266,13 @@ export default function DepthCarousel({
               {getIcon(current.icon)}
             </div>
             <div>
-              <div className="flex items-center gap-2">
-                <span className="px-1.5 py-0.2 rounded text-[9px] font-mono font-bold bg-amber-500/10 border border-amber-500/20 text-amber-900">
+              <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
+                <span className="px-1.5 py-0.5 rounded text-[9px] font-mono font-bold bg-amber-500/10 border border-amber-500/20 text-amber-900">
                   {current.category}
+                </span>
+                <span className="px-1.5 py-0.5 rounded text-[9px] font-mono font-bold bg-neutral-100 border border-neutral-300 text-neutral-700 flex items-center gap-1">
+                  <Lock className="w-2.5 h-2.5 text-amber-700" />
+                  <span>PRIVATE REPO</span>
                 </span>
                 <span className="text-[10px] font-mono text-neutral-500">
                   {current.clientOrRole}
@@ -390,36 +395,18 @@ export default function DepthCarousel({
             </button>
           )}
 
-          {/* Normal GitHub Button with Hover Morphing to Private Repo Lock (Projects 1 - 4) */}
-          {current.githubUrl && (
-            <a
-              href={current.githubUrl}
-              target="_blank"
-              rel="noreferrer"
-              className="group/gh relative px-3.5 py-2 rounded-xl border border-neutral-300 bg-white hover:bg-neutral-900 hover:text-white text-neutral-800 text-xs font-mono font-semibold transition-all duration-300 active:scale-95 flex items-center gap-2 overflow-hidden shadow-xs cursor-pointer"
-              title={current.isPrivate ? "Private enterprise repository — Click to visit GitHub profile" : "View Source on GitHub"}
-            >
-              {current.isPrivate ? (
-                <>
-                  <span className="flex items-center gap-1.5 transition-transform duration-300 group-hover/gh:-translate-y-6 group-hover/gh:opacity-0">
-                    <Code2 className="w-3.5 h-3.5 text-neutral-500" />
-                    <span>SOURCE / GITHUB</span>
-                    <ExternalLink className="w-3 h-3 text-neutral-400" />
-                  </span>
-                  <span className="absolute inset-0 flex items-center justify-center gap-1.5 text-yellow-400 font-bold translate-y-6 opacity-0 group-hover/gh:translate-y-0 group-hover/gh:opacity-100 transition-all duration-300 bg-neutral-900">
-                    <Lock className="w-3.5 h-3.5 text-yellow-400" />
-                    <span>PRIVATE REPO</span>
-                  </span>
-                </>
-              ) : (
-                <span className="flex items-center gap-1.5">
-                  <Code2 className="w-3.5 h-3.5 text-neutral-500 group-hover/gh:text-white" />
-                  <span>SOURCE / GITHUB</span>
-                  <ExternalLink className="w-3 h-3 text-neutral-400 group-hover/gh:text-white" />
-                </span>
-              )}
-            </a>
-          )}
+          {/* Private Repository Button (Displayed directly on all projects) */}
+          <a
+            href={current.githubUrl || "https://github.com/Fahedmb"}
+            target="_blank"
+            rel="noreferrer"
+            className="px-3.5 py-2 rounded-xl border border-neutral-300 bg-white hover:bg-neutral-900 hover:text-white text-neutral-800 text-xs font-mono font-semibold transition-all duration-200 active:scale-95 flex items-center gap-2 shadow-xs cursor-pointer"
+            title="Private enterprise codebase — Click to visit GitHub profile"
+          >
+            <Lock className="w-3.5 h-3.5 text-amber-700 group-hover:text-yellow-400" />
+            <span>PRIVATE REPO</span>
+            <ExternalLink className="w-3 h-3 text-neutral-400 opacity-60" />
+          </a>
 
           {/* Dedicated "Order a Portfolio" Button for 5th Project */}
           {current.isPortfolioProduct && (
