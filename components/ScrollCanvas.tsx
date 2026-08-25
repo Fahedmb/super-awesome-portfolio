@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useEffect, useRef, useState, useCallback } from "react";
-import { Monitor, Cpu, Sparkles } from "lucide-react";
 import { detectDevice, DeviceInfo } from "@/lib/device";
 
 // Types
@@ -71,8 +70,6 @@ export default function ScrollCanvas({
       return () => clearTimeout(timer);
     }
   }, [isLoaded]);
-
-  const [selectedTier, setSelectedTier] = useState<string>("");
 
   // Video refs - one <video> per scene
   const videosRef = useRef<Record<string, HTMLVideoElement>>({});
@@ -251,7 +248,6 @@ export default function ScrollCanvas({
 
       // 2. Select resolution tier based on screen size
       const tier = selectTier();
-      setSelectedTier(tier);
       console.log(
         `[ScrollCanvas] Selected tier: ${tier} (effective width: ${
           window.innerWidth * (window.devicePixelRatio || 1)
@@ -417,99 +413,26 @@ export default function ScrollCanvas({
   return (
     <>
       {/* ------------------------------------------------------------------- */}
-      {/* HIGH-TECH COSMIC TELEMETRY INITIALIZER & DISPLAY RECOGNITION LOADER */}
+      {/* MINIMAL THEME LOADER: PURE BLACK SCREEN WITH THEME YELLOW PROGRESS BAR */}
       {/* ------------------------------------------------------------------- */}
       {showLoader && (
-      <div
-        className={`fixed inset-0 z-[999999] flex flex-col items-center justify-center bg-neutral-950/98 backdrop-blur-3xl text-white transition-all duration-700 ease-out ${
-          isLoaded
-            ? "opacity-0 pointer-events-none scale-105"
-            : "opacity-100 pointer-events-auto scale-100"
-        }`}
-      >
-        {/* Subtle Cosmic Amber Radial Glow in Background */}
-        <div className="absolute w-[500px] h-[500px] rounded-full bg-yellow-500/5 blur-[120px] pointer-events-none -z-10" />
-
-        {/* Central HUD Card with Cybernetic Gold Brackets */}
-        <div className="relative w-full max-w-md mx-4 p-6 sm:p-8 rounded-3xl bg-neutral-900/80 border border-yellow-400/30 backdrop-blur-2xl shadow-2xl shadow-yellow-500/10 flex flex-col items-center text-center overflow-hidden">
-          {/* Cybernetic HUD Corner Accents */}
-          <div className="absolute top-3 left-3 w-4 h-4 border-t-2 border-l-2 border-yellow-400 pointer-events-none opacity-80" />
-          <div className="absolute top-3 right-3 w-4 h-4 border-t-2 border-r-2 border-yellow-400 pointer-events-none opacity-80" />
-          <div className="absolute bottom-3 left-3 w-4 h-4 border-b-2 border-l-2 border-yellow-400 pointer-events-none opacity-80" />
-          <div className="absolute bottom-3 right-3 w-4 h-4 border-b-2 border-r-2 border-yellow-400 pointer-events-none opacity-80" />
-
-          {/* Top Status Telemetry Pill */}
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-yellow-400/10 border border-yellow-400/25 text-yellow-300 text-[10px] font-mono tracking-widest uppercase mb-6">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-            <span>INITIALIZING HARDWARE CANVAS</span>
-          </div>
-
-          {/* High-Tech Orbital Indicator */}
-          <div className="relative w-28 h-28 mb-6 flex items-center justify-center">
-            {/* Ambient Pulse Ring */}
-            <div className="absolute inset-0 rounded-full border border-yellow-400/15 animate-pulse [animation-duration:3s]" />
-            {/* Outer Dashed Orbit */}
-            <div className="absolute inset-0 rounded-full border border-dashed border-yellow-400/30 animate-spin [animation-duration:14s]" />
-            {/* Inner High-Speed Accent Arc */}
-            <div className="absolute inset-2 rounded-full border-2 border-t-yellow-400 border-r-amber-500 border-b-transparent border-l-transparent animate-spin [animation-duration:1.6s]" />
-            {/* Center Percentage Display */}
-            <div className="flex flex-col items-center justify-center">
-              <span className="font-mono text-2xl font-black text-electric-yellow tracking-tight glow-yellow">
-                {loadProgress}%
-              </span>
-              <span className="text-[9px] font-mono text-neutral-400 tracking-wider">SYNCING</span>
+        <div
+          className={`fixed inset-0 z-[999999] flex flex-col items-center justify-center bg-black transition-opacity duration-700 ease-out ${
+            isLoaded
+              ? "opacity-0 pointer-events-none"
+              : "opacity-100 pointer-events-auto"
+          }`}
+        >
+          {/* Theme Yellow Progress Bar */}
+          <div className="w-48 sm:w-64 flex flex-col items-center">
+            <div className="w-full h-1 bg-neutral-900 rounded-full overflow-hidden">
+              <div
+                className="h-full bg-gradient-to-r from-amber-500 via-[#FFD600] to-yellow-300 rounded-full shadow-[0_0_12px_rgba(255,214,0,0.7)] transition-all duration-150 ease-out"
+                style={{ width: `${Math.max(4, loadProgress)}%` }}
+              />
             </div>
-          </div>
-
-          {/* Title & Stream Identification */}
-          <h2 className="text-base sm:text-lg font-bold font-display text-white tracking-tight mb-1">
-            FAHED MBAREK <span className="font-editorial italic font-normal text-amber-400 text-sm sm:text-base">{"// SYSTEMS"}</span>
-          </h2>
-          <p className="text-[11px] font-mono text-neutral-400 mb-5">
-            Loading Video-Synchronized Interactive Architecture
-          </p>
-
-          {/* Hardware & Display Recognition Telemetry Badges */}
-          <div className="w-full grid grid-cols-2 gap-2 mb-5 text-left">
-            <div className="p-2.5 rounded-xl bg-black/50 border border-white/10 flex items-center gap-2">
-              <Monitor className="w-4 h-4 text-yellow-400 shrink-0" />
-              <div className="min-w-0">
-                <div className="text-[9px] font-mono text-neutral-400 leading-none mb-1">SYSTEM ARCHITECTURE</div>
-                <div className="text-[10px] font-mono font-bold text-white truncate">
-                  {deviceInfo.osName.toUpperCase()}
-                </div>
-              </div>
-            </div>
-
-            <div className="p-2.5 rounded-xl bg-black/50 border border-white/10 flex items-center gap-2">
-              <Cpu className="w-4 h-4 text-amber-400 shrink-0" />
-              <div className="min-w-0">
-                <div className="text-[9px] font-mono text-neutral-400 leading-none mb-1">DECODER PIPELINE</div>
-                <div className="text-[10px] font-mono font-bold text-yellow-300 truncate">
-                  {selectedTier ? `${selectedTier.toUpperCase()} // 60FPS` : "INITIALIZING..."}
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Glowing Golden Amber Progress Bar */}
-          <div className="w-full h-1.5 bg-neutral-950 border border-yellow-400/20 rounded-full overflow-hidden mb-3.5 p-0.5">
-            <div
-              className="h-full bg-gradient-to-r from-amber-600 via-yellow-400 to-amber-300 rounded-full shadow-lg shadow-yellow-500/50 transition-all duration-200"
-              style={{ width: `${Math.max(4, loadProgress)}%` }}
-            />
-          </div>
-
-          {/* Micro Telemetry Footer */}
-          <div className="flex items-center justify-between w-full text-[10px] font-mono text-neutral-400">
-            <span className="flex items-center gap-1">
-              <Sparkles className="w-3 h-3 text-yellow-400" />
-              <span>1,194 Frames Pre-Warmed</span>
-            </span>
-            <span className="text-yellow-400/80 font-bold">READY TO SCROLL</span>
           </div>
         </div>
-      </div>
       )}
 
       <canvas
