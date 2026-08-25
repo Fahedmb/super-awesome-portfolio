@@ -15,6 +15,7 @@ import {
   Check,
 } from "lucide-react";
 import SpecularButton from "./SpecularButton";
+import DocumentModal from "./DocumentModal";
 
 interface TransmissionFormProps {
   onNavigateToWorks?: () => void;
@@ -31,6 +32,7 @@ export default function TransmissionForm({}: TransmissionFormProps) {
 
   const [status, setStatus] = useState<"idle" | "transmitting" | "sent">("idle");
   const [copiedEmail, setCopiedEmail] = useState(false);
+  const [isDocModalOpen, setIsDocModalOpen] = useState(false);
 
   React.useEffect(() => {
     const handleOrderEvent = (e: Event) => {
@@ -108,14 +110,14 @@ export default function TransmissionForm({}: TransmissionFormProps) {
             >
               SEND ANOTHER MESSAGE
             </button>
-            <a
-              href="/Resume_Fahed_Mbarek.pdf"
-              download="Resume_Fahed_Mbarek.pdf"
-              className="px-4 py-2 rounded-full text-xs font-mono bg-yellow-400 text-black font-bold hover:bg-yellow-300 transition-all flex items-center gap-1.5"
+            <button
+              type="button"
+              onClick={() => setIsDocModalOpen(true)}
+              className="px-4 py-2 rounded-full text-xs font-mono bg-yellow-400 text-black font-bold hover:bg-yellow-300 transition-all flex items-center gap-1.5 cursor-pointer"
             >
               <FileDown className="w-3.5 h-3.5" />
-              <span>DOWNLOAD CV</span>
-            </a>
+              <span>DOWNLOAD CV / RESUME</span>
+            </button>
           </div>
         </div>
       ) : (
@@ -191,14 +193,14 @@ export default function TransmissionForm({}: TransmissionFormProps) {
           {/* Action Row */}
           <div className="pt-2 flex flex-col sm:flex-row items-center justify-between gap-3">
             <div className="flex items-center gap-2">
-              <a
-                href="/Resume_Fahed_Mbarek.pdf"
-                download="Resume_Fahed_Mbarek.pdf"
-                className="px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-mono font-semibold transition-all flex items-center gap-1.5 active:scale-95"
+              <button
+                type="button"
+                onClick={() => setIsDocModalOpen(true)}
+                className="px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-mono font-semibold transition-all flex items-center gap-1.5 active:scale-95 cursor-pointer"
               >
                 <FileDown className="w-3.5 h-3.5 text-yellow-400" />
-                <span>DOWNLOAD CV (PDF)</span>
-              </a>
+                <span>DOWNLOAD CV / RESUME</span>
+              </button>
               <button
                 type="button"
                 onClick={handleCopyEmail}
@@ -280,6 +282,12 @@ export default function TransmissionForm({}: TransmissionFormProps) {
           <span>+216 20 731 135</span>
         </span>
       </div>
+
+      {/* Official Credentials & Documents Modal */}
+      <DocumentModal
+        isOpen={isDocModalOpen}
+        onClose={() => setIsDocModalOpen(false)}
+      />
     </div>
   );
 }

@@ -10,6 +10,7 @@ import TransmissionForm from "@/components/TransmissionForm";
 import GradualBlur from "@/components/GradualBlur";
 import AboutTabs from "@/components/AboutTabs";
 import ModeModal from "@/components/ModeModal";
+import DocumentModal from "@/components/DocumentModal";
 import { detectDevice } from "@/lib/device";
 
 const Lanyard = dynamic(() => import("@/components/Lanyard"), {
@@ -57,6 +58,7 @@ export default function Home() {
   });
   const [is3DTransitioning, setIs3DTransitioning] = useState<boolean>(false);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [isDocModalOpen, setIsDocModalOpen] = useState<boolean>(false);
 
   const handleModeToggleClick = () => {
     if (is3DMode) {
@@ -556,19 +558,19 @@ export default function Home() {
             )}
           </button>
 
-          <a
-            href="/Resume_Fahed_Mbarek.pdf"
-            download="Resume_Fahed_Mbarek.pdf"
-            className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-mono font-bold transition-all duration-200 active:scale-95 border ${
+          <button
+            type="button"
+            onClick={() => setIsDocModalOpen(true)}
+            className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-mono font-bold transition-all duration-200 active:scale-95 border cursor-pointer ${
               isCurrentSectionLight
                 ? "bg-amber-500/10 border-amber-500/30 text-amber-900 hover:bg-amber-500/20"
                 : "bg-yellow-400/10 border-yellow-400/30 text-yellow-400 hover:bg-yellow-400/20"
             }`}
-            title="Download Official CV PDF"
+            title="Download Resume or Motivation Letter (English & French)"
           >
             <FileDown className="w-3.5 h-3.5" />
-            <span>CV (PDF)</span>
-          </a>
+            <span>CV &amp; DOCS</span>
+          </button>
 
           <SpecularButton
             variant={isCurrentSectionLight ? "light" : "yellow"}
@@ -746,14 +748,14 @@ export default function Home() {
 
                 {/* Action Buttons */}
                 <div className="flex flex-wrap items-center gap-2 sm:gap-3">
-                  <a
-                    href="/Resume_Fahed_Mbarek.pdf"
-                    download="Resume_Fahed_Mbarek.pdf"
-                    className="px-4 sm:px-5 py-2 sm:py-2.5 rounded-full bg-neutral-900 hover:bg-black text-white text-[11px] sm:text-xs font-mono font-bold tracking-wider transition-all duration-200 active:scale-95 shadow-xl shadow-neutral-900/15 flex items-center gap-1.5 sm:gap-2"
+                  <button
+                    type="button"
+                    onClick={() => setIsDocModalOpen(true)}
+                    className="px-4 sm:px-5 py-2 sm:py-2.5 rounded-full bg-neutral-900 hover:bg-black text-white text-[11px] sm:text-xs font-mono font-bold tracking-wider transition-all duration-200 active:scale-95 shadow-xl shadow-neutral-900/15 flex items-center gap-1.5 sm:gap-2 cursor-pointer"
                   >
                     <FileDown className="w-3.5 sm:w-4 h-3.5 sm:h-4 text-yellow-400" />
-                    <span>DOWNLOAD CV</span>
-                  </a>
+                    <span>DOWNLOAD CV / RESUME</span>
+                  </button>
 
                   <SpecularButton
                     variant="light"
@@ -1003,6 +1005,12 @@ export default function Home() {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         onConfirm={handleConfirm3D}
+      />
+
+      {/* Official Credentials & Documents Modal */}
+      <DocumentModal
+        isOpen={isDocModalOpen}
+        onClose={() => setIsDocModalOpen(false)}
       />
     </main>
   );
