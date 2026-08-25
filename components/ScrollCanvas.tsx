@@ -27,6 +27,7 @@ interface VideoManifest {
 
 interface ScrollCanvasProps {
   activeSection?: number;
+  is3DMode?: boolean;
   onProgressUpdate?: (data: {
     progress: number;
     currentFrame: number;
@@ -55,14 +56,15 @@ function selectTier(): string {
 
 export default function ScrollCanvas({
   activeSection = 0,
+  is3DMode = false,
   onProgressUpdate,
 }: ScrollCanvasProps) {
   const [deviceInfo] = useState<DeviceInfo>(() => detectDevice());
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const ctxRef = useRef<CanvasRenderingContext2D | null>(null); // Cache context!
-  const [isLoaded, setIsLoaded] = useState(() => detectDevice().isMobile);
-  const [loadProgress, setLoadProgress] = useState(() => (detectDevice().isMobile ? 100 : 0));
-  const [showLoader, setShowLoader] = useState(() => !detectDevice().isMobile);
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [loadProgress, setLoadProgress] = useState(0);
+  const [showLoader, setShowLoader] = useState(false);
 
   useEffect(() => {
     if (isLoaded) {
@@ -233,12 +235,13 @@ export default function ScrollCanvas({
   useEffect(() => {
     let isCancelled = false;
 
-    // Mobile Device Check: Skip video fetching, decoding, and DOM elements entirely!
-    if (deviceInfo.isMobile) {
+    // Skip video fetching if not in 3D Mode or on Mobile Device!
+    if (!is3DMode || deviceInfo.isMobile) {
       return;
     }
 
     async function initVideos() {
+      setShowLoader(true);
       // 1. Fetch manifest
       const res = await fetch("/videos/manifest.json");
       if (!res.ok) throw new Error("Failed to load video manifest");
@@ -365,7 +368,7 @@ export default function ScrollCanvas({
       });
       videosRef.current = {};
     };
-  }, [renderVideoFrame, deviceInfo.isMobile]);
+  }, [renderVideoFrame, deviceInfo.isMobile, is3DMode]);
 
   // Setup scroll + resize listeners (after loaded)
   useEffect(() => {
@@ -383,7 +386,7 @@ export default function ScrollCanvas({
     };
   }, [isLoaded, handleResize, handleScroll]);
 
-  if (deviceInfo.isMobile) {
+  if (!is3DMode || deviceInfo.isMobile) {
     const isLight = activeSection === 0 || activeSection === 2;
     return (
       <div

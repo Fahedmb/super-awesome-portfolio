@@ -9,6 +9,7 @@ import DepthCarousel from "@/components/DepthCarousel";
 import TransmissionForm from "@/components/TransmissionForm";
 import GradualBlur from "@/components/GradualBlur";
 import AboutTabs from "@/components/AboutTabs";
+import ModeModal from "@/components/ModeModal";
 import { detectDevice } from "@/lib/device";
 
 const Lanyard = dynamic(() => import("@/components/Lanyard"), {
@@ -46,6 +47,37 @@ export default function Home() {
   const isAnimating = useRef(false);
   const animRafRef = useRef<number | null>(null);
   const scrollTimeout = useRef<NodeJS.Timeout | null>(null);
+
+  const [is3DMode, setIs3DMode] = useState<boolean>(() => {
+    if (typeof window === "undefined") return false;
+    try {
+      return localStorage.getItem("portfolio_3d_mode") === "true";
+    } catch {
+      return false;
+    }
+  });
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+
+  const handleModeToggleClick = () => {
+    if (is3DMode) {
+      setIs3DMode(false);
+      try {
+        localStorage.setItem("portfolio_3d_mode", "false");
+      } catch {}
+    } else {
+      setIsModalOpen(true);
+    }
+  };
+
+  const handleConfirm3D = (remember: boolean) => {
+    setIs3DMode(true);
+    setIsModalOpen(false);
+    if (remember) {
+      try {
+        localStorage.setItem("portfolio_3d_mode", "true");
+      } catch {}
+    }
+  };
 
   const [pendingTransition, setPendingTransition] = useState<PendingTransition | null>(null);
   const pendingTransitionRef = useRef<PendingTransition | null>(null);
@@ -108,14 +140,14 @@ export default function Home() {
         cancelAnimationFrame(animRafRef.current);
       }
 
-      // Mobile Device Fast-Track: 350ms responsive cubic-bezier smooth transition with fade
-      if (dev.isMobile) {
+      // Simple Mode (Default) OR Mobile Device: 350ms responsive cubic-bezier smooth transition with fade
+      if (!is3DMode || dev.isMobile) {
         setIsTransitioning(true);
         isAnimating.current = true;
         const startTime = performance.now();
         const duration = 350;
 
-        const animateMobile = (currentTime: number) => {
+        const animateFast = (currentTime: number) => {
           const elapsed = currentTime - startTime;
           const progress = Math.min(elapsed / duration, 1);
           // Smooth ease-in-out
@@ -127,7 +159,7 @@ export default function Home() {
           window.scrollTo(0, startY + change * ease);
 
           if (progress < 1) {
-            animRafRef.current = requestAnimationFrame(animateMobile);
+            animRafRef.current = requestAnimationFrame(animateFast);
           } else {
             window.scrollTo(0, targetY);
             isAnimating.current = false;
@@ -137,11 +169,11 @@ export default function Home() {
           }
         };
 
-        animRafRef.current = requestAnimationFrame(animateMobile);
+        animRafRef.current = requestAnimationFrame(animateFast);
         return;
       }
 
-      // Desktop (Windows PC, Mac, Linux): Full 1:1 real-time 60fps video playback
+      // Desktop 3D Mode: Full 1:1 real-time 60fps video playback
       setIsTransitioning(true);
       isAnimating.current = true;
       const startTime = performance.now();
@@ -182,7 +214,7 @@ export default function Home() {
 
       animRafRef.current = requestAnimationFrame(animateScroll);
     },
-    []
+    [is3DMode]
   );
 
   // Multi-modal gesture and interaction handler (Wheel, Touch, Keyboard)
@@ -408,7 +440,7 @@ export default function Home() {
   return (
     <main className="relative min-h-screen font-sans selection:bg-yellow-400 selection:text-black">
       {/* Dynamic 60fps Video-Synchronized / Adaptive Mobile Background Canvas */}
-      <ScrollCanvas activeSection={activeSection} onProgressUpdate={handleProgressUpdate} />
+      <ScrollCanvas activeSection={activeSection} is3DMode={is3DMode} onProgressUpdate={handleProgressUpdate} />
 
       {/* Top Glass Header & Navigation HUD (Desktop & Tablet) */}
       <header className="hidden md:flex fixed top-0 left-0 right-0 z-40 px-6 py-4 items-center justify-between pointer-events-auto">
@@ -420,18 +452,14 @@ export default function Home() {
                 : "bg-yellow-400/20 border border-yellow-400/40 text-yellow-400"
             }`}
           >
-            <Orbit className="w-4 h-4 animate-spin" style={{ animationDuration: "16s" }} />
+            <Orbit className="w-4 h-4 animate-spin [animation-duration:12s]" />
           </div>
           <div>
-            <div
-              className={`text-xs font-mono font-bold tracking-widest flex items-center gap-1.5 transition-colors duration-300 ${
-                isCurrentSectionLight ? "text-neutral-900" : "text-white"
-              }`}
-            >
-              FAHED MBAREK <span className="font-normal opacity-60">{"// FULL-STACK & AI"}</span>
+            <div className="text-xs font-bold font-mono tracking-wider">
+              FAHED MBAREK
             </div>
             <div
-              className={`text-[10px] flex items-center gap-1.5 font-mono ${
+              className={`text-[10px] font-mono flex items-center gap-1.5 transition-colors duration-300 ${
                 isCurrentSectionLight ? "text-neutral-600" : "text-neutral-400"
               }`}
             >
@@ -491,8 +519,33 @@ export default function Home() {
           })}
         </nav>
 
-        {/* Quick Header Actions: CV Download & Contact */}
+        {/* Quick Header Actions: Mode Switcher, CV Download & Contact */}
         <div className="flex items-center gap-2">
+          {/* Experience Mode Toggle Button */}
+          <button
+            onClick={handleModeToggleClick}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-mono font-bold transition-all duration-200 active:scale-95 border cursor-pointer ${
+              is3DMode
+                ? "bg-yellow-400 text-black border-yellow-400 hover:bg-yellow-300 shadow-md shadow-yellow-500/25"
+                : isCurrentSectionLight
+                ? "bg-neutral-100 hover:bg-neutral-200 border-neutral-300 text-neutral-800"
+                : "bg-white/10 hover:bg-white/20 border-white/20 text-neutral-200"
+            }`}
+            title={is3DMode ? "Switch to Simple Mode" : "Enable 3D & Video Animations"}
+          >
+            {is3DMode ? (
+              <>
+                <span className="w-1.5 h-1.5 rounded-full bg-black animate-pulse" />
+                <span>3D MODE: ON</span>
+              </>
+            ) : (
+              <>
+                <Sparkles className="w-3 h-3 text-yellow-500 animate-pulse" />
+                <span>3D MODE: OFF</span>
+              </>
+            )}
+          </button>
+
           <a
             href="/Resume_Fahed_Mbarek.pdf"
             download="Resume_Fahed_Mbarek.pdf"
@@ -647,7 +700,7 @@ export default function Home() {
           <div className="flex-1 overflow-y-auto pr-1">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-8 items-center pt-1 lg:pt-3">
               {/* Left Narrative Column */}
-              <div className="lg:col-span-7 flex flex-col items-start text-neutral-900 z-10">
+              <div className={`flex flex-col items-start text-neutral-900 z-10 ${is3DMode ? "lg:col-span-7" : "lg:col-span-12 max-w-4xl"}`}>
                 <div className="inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-900 text-[10px] sm:text-xs font-mono mb-2 sm:mb-3 backdrop-blur-md">
                   <Sparkles className="w-3 sm:w-3.5 h-3 sm:h-3.5 text-amber-600 animate-pulse" />
                   <span>FAHED MBAREK // FULL-STACK &amp; AI SYSTEMS</span>
@@ -714,18 +767,20 @@ export default function Home() {
                 </div>
               </div>
 
-              {/* Right Column: Interactive 3D Lanyard (Desktop & Large Viewports) */}
-              <div className="hidden lg:flex lg:col-span-5 justify-center items-center pointer-events-auto overflow-visible">
-                <Lanyard
-                  position={[0, 0, 20]}
-                  gravity={[0, -40, 0]}
-                  fov={20}
-                  transparent={true}
-                  lanyardWidth={1}
-                  frontImage="/assets/lanyard/fahed_badge.svg"
-                  active={getSectionVisibility(0) > 0.05}
-                />
-              </div>
+              {/* Right Column: Interactive 3D Lanyard (Desktop 3D Mode Only) */}
+              {is3DMode && (
+                <div className="hidden lg:flex lg:col-span-5 justify-center items-center pointer-events-auto overflow-visible">
+                  <Lanyard
+                    position={[0, 0, 20]}
+                    gravity={[0, -40, 0]}
+                    fov={20}
+                    transparent={true}
+                    lanyardWidth={1}
+                    frontImage="/assets/lanyard/fahed_badge.svg"
+                    active={getSectionVisibility(0) > 0.05}
+                  />
+                </div>
+              )}
             </div>
 
             {/* Bottom Tech Logo Loop */}
@@ -926,6 +981,13 @@ export default function Home() {
         <section className="h-screen w-full" />
         <section className="h-screen w-full" />
       </div>
+
+      {/* 3D & Video Animations Confirmation Modal */}
+      <ModeModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onConfirm={handleConfirm3D}
+      />
     </main>
   );
 }
