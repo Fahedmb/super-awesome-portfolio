@@ -53,11 +53,12 @@ function YoutubeIcon({ className = "w-3.5 h-3.5" }: { className?: string }) {
 }
 
 interface AboutTabsProps {
+  is3DMode?: boolean;
   onNavigateToOrigin?: () => void;
   onNavigateToWorks?: () => void;
 }
 
-export default function AboutTabs({}: AboutTabsProps) {
+export default function AboutTabs({ is3DMode = false }: AboutTabsProps) {
   const [activeTab, setActiveTab] = useState<"core" | "manifesto" | "roadmap" | "hobbies" | "qa" | "youtube">("core");
 
   // Short, clear, meaningful tab titles that fit on one line effortlessly
@@ -507,7 +508,7 @@ export default function AboutTabs({}: AboutTabsProps) {
             </div>
           </div>
 
-          <EasterEggDecoder />
+          {is3DMode && <EasterEggDecoder />}
         </div>
       )}
 

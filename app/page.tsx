@@ -1021,7 +1021,7 @@ export default function Home() {
             </p>
 
             {/* Interactive Multi-Tab Interface: Core Architecture, Academic Roadmap, Hobbies, Q&A */}
-            <AboutTabs />
+            <AboutTabs is3DMode={is3DMode && !detectDevice().isMobile} />
           </div>
 
           {/* Absolute Bottom Navigation Bar (Desktop Only) */}
