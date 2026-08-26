@@ -41,13 +41,15 @@ interface ProgressData {
 
 interface PendingTransition {
   direction: "next" | "prev";
+  sourceSection: number;
   targetSection: number;
-  timestamp: number;
+  armedTimestamp: number;
 }
 
 export default function Home() {
   const isAnimating = useRef(false);
   const animRafRef = useRef<number | null>(null);
+  const transitionCooldownRef = useRef<number>(0);
 
   const [is3DMode, setIs3DMode] = useState<boolean>(() => {
     if (typeof window === "undefined") return false;
@@ -108,9 +110,13 @@ export default function Home() {
   // Smooth cinematic transition engine (3.2s duration per scene)
   const scrollToSection = useCallback(
     (index: number, customDuration?: number) => {
-      if (pendingTimerRef.current) clearTimeout(pendingTimerRef.current);
+      if (pendingTimerRef.current) {
+        clearTimeout(pendingTimerRef.current);
+        pendingTimerRef.current = null;
+      }
       pendingTransitionRef.current = null;
       setPendingTransition(null);
+      transitionCooldownRef.current = Date.now() + 800;
 
       const vh = window.innerHeight;
       const targetIndex = Math.max(0, Math.min(index, 3));
@@ -166,6 +172,13 @@ export default function Home() {
             isAnimating.current = false;
             animRafRef.current = null;
             setActiveSection(targetIndex);
+            if (pendingTimerRef.current) {
+              clearTimeout(pendingTimerRef.current);
+              pendingTimerRef.current = null;
+            }
+            pendingTransitionRef.current = null;
+            setPendingTransition(null);
+            transitionCooldownRef.current = Date.now() + 800;
           }
         };
 
@@ -209,6 +222,13 @@ export default function Home() {
           animRafRef.current = null;
           setActiveSection(targetIndex);
           setIs3DTransitioning(false);
+          if (pendingTimerRef.current) {
+            clearTimeout(pendingTimerRef.current);
+            pendingTimerRef.current = null;
+          }
+          pendingTransitionRef.current = null;
+          setPendingTransition(null);
+          transitionCooldownRef.current = Date.now() + 800;
         }
       };
 
@@ -281,6 +301,10 @@ export default function Home() {
 
     const handleTouchStart = (e: TouchEvent) => {
       if (e.touches.length > 0) {
+        if (isAnimating.current || Date.now() < transitionCooldownRef.current) {
+          isTouchActive = false;
+          return;
+        }
         touchStartY = e.touches[0].clientY;
         touchStartX = e.touches[0].clientX;
         isTouchActive = true;
@@ -288,16 +312,18 @@ export default function Home() {
     };
 
     const handleTouchMove = (e: TouchEvent) => {
+      if (!isTouchActive || isAnimating.current) return;
+
       // If a pending transition exists, detect if user is moving in the opposite direction
       if (pendingTransitionRef.current && e.touches.length > 0) {
         const currentY = e.touches[0].clientY;
         const currentDeltaY = touchStartY - currentY;
-        // If armed for "next" (swiping UP) but now dragging DOWN by > 25px -> Cancel immediately!
-        if (pendingTransitionRef.current.direction === "next" && currentDeltaY < -25) {
+        // If armed for "next" (swiping UP) but now dragging DOWN by > 20px -> Cancel immediately!
+        if (pendingTransitionRef.current.direction === "next" && currentDeltaY < -20) {
           clearPendingTransition();
         }
-        // If armed for "prev" (swiping DOWN) but now dragging UP by > 25px -> Cancel immediately!
-        if (pendingTransitionRef.current.direction === "prev" && currentDeltaY > 25) {
+        // If armed for "prev" (swiping DOWN) but now dragging UP by > 20px -> Cancel immediately!
+        if (pendingTransitionRef.current.direction === "prev" && currentDeltaY > 20) {
           clearPendingTransition();
         }
       }
@@ -321,29 +347,19 @@ export default function Home() {
     };
 
     const handleTouchEnd = (e: TouchEvent) => {
-      if (!isTouchActive || e.changedTouches.length === 0 || isAnimating.current) return;
+      if (
+        !isTouchActive ||
+        e.changedTouches.length === 0 ||
+        isAnimating.current ||
+        Date.now() < transitionCooldownRef.current
+      ) {
+        isTouchActive = false;
+        return;
+      }
       isTouchActive = false;
 
       const deltaY = touchStartY - e.changedTouches[0].clientY;
       const deltaX = touchStartX - e.changedTouches[0].clientX;
-
-      // If a pending transition was active and user swiped in the opposite direction -> CANCEL & DISMISS
-      if (pendingTransitionRef.current) {
-        const armedDir = pendingTransitionRef.current.direction;
-        if (armedDir === "next" && deltaY < -20) {
-          clearPendingTransition();
-          return;
-        }
-        if (armedDir === "prev" && deltaY > 20) {
-          clearPendingTransition();
-          return;
-        }
-      }
-
-      // Generous deadzone / margin: must be at least 70px and predominantly vertical (1.4x horizontal)
-      if (Math.abs(deltaY) < 70 || Math.abs(deltaY) < Math.abs(deltaX) * 1.4) {
-        return;
-      }
 
       // Check if user is scrolling inside a scrollable sub-container
       let target = e.target as HTMLElement | null;
@@ -376,60 +392,71 @@ export default function Home() {
         }
       }
 
+      // Minimum swipe distance (60px) and vertical intent
+      const isVerticalSwipe = Math.abs(deltaY) >= 60 && Math.abs(deltaY) > Math.abs(deltaX) * 1.3;
+      if (!isVerticalSwipe) {
+        return;
+      }
+
       const currentSection = activeSection;
+      const swipeDir: "next" | "prev" = deltaY > 0 ? "next" : "prev";
 
-      if (deltaY > 0 && currentSection < 3) {
-        // Swiping towards next section
+      // Case A: A swipe transition is ALREADY ARMED waiting for the 2nd swipe
+      if (pendingTransitionRef.current) {
+        const armed = pendingTransitionRef.current;
+        const timeSinceArmed = Date.now() - armed.armedTimestamp;
+
+        // Check if this is the CONFIRMED second swipe (same direction, same source section, within timeout, separate touch)
+        if (
+          armed.direction === swipeDir &&
+          armed.sourceSection === currentSection &&
+          timeSinceArmed > 120 &&
+          timeSinceArmed < 3000
+        ) {
+          // Double scroll confirmed!
+          const target = armed.targetSection;
+          clearPendingTransition();
+          transitionCooldownRef.current = Date.now() + 800;
+          scrollToSection(target);
+          return;
+        }
+
+        // If swipe direction doesn't match or expired -> Cancel the armed alert
+        clearPendingTransition();
+        return;
+      }
+
+      // Case B: NO swipe armed yet — This is the 1ST SWIPE (User swiped once and lifted finger)
+      if (swipeDir === "next" && currentSection < 3) {
         const targetSection = currentSection + 1;
-        const now = Date.now();
+        const pending: PendingTransition = {
+          direction: "next",
+          sourceSection: currentSection,
+          targetSection,
+          armedTimestamp: Date.now(),
+        };
+        pendingTransitionRef.current = pending;
+        setPendingTransition(pending);
 
-        if (
-          pendingTransitionRef.current &&
-          pendingTransitionRef.current.direction === "next" &&
-          pendingTransitionRef.current.targetSection === targetSection &&
-          now - pendingTransitionRef.current.timestamp < 2800
-        ) {
-          // Double scroll confirmed!
+        if (pendingTimerRef.current) clearTimeout(pendingTimerRef.current);
+        pendingTimerRef.current = setTimeout(() => {
           clearPendingTransition();
-          scrollToSection(targetSection);
-        } else {
-          // 1st scroll: Arm double-scroll confirmation with UI indicator
-          const pending: PendingTransition = { direction: "next", targetSection, timestamp: now };
-          pendingTransitionRef.current = pending;
-          setPendingTransition(pending);
-
-          if (pendingTimerRef.current) clearTimeout(pendingTimerRef.current);
-          pendingTimerRef.current = setTimeout(() => {
-            pendingTransitionRef.current = null;
-            setPendingTransition(null);
-          }, 2800);
-        }
-      } else if (deltaY < 0 && currentSection > 0) {
-        // Swiping towards previous section
+        }, 3000);
+      } else if (swipeDir === "prev" && currentSection > 0) {
         const targetSection = currentSection - 1;
-        const now = Date.now();
+        const pending: PendingTransition = {
+          direction: "prev",
+          sourceSection: currentSection,
+          targetSection,
+          armedTimestamp: Date.now(),
+        };
+        pendingTransitionRef.current = pending;
+        setPendingTransition(pending);
 
-        if (
-          pendingTransitionRef.current &&
-          pendingTransitionRef.current.direction === "prev" &&
-          pendingTransitionRef.current.targetSection === targetSection &&
-          now - pendingTransitionRef.current.timestamp < 2800
-        ) {
-          // Double scroll confirmed!
+        if (pendingTimerRef.current) clearTimeout(pendingTimerRef.current);
+        pendingTimerRef.current = setTimeout(() => {
           clearPendingTransition();
-          scrollToSection(targetSection);
-        } else {
-          // 1st scroll: Arm double-scroll confirmation with UI indicator
-          const pending: PendingTransition = { direction: "prev", targetSection, timestamp: now };
-          pendingTransitionRef.current = pending;
-          setPendingTransition(pending);
-
-          if (pendingTimerRef.current) clearTimeout(pendingTimerRef.current);
-          pendingTimerRef.current = setTimeout(() => {
-            pendingTransitionRef.current = null;
-            setPendingTransition(null);
-          }, 2800);
-        }
+        }, 3000);
       }
     };
 
