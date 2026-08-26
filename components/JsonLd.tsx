@@ -68,7 +68,7 @@ export function JsonLd() {
       {
         "@type": "EducationalOrganization",
         name: "ISET Gafsa",
-        description: "Licence in Information Systems Development (DSI) (2022)",
+        description: "Bachelor's in Information Systems Development (DSI) (2022)",
       },
     ],
     hasCredential: [
@@ -83,7 +83,7 @@ export function JsonLd() {
       },
       {
         "@type": "EducationalOccupationalCredential",
-        name: "Licence in Information Systems Development (DSI)",
+        name: "Bachelor's Degree in Information Systems Development (DSI)",
         credentialCategory: "degree",
         recognizedBy: {
           "@type": "EducationalOrganization",
@@ -155,7 +155,7 @@ export function JsonLd() {
         name: "What is Fahed Mbarek's educational background?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Fahed Mbarek obtained his Computer Science Baccalaureate in 2019, earned a Licence in Information Systems Development (DSI) from ISET Gafsa in 2022, completed M1 studies in Data Science in 2023, and graduated with a National Engineering Diploma in Software Engineering from TEK-UP University in 2025.",
+          text: "Fahed Mbarek obtained his High School Diploma in Computer Science in 2019, earned a Bachelor's in Information Systems Development (DSI) from ISET Gafsa in 2022, completed M1 studies in Data Science in 2023, and graduated with a National Engineering Diploma in Software Engineering from TEK-UP University in 2025.",
         },
       },
       {
