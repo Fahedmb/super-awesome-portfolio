@@ -28,6 +28,7 @@ import {
   GraduationCap,
   Briefcase,
   Database,
+  X,
 } from "lucide-react";
 
 interface ProgressData {
@@ -269,6 +270,15 @@ export default function Home() {
     let touchStartX = 0;
     let isTouchActive = false;
 
+    const clearPendingTransition = () => {
+      if (pendingTimerRef.current) {
+        clearTimeout(pendingTimerRef.current);
+        pendingTimerRef.current = null;
+      }
+      pendingTransitionRef.current = null;
+      setPendingTransition(null);
+    };
+
     const handleTouchStart = (e: TouchEvent) => {
       if (e.touches.length > 0) {
         touchStartY = e.touches[0].clientY;
@@ -278,6 +288,20 @@ export default function Home() {
     };
 
     const handleTouchMove = (e: TouchEvent) => {
+      // If a pending transition exists, detect if user is moving in the opposite direction
+      if (pendingTransitionRef.current && e.touches.length > 0) {
+        const currentY = e.touches[0].clientY;
+        const currentDeltaY = touchStartY - currentY;
+        // If armed for "next" (swiping UP) but now dragging DOWN by > 25px -> Cancel immediately!
+        if (pendingTransitionRef.current.direction === "next" && currentDeltaY < -25) {
+          clearPendingTransition();
+        }
+        // If armed for "prev" (swiping DOWN) but now dragging UP by > 25px -> Cancel immediately!
+        if (pendingTransitionRef.current.direction === "prev" && currentDeltaY > 25) {
+          clearPendingTransition();
+        }
+      }
+
       // Allow internal scrolling inside scrollable sub-containers (.overflow-y-auto or .overflow-x-auto)
       let target = e.target as HTMLElement | null;
       let isInsideScrollable = false;
@@ -303,6 +327,19 @@ export default function Home() {
       const deltaY = touchStartY - e.changedTouches[0].clientY;
       const deltaX = touchStartX - e.changedTouches[0].clientX;
 
+      // If a pending transition was active and user swiped in the opposite direction -> CANCEL & DISMISS
+      if (pendingTransitionRef.current) {
+        const armedDir = pendingTransitionRef.current.direction;
+        if (armedDir === "next" && deltaY < -20) {
+          clearPendingTransition();
+          return;
+        }
+        if (armedDir === "prev" && deltaY > 20) {
+          clearPendingTransition();
+          return;
+        }
+      }
+
       // Generous deadzone / margin: must be at least 70px and predominantly vertical (1.4x horizontal)
       if (Math.abs(deltaY) < 70 || Math.abs(deltaY) < Math.abs(deltaX) * 1.4) {
         return;
@@ -327,10 +364,16 @@ export default function Home() {
         const isAtTop = scrollTop <= 15;
         const isAtBottom = scrollTop + clientHeight >= scrollHeight - 15;
 
-        // If swiping down (to scroll up) but not at top of container, let user scroll inside
-        if (deltaY < 0 && !isAtTop) return;
-        // If swiping up (to scroll down) but not at bottom of container, let user scroll inside
-        if (deltaY > 0 && !isAtBottom) return;
+        // If swiping down (to scroll up) but not at top of container, let user scroll inside and clear any pending
+        if (deltaY < 0 && !isAtTop) {
+          clearPendingTransition();
+          return;
+        }
+        // If swiping up (to scroll down) but not at bottom of container, let user scroll inside and clear any pending
+        if (deltaY > 0 && !isAtBottom) {
+          clearPendingTransition();
+          return;
+        }
       }
 
       const currentSection = activeSection;
@@ -347,9 +390,7 @@ export default function Home() {
           now - pendingTransitionRef.current.timestamp < 2800
         ) {
           // Double scroll confirmed!
-          if (pendingTimerRef.current) clearTimeout(pendingTimerRef.current);
-          pendingTransitionRef.current = null;
-          setPendingTransition(null);
+          clearPendingTransition();
           scrollToSection(targetSection);
         } else {
           // 1st scroll: Arm double-scroll confirmation with UI indicator
@@ -375,9 +416,7 @@ export default function Home() {
           now - pendingTransitionRef.current.timestamp < 2800
         ) {
           // Double scroll confirmed!
-          if (pendingTimerRef.current) clearTimeout(pendingTimerRef.current);
-          pendingTransitionRef.current = null;
-          setPendingTransition(null);
+          clearPendingTransition();
           scrollToSection(targetSection);
         } else {
           // 1st scroll: Arm double-scroll confirmation with UI indicator
@@ -689,9 +728,23 @@ export default function Home() {
               </span>
             </div>
           </div>
-          <span className="shrink-0 px-3 py-1 rounded-xl bg-[#FFD600] text-black text-[10px] sm:text-[11px] font-mono font-black uppercase tracking-wider shadow-md hover:bg-yellow-300 transition-colors">
-            TAP TO GO
-          </span>
+          <div className="flex items-center gap-1.5 shrink-0">
+            <span className="px-3 py-1 rounded-xl bg-[#FFD600] text-black text-[10px] sm:text-[11px] font-mono font-black uppercase tracking-wider shadow-md hover:bg-yellow-300 transition-colors">
+              TAP TO GO
+            </span>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                if (pendingTimerRef.current) clearTimeout(pendingTimerRef.current);
+                pendingTransitionRef.current = null;
+                setPendingTransition(null);
+              }}
+              className="p-1 rounded-lg text-neutral-400 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
+              title="Cancel"
+            >
+              <X className="w-3.5 h-3.5" />
+            </button>
+          </div>
         </div>
       )}
 
