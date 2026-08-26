@@ -36,6 +36,15 @@
   }
 }
 
+/* Horizontal & custom elements scrollbar suppress utility */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
 /* Typography Helpers */
 .font-display {
   font-family: var(--font-syne), sans-serif;

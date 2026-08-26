@@ -348,40 +348,52 @@ export default function Home() {
     };
 
     const handleTouchMove = (e: TouchEvent) => {
-      if (!isTouchActive || isAnimating.current) return;
+      if (!isTouchActive || isAnimating.current || e.touches.length === 0) return;
+
+      const currentDeltaX = touchStartX - e.touches[0].clientX;
+      const currentDeltaY = touchStartY - e.touches[0].clientY;
 
       // Allow internal scrolling inside scrollable sub-containers (.overflow-y-auto or .overflow-x-auto)
       let target = e.target as HTMLElement | null;
-      let isInsideScrollable = false;
-      let scrollableEl: HTMLElement | null = null;
+      let scrollableYEl: HTMLElement | null = null;
+      let scrollableXEl: HTMLElement | null = null;
+
       while (target && target !== document.body) {
         if (
           target.classList?.contains("overflow-y-auto") ||
-          target.classList?.contains("overflow-x-auto")
+          target.classList?.contains("overflow-y-scroll")
         ) {
-          isInsideScrollable = true;
-          scrollableEl = target;
-          break;
+          if (!scrollableYEl) scrollableYEl = target;
+        }
+        if (
+          target.classList?.contains("overflow-x-auto") ||
+          target.classList?.contains("overflow-x-scroll")
+        ) {
+          if (!scrollableXEl) scrollableXEl = target;
         }
         target = target.parentElement;
       }
 
+      // If user is inside a horizontally scrollable element and moving horizontally, allow full horizontal scroll
+      if (scrollableXEl && Math.abs(currentDeltaX) > Math.abs(currentDeltaY)) {
+        return;
+      }
+
       const dev = detectDevice();
       if (dev.isMobile) {
-        if (!isInsideScrollable) {
+        if (!scrollableYEl) {
           if (e.cancelable) e.preventDefault();
-        } else if (scrollableEl) {
-          const { scrollTop, scrollHeight, clientHeight } = scrollableEl;
+        } else {
+          const { scrollTop, scrollHeight, clientHeight } = scrollableYEl;
           const isAtTop = scrollTop <= 5;
           const isAtBottom = scrollTop + clientHeight >= scrollHeight - 5;
-          const currentDeltaY = touchStartY - e.touches[0].clientY;
 
-          // Prevent native window scroll if user reaches top/bottom edge of the scrollable container and keeps dragging
+          // Prevent native window scroll only when at boundaries and continuing in that direction
           if ((isAtTop && currentDeltaY < 0) || (isAtBottom && currentDeltaY > 0)) {
             if (e.cancelable) e.preventDefault();
           }
         }
-      } else if (!isInsideScrollable) {
+      } else if (!scrollableYEl && !scrollableXEl) {
         if (e.cancelable) e.preventDefault();
       }
     };
@@ -401,22 +413,27 @@ export default function Home() {
       const deltaY = touchStartY - e.changedTouches[0].clientY;
       const deltaX = touchStartX - e.changedTouches[0].clientX;
 
-      // Check if user is scrolling inside a scrollable sub-container
+      // If gesture was predominantly horizontal (e.g. scrolling tabs), ignore section swipe
+      if (Math.abs(deltaX) > Math.abs(deltaY) * 1.1) {
+        return;
+      }
+
+      // Check if user is scrolling inside a vertical scrollable sub-container
       let target = e.target as HTMLElement | null;
-      let scrollableEl: HTMLElement | null = null;
+      let scrollableYEl: HTMLElement | null = null;
       while (target && target !== document.body) {
         if (
           target.classList?.contains("overflow-y-auto") ||
-          target.classList?.contains("overflow-x-auto")
+          target.classList?.contains("overflow-y-scroll")
         ) {
-          scrollableEl = target;
+          scrollableYEl = target;
           break;
         }
         target = target.parentElement;
       }
 
-      if (scrollableEl) {
-        const { scrollTop, scrollHeight, clientHeight } = scrollableEl;
+      if (scrollableYEl) {
+        const { scrollTop, scrollHeight, clientHeight } = scrollableYEl;
         const isAtTop = scrollTop <= 15;
         const isAtBottom = scrollTop + clientHeight >= scrollHeight - 15;
 

@@ -228,15 +228,15 @@ export default function DepthCarousel({
       {/* ------------------------------------------------------------------- */}
       {/* SECTION 2 MATCHING LIGHT-THEMED PROJECT TAB NAVBAR                 */}
       {/* ------------------------------------------------------------------- */}
-      <div className="flex justify-start sm:justify-center mb-2.5 max-w-full overflow-x-auto no-scrollbar py-0.5 px-0.5">
-        <div className="flex items-center gap-1 p-1 rounded-2xl bg-white/90 border border-neutral-300/80 backdrop-blur-xl shadow-md flex-nowrap shrink-0 mx-auto">
+      <div className="w-full overflow-x-auto overscroll-x-contain no-scrollbar py-1 px-0.5 mb-2.5 touch-pan-x">
+        <div className="inline-flex sm:flex items-center justify-start sm:justify-center gap-1 p-1 rounded-2xl bg-white/90 border border-neutral-300/80 backdrop-blur-xl shadow-md min-w-max mx-auto sm:w-fit">
           {projects.map((proj, idx) => {
             const isActive = activeIndex === idx;
             return (
               <button
                 key={proj.id}
                 onClick={() => setActiveIndex(idx)}
-                className={`flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl text-[10px] sm:text-[11px] font-mono font-bold tracking-wider transition-all whitespace-nowrap cursor-pointer active:scale-95 ${
+                className={`flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl text-[10px] sm:text-[11px] font-mono font-bold tracking-wider transition-all whitespace-nowrap cursor-pointer active:scale-95 shrink-0 ${
                   isActive
                     ? "bg-neutral-900 text-white shadow-md font-extrabold"
                     : "text-neutral-600 hover:text-neutral-950 hover:bg-neutral-100"

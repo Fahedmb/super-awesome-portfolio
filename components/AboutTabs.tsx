@@ -59,7 +59,15 @@ interface AboutTabsProps {
 }
 
 export default function AboutTabs({ is3DMode = false }: AboutTabsProps) {
-  const [activeTab, setActiveTab] = useState<"core" | "manifesto" | "roadmap" | "hobbies" | "qa" | "youtube">("core");
+  const [activeTab, setActiveTab] = useState<"core" | "manifesto" | "roadmap" | "hobbies" | "faq" | "youtube">("core");
+  const [expandedFaqs, setExpandedFaqs] = useState<Record<string, boolean>>({});
+
+  const toggleFaq = (id: string) => {
+    setExpandedFaqs((prev) => ({
+      ...prev,
+      [id]: !prev[id],
+    }));
+  };
 
   // Short, clear, meaningful tab titles that fit on one line effortlessly
   const tabs = [
@@ -67,7 +75,7 @@ export default function AboutTabs({ is3DMode = false }: AboutTabsProps) {
     { id: "manifesto", label: "PHILOSOPHY", icon: Quote },
     { id: "roadmap", label: "ROADMAP", icon: GraduationCap },
     { id: "hobbies", label: "HOBBIES", icon: Dumbbell },
-    { id: "qa", label: "Q&A", icon: HelpCircle },
+    { id: "faq", label: "FAQ", icon: HelpCircle },
     { id: "youtube", label: "CHANNELS", icon: Video },
   ] as const;
 
@@ -143,7 +151,7 @@ export default function AboutTabs({ is3DMode = false }: AboutTabsProps) {
     },
     {
       id: 4,
-      date: "2022 – 2025",
+      date: "2023 – 2025",
       title: "National Engineering Diploma in Software Engineering",
       institution: "TEK-UP University, Tunis",
       description: "Software Architecture, Distributed Systems, Microservices & OpenAPI.",
@@ -195,8 +203,8 @@ export default function AboutTabs({ is3DMode = false }: AboutTabsProps) {
     },
   ];
 
-  // Q&A Items (Vertical List with Real Hover-to-Reveal)
-  const qaList = [
+  // FAQ Items (Interactive Tap & Hover Reveal)
+  const faqList = [
     {
       id: "age-origin",
       question: "When and where were you born?",
@@ -294,8 +302,8 @@ export default function AboutTabs({ is3DMode = false }: AboutTabsProps) {
   return (
     <div className="w-full">
       {/* Centered, Compact, Single-Line Glass Tab Switcher with Mobile Horizontal Scroll */}
-      <div className="flex justify-start sm:justify-center mb-2.5 max-w-full overflow-x-auto no-scrollbar py-0.5 px-0.5">
-        <div className="flex items-center gap-1 p-1 rounded-2xl bg-black/85 border border-white/15 backdrop-blur-2xl shadow-xl flex-nowrap shrink-0 mx-auto">
+      <div className="w-full overflow-x-auto overscroll-x-contain no-scrollbar py-1 px-0.5 mb-2.5 touch-pan-x">
+        <div className="inline-flex sm:flex items-center justify-start sm:justify-center gap-1 p-1 rounded-2xl bg-black/85 border border-white/15 backdrop-blur-2xl shadow-xl min-w-max mx-auto sm:w-fit">
           {tabs.map((tab) => {
             const Icon = tab.icon;
             const isActive = activeTab === tab.id;
@@ -303,7 +311,7 @@ export default function AboutTabs({ is3DMode = false }: AboutTabsProps) {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl text-[10px] sm:text-[11px] font-mono font-bold tracking-wider transition-all whitespace-nowrap cursor-pointer active:scale-95 ${
+                className={`flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl text-[10px] sm:text-[11px] font-mono font-bold tracking-wider transition-all whitespace-nowrap cursor-pointer active:scale-95 shrink-0 ${
                   isActive
                     ? "bg-[#FFD600] text-black shadow-md shadow-yellow-400/25 font-extrabold"
                     : "text-neutral-300 hover:text-white hover:bg-white/10"
@@ -669,52 +677,72 @@ export default function AboutTabs({ is3DMode = false }: AboutTabsProps) {
       )}
 
       {/* ------------------------------------------------------------------- */}
-      {/* TAB 5: INTEL & Q&A                                                 */}
+      {/* TAB 5: INTEL & FAQ                                                  */}
       {/* ------------------------------------------------------------------- */}
-      {activeTab === "qa" && (
-        <div key="qa" className="animate-tab-switch p-4 rounded-2xl bg-black/60 border border-white/10 backdrop-blur-xl">
+      {activeTab === "faq" && (
+        <div key="faq" className="animate-tab-switch p-4 rounded-2xl bg-black/60 border border-white/10 backdrop-blur-xl">
           <div className="text-xs font-mono font-bold text-yellow-400 mb-3 flex items-center justify-between">
             <div className="flex items-center gap-2">
               <HelpCircle className="w-4 h-4 text-yellow-400" />
-              <span>CLASSIFIED DOSSIER // FREQUENT INQUIRIES</span>
+              <span>FREQUENTLY ASKED QUESTIONS // VERIFIED INTEL</span>
             </div>
             <span className="text-[10px] text-neutral-400 font-normal">
-              HOVER TO REVEAL TELEMETRY
+              TAP OR HOVER TO REVEAL
             </span>
           </div>
 
           <div className="space-y-2">
-            {qaList.map((item) => {
+            {faqList.map((item) => {
               const Icon = item.icon;
+              const isExpanded = !!expandedFaqs[item.id];
               return (
                 <div
                   key={item.id}
-                  className="group relative p-3 rounded-xl bg-white/5 border border-white/5 hover:border-yellow-400/40 hover:bg-neutral-900/90 transition-all cursor-pointer"
+                  onClick={() => toggleFaq(item.id)}
+                  className={`group relative p-3 rounded-xl transition-all cursor-pointer border select-none ${
+                    isExpanded
+                      ? "bg-neutral-900/95 border-yellow-400/50 shadow-md shadow-yellow-400/10"
+                      : "bg-white/5 border-white/5 hover:border-yellow-400/40 hover:bg-neutral-900/90"
+                  }`}
                 >
                   <div className="flex items-center justify-between gap-2 mb-1">
-                    <div className="flex items-center gap-2.5">
+                    <div className="flex items-center gap-2.5 min-w-0">
                       <div className="w-6 h-6 rounded-lg bg-yellow-400/10 border border-yellow-400/20 flex items-center justify-center shrink-0">
                         <Icon className="w-3.5 h-3.5 text-yellow-400" />
                       </div>
-                      <span className="text-xs font-bold text-neutral-200 group-hover:text-white font-display">
+                      <span className={`text-xs font-bold font-display transition-colors ${isExpanded ? "text-white" : "text-neutral-200 group-hover:text-white"}`}>
                         {item.question}
                       </span>
                     </div>
 
-                    <div className="flex items-center gap-1.5">
+                    <div className="flex items-center gap-1.5 shrink-0">
                       <span className="text-[9px] font-mono text-neutral-500 tracking-wider">
                         {item.category}
                       </span>
-                      <div className="w-5 h-5 rounded-md bg-white/5 flex items-center justify-center text-neutral-400 group-hover:text-yellow-400 group-hover:bg-yellow-400/10 transition-all">
-                        <Lock className="w-3 h-3 group-hover:hidden" />
-                        <Eye className="w-3 h-3 hidden group-hover:block text-yellow-400" />
+                      <div className={`w-5 h-5 rounded-md flex items-center justify-center transition-all ${
+                        isExpanded
+                          ? "bg-yellow-400/20 text-yellow-400"
+                          : "bg-white/5 text-neutral-400 group-hover:text-yellow-400 group-hover:bg-yellow-400/10"
+                      }`}>
+                        {isExpanded ? (
+                          <Eye className="w-3 h-3 text-yellow-400" />
+                        ) : (
+                          <>
+                            <Lock className="w-3 h-3 group-hover:hidden" />
+                            <Eye className="w-3 h-3 hidden group-hover:block text-yellow-400" />
+                          </>
+                        )}
                       </div>
                     </div>
                   </div>
 
-                  <div className="overflow-hidden max-h-0 opacity-0 group-hover:max-h-24 group-hover:opacity-100 transition-all duration-300 ease-in-out">
+                  <div className={`overflow-hidden transition-all duration-300 ease-in-out ${
+                    isExpanded
+                      ? "max-h-40 opacity-100"
+                      : "max-h-0 opacity-0 group-hover:max-h-40 group-hover:opacity-100"
+                  }`}>
                     <div className="mt-2 pt-2 border-t border-white/10 text-[11px] font-mono text-yellow-300 leading-relaxed flex items-start gap-1.5">
-                      <span className="text-amber-500 font-bold">↳ DECLASSIFIED:</span>
+                      <span className="text-amber-500 font-bold shrink-0">↳ DECLASSIFIED:</span>
                       <span>{item.answer}</span>
                     </div>
                   </div>
