@@ -244,14 +244,55 @@ export default function Home() {
   // Multi-modal gesture and interaction handler (Wheel, Touch, Keyboard)
   useEffect(() => {
     const handleWheel = (e: WheelEvent) => {
-      e.preventDefault();
-
       // If already transitioning between sections, ignore wheel events to prevent animation interruption
-      if (isAnimating.current) {
+      if (isAnimating.current || Date.now() < transitionCooldownRef.current) {
+        e.preventDefault();
         return;
       }
 
-      if (Math.abs(e.deltaY) > 8) {
+      // Check if the user is scrolling inside a scrollable sub-container (Section 1 About Tabs, Section 2 Projects, etc.)
+      let target = e.target as HTMLElement | null;
+      let scrollableEl: HTMLElement | null = null;
+      while (target && target !== document.body) {
+        if (
+          target.classList?.contains("overflow-y-auto") ||
+          target.classList?.contains("overflow-y-scroll")
+        ) {
+          scrollableEl = target;
+          break;
+        }
+        const style = window.getComputedStyle(target);
+        if (style.overflowY === "auto" || style.overflowY === "scroll") {
+          if (target.scrollHeight > target.clientHeight + 4) {
+            scrollableEl = target;
+            break;
+          }
+        }
+        target = target.parentElement;
+      }
+
+      if (scrollableEl) {
+        const { scrollTop, scrollHeight, clientHeight } = scrollableEl;
+        const isScrollable = scrollHeight > clientHeight + 4;
+
+        if (isScrollable) {
+          const isAtTop = scrollTop <= 4;
+          const isAtBottom = scrollTop + clientHeight >= scrollHeight - 4;
+
+          // If scrolling down and container can scroll down further, allow native scroll
+          if (e.deltaY > 0 && !isAtBottom) {
+            return;
+          }
+          // If scrolling up and container can scroll up further, allow native scroll
+          if (e.deltaY < 0 && !isAtTop) {
+            return;
+          }
+        }
+      }
+
+      e.preventDefault();
+
+      if (Math.abs(e.deltaY) > 12) {
         const vh = window.innerHeight;
         const currentSection = Math.round(window.scrollY / vh);
         if (e.deltaY > 0 && currentSection < 3) {

@@ -21,17 +21,18 @@
 
   /* Custom sleek scrollbar */
   ::-webkit-scrollbar {
-    width: 5px;
+    width: 6px;
+    height: 6px;
   }
   ::-webkit-scrollbar-track {
     background: transparent;
   }
   ::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.2);
+    background: rgba(140, 140, 140, 0.35);
     border-radius: 9999px;
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: rgba(255, 255, 255, 0.4);
+    background: rgba(140, 140, 140, 0.65);
   }
 }
 
