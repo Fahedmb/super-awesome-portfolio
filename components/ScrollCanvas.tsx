@@ -386,50 +386,52 @@ export default function ScrollCanvas({
     };
   }, [isLoaded, handleResize, handleScroll]);
 
-  if (!is3DMode || deviceInfo.isMobile) {
-    const isLight = activeSection === 0 || activeSection === 2;
-    return (
+  const isLight = activeSection === 0 || activeSection === 2;
+
+  return (
+    <>
+      {/* Persistent adaptive background color matching active section */}
       <div
-        className={`fixed inset-0 w-full h-full -z-10 transition-colors duration-700 ease-in-out pointer-events-none ${
+        className={`fixed inset-0 w-full h-full -z-20 transition-colors duration-700 ease-in-out pointer-events-none ${
           isLight ? "bg-[#ffffff]" : "bg-[#0a0a0c]"
         }`}
         aria-hidden="true"
       />
-    );
-  }
 
-  return (
-    <>
-      {/* ------------------------------------------------------------------- */}
-      {/* MINIMAL THEME LOADER: PURE BLACK SCREEN WITH THEME YELLOW PROGRESS BAR */}
-      {/* ------------------------------------------------------------------- */}
-      {showLoader && (
-        <div
-          className={`fixed inset-0 z-[999999] flex flex-col items-center justify-center bg-black transition-opacity duration-700 ease-out ${
-            isLoaded
-              ? "opacity-0 pointer-events-none"
-              : "opacity-100 pointer-events-auto"
-          }`}
-        >
-          {/* Theme Yellow Progress Bar */}
-          <div className="w-48 sm:w-64 flex flex-col items-center">
-            <div className="w-full h-1 bg-neutral-900 rounded-full overflow-hidden">
-              <div
-                className="h-full bg-gradient-to-r from-amber-500 via-[#FFD600] to-yellow-300 rounded-full shadow-[0_0_12px_rgba(255,214,0,0.7)] transition-all duration-150 ease-out"
-                style={{ width: `${Math.max(4, loadProgress)}%` }}
-              />
+      {/* 3D Mode Canvas and Loader (rendered when 3D Mode is enabled on desktop) */}
+      {is3DMode && !deviceInfo.isMobile && (
+        <>
+          {showLoader && (
+            <div
+              className={`fixed inset-0 z-[999999] flex flex-col items-center justify-center backdrop-blur-md transition-opacity duration-700 ease-out ${
+                isLight ? "bg-white/85" : "bg-black/90"
+              } ${
+                isLoaded
+                  ? "opacity-0 pointer-events-none"
+                  : "opacity-100 pointer-events-auto"
+              }`}
+            >
+              {/* Theme Yellow Progress Bar */}
+              <div className="w-48 sm:w-64 flex flex-col items-center">
+                <div className="w-full h-1.5 bg-neutral-900/20 rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-gradient-to-r from-amber-500 via-[#FFD600] to-yellow-300 rounded-full shadow-[0_0_12px_rgba(255,214,0,0.7)] transition-all duration-150 ease-out"
+                    style={{ width: `${Math.max(4, loadProgress)}%` }}
+                  />
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
-      )}
+          )}
 
-      <canvas
-        ref={canvasRef}
-        className="fixed inset-0 w-full h-full -z-10 bg-neutral-950 transition-opacity duration-500"
-        style={{
-          opacity: isLoaded ? 1 : 0,
-        }}
-      />
+          <canvas
+            ref={canvasRef}
+            className="fixed inset-0 w-full h-full -z-10 bg-transparent transition-opacity duration-500"
+            style={{
+              opacity: isLoaded ? 1 : 0,
+            }}
+          />
+        </>
+      )}
     </>
   );
 }

@@ -194,6 +194,48 @@
   will-change: transform, opacity;
 }
 
+/* Idle Next Section Prompt (Gentle Pulse Once Every 3 Seconds) */
+@keyframes idle-pulse-3s {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(255, 214, 0, 0);
+  }
+  20% {
+    transform: scale(1.02);
+    box-shadow: 0 0 0 6px rgba(255, 214, 0, 0.35), 0 0 20px 4px rgba(255, 214, 0, 0.25);
+  }
+  40% {
+    transform: scale(1);
+    box-shadow: 0 0 0 10px rgba(255, 214, 0, 0), 0 0 0 0 rgba(255, 214, 0, 0);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(255, 214, 0, 0);
+  }
+}
+
+.animate-idle-pulse-3s {
+  animation: idle-pulse-3s 3s cubic-bezier(0.25, 1, 0.5, 1) infinite;
+  will-change: transform, box-shadow;
+}
+
+/* 3D Mode Inviting Glow on Contact Sector */
+@keyframes invite-glow {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(255, 214, 0, 0);
+  }
+  50% {
+    transform: scale(1.04);
+    box-shadow: 0 0 16px 4px rgba(255, 214, 0, 0.5), 0 0 0 2px rgba(255, 214, 0, 0.6);
+  }
+}
+
+.animate-invite-glow {
+  animation: invite-glow 2.5s ease-in-out infinite;
+  will-change: transform, box-shadow;
+}
+
 /* Accessibility: Respect reduced motion preferences */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {

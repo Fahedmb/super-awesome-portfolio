@@ -11,6 +11,7 @@ import GradualBlur from "@/components/GradualBlur";
 import AboutTabs from "@/components/AboutTabs";
 import ModeModal from "@/components/ModeModal";
 import DocumentModal from "@/components/DocumentModal";
+import GuidedTour from "@/components/GuidedTour";
 import { detectDevice } from "@/lib/device";
 
 const Lanyard = dynamic(() => import("@/components/Lanyard"), {
@@ -28,6 +29,7 @@ import {
   GraduationCap,
   Briefcase,
   Database,
+  HelpCircle,
   X,
 } from "lucide-react";
 
@@ -63,12 +65,36 @@ export default function Home() {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [isDocModalOpen, setIsDocModalOpen] = useState<boolean>(false);
 
+  // Idle section next-button pulse (after 6s in the same section without navigating)
+  const [isNextButtonPulsing, setIsNextButtonPulsing] = useState<boolean>(false);
+  const idleTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+  const [activeSection, setActiveSection] = useState<number>(0);
+
+  const resetIdleTimer = useCallback(() => {
+    setIsNextButtonPulsing(false);
+    if (idleTimerRef.current) {
+      clearTimeout(idleTimerRef.current);
+    }
+    idleTimerRef.current = setTimeout(() => {
+      setIsNextButtonPulsing(true);
+    }, 6000);
+  }, []);
+
+  useEffect(() => {
+    resetIdleTimer();
+    return () => {
+      if (idleTimerRef.current) clearTimeout(idleTimerRef.current);
+    };
+  }, [activeSection, resetIdleTimer]);
+
   const handleModeToggleClick = () => {
     if (is3DMode) {
       setIs3DMode(false);
       try {
         localStorage.setItem("portfolio_3d_mode", "false");
       } catch {}
+      window.scrollTo(0, activeSection * window.innerHeight);
     } else {
       setIsModalOpen(true);
     }
@@ -82,6 +108,7 @@ export default function Home() {
         localStorage.setItem("portfolio_3d_mode", "true");
       } catch {}
     }
+    window.scrollTo(0, activeSection * window.innerHeight);
   };
 
   const [pendingTransition, setPendingTransition] = useState<PendingTransition | null>(null);
@@ -97,7 +124,6 @@ export default function Home() {
     setPendingTransition(null);
   }, []);
 
-  const [activeSection, setActiveSection] = useState<number>(0);
   const [hoveredNav, setHoveredNav] = useState<number | null>(null);
   const progressRef = useRef<ProgressData>({
     progress: 0,
@@ -700,29 +726,41 @@ export default function Home() {
         {/* Quick Header Actions: Mode Switcher, CV Download & Contact */}
         <div className="flex items-center gap-2">
           {/* Experience Mode Toggle Button */}
-          <button
-            onClick={handleModeToggleClick}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-mono font-bold transition-all duration-200 active:scale-95 border cursor-pointer ${
-              is3DMode
-                ? "bg-yellow-400 text-black border-yellow-400 hover:bg-yellow-300 shadow-md shadow-yellow-500/25"
-                : isCurrentSectionLight
-                ? "bg-neutral-100 hover:bg-neutral-200 border-neutral-300 text-neutral-800"
-                : "bg-white/10 hover:bg-white/20 border-white/20 text-neutral-200"
-            }`}
-            title={is3DMode ? "Switch to Simple Mode" : "Enable 3D & Video Animations"}
-          >
-            {is3DMode ? (
-              <>
-                <span className="w-1.5 h-1.5 rounded-full bg-black animate-pulse" />
-                <span>3D MODE: ON</span>
-              </>
-            ) : (
-              <>
-                <Sparkles className="w-3 h-3 text-yellow-500 animate-pulse" />
-                <span>3D MODE: OFF</span>
-              </>
+          <div className="relative">
+            <button
+              onClick={handleModeToggleClick}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-mono font-bold transition-all duration-300 active:scale-95 border cursor-pointer ${
+                is3DMode
+                  ? "bg-yellow-400 text-black border-yellow-400 hover:bg-yellow-300 shadow-md shadow-yellow-500/25"
+                  : activeSection === 3
+                  ? "bg-yellow-400/20 text-yellow-300 border-yellow-400/80 animate-invite-glow shadow-lg shadow-yellow-400/30 ring-2 ring-yellow-400/40"
+                  : isCurrentSectionLight
+                  ? "bg-neutral-100 hover:bg-neutral-200 border-neutral-300 text-neutral-800"
+                  : "bg-white/10 hover:bg-white/20 border-white/20 text-neutral-200"
+              }`}
+              title={is3DMode ? "Switch to Simple Mode" : "Enable 3D & Video Animations"}
+            >
+              {is3DMode ? (
+                <>
+                  <span className="w-1.5 h-1.5 rounded-full bg-black animate-pulse" />
+                  <span>3D MODE: ON</span>
+                </>
+              ) : (
+                <>
+                  <Sparkles className={`w-3 h-3 ${activeSection === 3 ? "text-yellow-300 animate-spin" : "text-yellow-500 animate-pulse"}`} />
+                  <span>3D MODE: OFF</span>
+                </>
+              )}
+            </button>
+
+            {/* Inviting Badge Tooltip on Contact Sector (Desktop Only) */}
+            {activeSection === 3 && !is3DMode && (
+              <div className="absolute top-11 right-0 z-50 px-3 py-1 rounded-xl bg-black/95 border border-yellow-400/60 shadow-2xl backdrop-blur-2xl text-[10px] font-mono text-yellow-300 animate-section-entrance flex items-center gap-1.5 whitespace-nowrap pointer-events-auto">
+                <span className="w-1.5 h-1.5 rounded-full bg-yellow-400 animate-ping" />
+                <span>Full journey explored! Try 3D Video Mode</span>
+              </div>
             )}
-          </button>
+          </div>
 
           <button
             type="button"
@@ -775,6 +813,16 @@ export default function Home() {
               {sectionTitles[activeSection]?.themeLabel}
             </span>
           </div>
+
+          {/* Quick Tour Launcher Help Button */}
+          <button
+            onClick={() => window.dispatchEvent(new CustomEvent("open-portfolio-tour"))}
+            className="flex items-center gap-1 opacity-60 hover:opacity-100 hover:text-yellow-400 transition-opacity p-0.5 cursor-pointer ml-0.5 sm:ml-1"
+            title="Open Quick Guide Tutorial"
+          >
+            <HelpCircle className="w-3 h-3 text-yellow-400" />
+            <span className="text-[9px] font-mono hidden sm:inline">GUIDE</span>
+          </button>
         </div>
 
         {/* Center: Perfectly Centered Animation Progress Meter (Mobile & Desktop) */}
@@ -816,6 +864,10 @@ export default function Home() {
               isCurrentSectionLight
                 ? "glass-panel-light text-neutral-800 hover:bg-neutral-200"
                 : "glass-panel-dark text-neutral-300 hover:text-white"
+            } ${
+              isNextButtonPulsing && activeSection < 3
+                ? "animate-idle-pulse-3s ring-2 ring-yellow-400/80 border-yellow-400"
+                : ""
             }`}
             title="Next Sector (Arrow Down)"
           >
@@ -988,7 +1040,11 @@ export default function Home() {
           {/* Absolute Bottom Navigation Bar (Desktop Only) */}
           <button
             onClick={() => scrollToSection(1)}
-            className="hidden md:flex w-full py-2.5 sm:py-3 px-5 sm:px-6 rounded-2xl bg-neutral-900 hover:bg-black text-white text-xs font-mono font-bold tracking-wider items-center justify-between transition-all active:scale-98 shadow-xl shadow-neutral-900/25 cursor-pointer shrink-0 mt-3 sm:mt-4 pointer-events-auto"
+            className={`hidden md:flex w-full py-2.5 sm:py-3 px-5 sm:px-6 rounded-2xl bg-neutral-900 hover:bg-black text-white text-xs font-mono font-bold tracking-wider items-center justify-between transition-all active:scale-98 shadow-xl shadow-neutral-900/25 cursor-pointer shrink-0 mt-3 sm:mt-4 pointer-events-auto ${
+              isNextButtonPulsing && activeSection === 0
+                ? "animate-idle-pulse-3s ring-2 ring-yellow-400/80 border border-yellow-400/60"
+                : ""
+            }`}
           >
             <div className="flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-yellow-400 animate-pulse" />
@@ -1044,7 +1100,11 @@ export default function Home() {
           {/* Absolute Bottom Navigation Bar (Desktop Only) */}
           <button
             onClick={() => scrollToSection(2)}
-            className="hidden md:flex w-full py-2.5 sm:py-3 px-5 sm:px-6 rounded-2xl bg-[#FFD600] hover:bg-[#FFE033] text-black text-xs font-mono font-extrabold tracking-wider items-center justify-between transition-all active:scale-98 shadow-xl shadow-yellow-400/30 cursor-pointer shrink-0 mt-3 sm:mt-4 pointer-events-auto"
+            className={`hidden md:flex w-full py-2.5 sm:py-3 px-5 sm:px-6 rounded-2xl bg-[#FFD600] hover:bg-[#FFE033] text-black text-xs font-mono font-extrabold tracking-wider items-center justify-between transition-all active:scale-98 shadow-xl shadow-yellow-400/30 cursor-pointer shrink-0 mt-3 sm:mt-4 pointer-events-auto ${
+              isNextButtonPulsing && activeSection === 1
+                ? "animate-idle-pulse-3s ring-2 ring-black/80"
+                : ""
+            }`}
           >
             <div className="flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-black animate-pulse" />
@@ -1100,7 +1160,11 @@ export default function Home() {
           {/* Absolute Bottom Navigation Bar (Desktop Only) */}
           <button
             onClick={() => scrollToSection(3)}
-            className="hidden md:flex w-full py-2.5 sm:py-3 px-5 sm:px-6 rounded-2xl bg-neutral-900 hover:bg-black text-white text-xs font-mono font-bold tracking-wider items-center justify-between transition-all active:scale-98 shadow-xl shadow-neutral-900/25 cursor-pointer shrink-0 mt-3 sm:mt-4 pointer-events-auto"
+            className={`hidden md:flex w-full py-2.5 sm:py-3 px-5 sm:px-6 rounded-2xl bg-neutral-900 hover:bg-black text-white text-xs font-mono font-bold tracking-wider items-center justify-between transition-all active:scale-98 shadow-xl shadow-neutral-900/25 cursor-pointer shrink-0 mt-3 sm:mt-4 pointer-events-auto ${
+              isNextButtonPulsing && activeSection === 2
+                ? "animate-idle-pulse-3s ring-2 ring-yellow-400/80 border border-yellow-400/60"
+                : ""
+            }`}
           >
             <div className="flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-yellow-400 animate-pulse" />
@@ -1189,6 +1253,12 @@ export default function Home() {
       <DocumentModal
         isOpen={isDocModalOpen}
         onClose={() => setIsDocModalOpen(false)}
+      />
+
+      {/* Guided Onboarding Tutorial HUD (Auto-triggers after 3s on first visit) */}
+      <GuidedTour
+        isMobile={detectDevice().isMobile}
+        onNavigateToSection={scrollToSection}
       />
     </main>
   );
