@@ -685,6 +685,7 @@ export default function Home() {
             return (
               <button
                 key={item.num}
+                id={idx === 2 ? "tour-works-btn" : undefined}
                 onClick={() => scrollToSection(idx)}
                 onMouseEnter={() => setHoveredNav(idx)}
                 onMouseLeave={() => setHoveredNav(null)}
@@ -728,6 +729,7 @@ export default function Home() {
           {/* Experience Mode Toggle Button */}
           <div className="relative">
             <button
+              id="tour-3d-btn"
               onClick={handleModeToggleClick}
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-mono font-bold transition-all duration-300 active:scale-95 border cursor-pointer ${
                 is3DMode
@@ -763,6 +765,7 @@ export default function Home() {
           </div>
 
           <button
+            id="tour-cv-btn"
             type="button"
             onClick={() => setIsDocModalOpen(true)}
             className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-mono font-bold transition-all duration-200 active:scale-95 border cursor-pointer ${
@@ -979,6 +982,7 @@ export default function Home() {
                 {/* Action Buttons */}
                 <div className="flex flex-wrap items-center gap-2 sm:gap-3">
                   <button
+                    id="tour-cv-hero-btn"
                     type="button"
                     onClick={() => setIsDocModalOpen(true)}
                     className="px-4 sm:px-5 py-2 sm:py-2.5 rounded-full bg-neutral-900 hover:bg-black text-white text-[11px] sm:text-xs font-mono font-bold tracking-wider transition-all duration-200 active:scale-95 shadow-xl shadow-neutral-900/15 flex items-center gap-1.5 sm:gap-2 cursor-pointer"
@@ -997,6 +1001,7 @@ export default function Home() {
                   </SpecularButton>
 
                   <button
+                    id="tour-works-hero-btn"
                     onClick={() => scrollToSection(2)}
                     className="hidden md:inline-flex px-4 sm:px-5 py-2 sm:py-2.5 rounded-full border border-neutral-300 bg-white/80 hover:bg-white text-neutral-800 text-[11px] sm:text-xs font-mono font-semibold transition-all duration-200 active:scale-95 shadow-xs cursor-pointer"
                   >
@@ -1039,6 +1044,7 @@ export default function Home() {
 
           {/* Absolute Bottom Navigation Bar (Desktop Only) */}
           <button
+            id="tour-next-btn"
             onClick={() => scrollToSection(1)}
             className={`hidden md:flex w-full py-2.5 sm:py-3 px-5 sm:px-6 rounded-2xl bg-neutral-900 hover:bg-black text-white text-xs font-mono font-bold tracking-wider items-center justify-between transition-all active:scale-98 shadow-xl shadow-neutral-900/25 cursor-pointer shrink-0 mt-3 sm:mt-4 pointer-events-auto ${
               isNextButtonPulsing && activeSection === 0
