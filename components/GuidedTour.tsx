@@ -26,9 +26,17 @@ export default function GuidedTour({
   const [targetRect, setTargetRect] = useState<DOMRect | null>(null);
   const tooltipRef = useRef<HTMLDivElement>(null);
 
-  const steps: TourStep[] = [
+  const [isClientMobile, setIsClientMobile] = useState<boolean>(isMobile);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setIsClientMobile(isMobile || window.innerWidth < 640);
+    }
+  }, [isMobile]);
+
+  const mobileSteps: TourStep[] = [
     {
-      targetId: isMobile ? "tour-works-hero-btn" : "tour-works-btn",
+      targetId: "tour-works-hero-btn",
       fallbackTargetId: "tour-works-hero-btn",
       title: "Section 02: Enterprise Works",
       description: "Tap here to jump directly to Section 02 to watch recorded video demos and explore platforms.",
@@ -36,34 +44,51 @@ export default function GuidedTour({
       placement: "bottom",
     },
     {
-      targetId: isMobile ? "tour-cv-hero-btn" : "tour-cv-btn",
+      targetId: "tour-cv-hero-btn",
       fallbackTargetId: "tour-cv-hero-btn",
       title: "Download CV & Credentials",
       description: "Tap here to inspect and download Fahed's official Resume and Motivation Letter in EN & FR.",
       icon: FileDown,
       placement: "bottom",
     },
+  ];
+
+  const desktopSteps: TourStep[] = [
     {
-      targetId: isMobile ? "tour-cv-hero-btn" : "tour-3d-btn",
+      targetId: "tour-works-btn",
+      fallbackTargetId: "tour-works-hero-btn",
+      title: "Section 02: Enterprise Works & Demos",
+      description: "Click here to jump directly to Section 02 to watch recorded video demos and explore platforms.",
+      icon: Layers,
+      placement: "bottom",
+    },
+    {
+      targetId: "tour-cv-btn",
       fallbackTargetId: "tour-cv-hero-btn",
-      title: isMobile ? "Fast Simple Mode" : "Simple & 3D Experience",
-      description: isMobile
-        ? "Mobile runs in ultra-fast Simple Mode for smooth, responsive navigation across all devices."
-        : "Toggle between ultra-fast Simple Mode and Cinematic 3D Video Mode anytime in the header.",
+      title: "Download CV & Credentials",
+      description: "Click here to inspect and download Fahed's official Resume and Motivation Letter in EN & FR.",
+      icon: FileDown,
+      placement: "bottom",
+    },
+    {
+      targetId: "tour-3d-btn",
+      fallbackTargetId: "tour-cv-hero-btn",
+      title: "Simple & 3D Experience",
+      description: "Toggle between ultra-fast Simple Mode and Cinematic 3D Video Mode anytime in the header.",
       icon: Sparkles,
       placement: "bottom",
     },
     {
-      targetId: isMobile ? "tour-telemetry-sec" : "tour-next-btn",
+      targetId: "tour-next-btn",
       fallbackTargetId: "tour-telemetry-sec",
       title: "Sector Navigation",
-      description: isMobile
-        ? "Double-swipe or tap the sector pills at the bottom to travel between all 4 sectors."
-        : "Click this travel bar or scroll down with your mouse to journey through all 4 sectors.",
+      description: "Click this travel bar or scroll down with your mouse to journey through all 4 sectors.",
       icon: ArrowDown,
       placement: "top",
     },
   ];
+
+  const steps = isClientMobile ? mobileSteps : desktopSteps;
 
   // Trigger after 3 seconds of landing if not completed before
   useEffect(() => {
