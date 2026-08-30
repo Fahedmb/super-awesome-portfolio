@@ -30,8 +30,8 @@ export default function GuidedTour({
     {
       targetId: isMobile ? "tour-works-hero-btn" : "tour-works-btn",
       fallbackTargetId: "tour-works-hero-btn",
-      title: "Section 02: Enterprise Works & Demos",
-      description: "Click here to jump directly to Section 02 to watch recorded video demos and explore full enterprise projects.",
+      title: "Section 02: Enterprise Works",
+      description: "Tap here to jump directly to Section 02 to watch recorded video demos and explore platforms.",
       icon: Layers,
       placement: "bottom",
     },
@@ -39,26 +39,26 @@ export default function GuidedTour({
       targetId: isMobile ? "tour-cv-hero-btn" : "tour-cv-btn",
       fallbackTargetId: "tour-cv-hero-btn",
       title: "Download CV & Credentials",
-      description: "Click here to inspect and download Fahed's official Resume and Motivation Letter in English or French.",
+      description: "Tap here to inspect and download Fahed's official Resume and Motivation Letter in EN & FR.",
       icon: FileDown,
       placement: "bottom",
     },
     {
-      targetId: "tour-3d-btn",
-      fallbackTargetId: "tour-works-hero-btn",
-      title: "Simple & 3D Video Experience",
+      targetId: isMobile ? "tour-cv-hero-btn" : "tour-3d-btn",
+      fallbackTargetId: "tour-cv-hero-btn",
+      title: isMobile ? "Fast Simple Mode" : "Simple & 3D Experience",
       description: isMobile
-        ? "Mobile devices run in ultra-fast Simple Mode. You can navigate effortlessly across all sectors."
-        : "Toggle between ultra-fast Simple Mode and Cinematic 3D Video Mode anytime.",
+        ? "Mobile runs in ultra-fast Simple Mode for smooth, responsive navigation across all devices."
+        : "Toggle between ultra-fast Simple Mode and Cinematic 3D Video Mode anytime in the header.",
       icon: Sparkles,
       placement: "bottom",
     },
     {
-      targetId: "tour-next-btn",
-      fallbackTargetId: "tour-works-hero-btn",
-      title: "Travel to the Next Sector",
+      targetId: isMobile ? "tour-telemetry-sec" : "tour-next-btn",
+      fallbackTargetId: "tour-telemetry-sec",
+      title: "Sector Navigation",
       description: isMobile
-        ? "Double-swipe down or tap the sector bar to advance to the next sector."
+        ? "Double-swipe or tap the sector pills at the bottom to travel between all 4 sectors."
         : "Click this travel bar or scroll down with your mouse to journey through all 4 sectors.",
       icon: ArrowDown,
       placement: "top",
@@ -86,19 +86,18 @@ export default function GuidedTour({
     if (!currentStep) return;
 
     let el = document.getElementById(currentStep.targetId);
-    if (!el && currentStep.fallbackTargetId) {
+    if ((!el || el.offsetParent === null) && currentStep.fallbackTargetId) {
       el = document.getElementById(currentStep.fallbackTargetId);
     }
 
-    if (el) {
+    if (el && el.offsetParent !== null) {
       const rect = el.getBoundingClientRect();
-      // Ensure element is visible on screen
       if (rect.width > 0 && rect.height > 0) {
         setTargetRect(rect);
         return;
       }
     }
-    // Fallback if target element is hidden (e.g. desktop navbar on mobile)
+    // Fallback if target element is hidden or off-screen
     setTargetRect(null);
   }, [isVisible, currentStepIndex, steps]);
 
@@ -130,7 +129,10 @@ export default function GuidedTour({
     } catch {}
   };
 
-  const handleNext = () => {
+  const handleNext = (e?: React.MouseEvent) => {
+    if (e) {
+      e.stopPropagation();
+    }
     if (currentStepIndex < steps.length - 1) {
       setCurrentStepIndex((prev) => prev + 1);
     } else {
@@ -143,6 +145,11 @@ export default function GuidedTour({
   const current = steps[currentStepIndex];
   const Icon = current.icon;
 
+  // Viewport measurements
+  const windowWidth = typeof window !== "undefined" ? window.innerWidth : 400;
+  const windowHeight = typeof window !== "undefined" ? window.innerHeight : 800;
+  const isSmallScreen = windowWidth < 640;
+
   // Calculate tooltip coordinates based on targetRect
   let tooltipStyle: React.CSSProperties = {
     position: "fixed",
@@ -152,56 +159,70 @@ export default function GuidedTour({
   let arrowPlacement: "top" | "bottom" = "top";
   let arrowLeftPercent = 50;
 
-  const tooltipWidth = typeof window !== "undefined" ? Math.min(340, window.innerWidth - 32) : 320;
+  if (isSmallScreen) {
+    // Mobile view: Full width with 12px margin on both sides
+    tooltipStyle.left = "12px";
+    tooltipStyle.right = "12px";
+    tooltipStyle.width = "calc(100vw - 24px)";
+    tooltipStyle.maxWidth = "400px";
+    tooltipStyle.margin = "0 auto";
 
-  if (targetRect) {
-    const targetCenterX = targetRect.left + targetRect.width / 2;
-    const windowWidth = typeof window !== "undefined" ? window.innerWidth : 1200;
-    const windowHeight = typeof window !== "undefined" ? window.innerHeight : 800;
+    if (targetRect) {
+      const targetCenterX = targetRect.left + targetRect.width / 2;
+      arrowLeftPercent = Math.max(12, Math.min(88, (targetCenterX / windowWidth) * 100));
 
-    let left = targetCenterX - tooltipWidth / 2;
-    // Keep within viewport boundaries with 16px padding
-    left = Math.max(16, Math.min(left, windowWidth - tooltipWidth - 16));
-
-    // Calculate where arrow should point along the tooltip's top/bottom edge
-    arrowLeftPercent = Math.max(15, Math.min(85, ((targetCenterX - left) / tooltipWidth) * 100));
-
-    // Decide if tooltip should appear below or above target
-    if (current.placement === "top" || targetRect.bottom + 160 > windowHeight) {
-      // Position above target
-      arrowPlacement = "bottom";
-      tooltipStyle = {
-        position: "fixed",
-        top: Math.max(16, targetRect.top - 140),
-        left: `${left}px`,
-        width: `${tooltipWidth}px`,
-        zIndex: 99999,
-      };
+      // If target is in top half of screen, place tooltip below it
+      if (targetRect.top < windowHeight * 0.45) {
+        arrowPlacement = "top";
+        tooltipStyle.top = `${Math.max(12, Math.min(targetRect.bottom + 8, windowHeight - 210))}px`;
+      } else {
+        // Target is in bottom half of screen, place tooltip above it
+        arrowPlacement = "bottom";
+        tooltipStyle.bottom = `${Math.max(12, Math.min(windowHeight - targetRect.top + 8, windowHeight - 210))}px`;
+      }
     } else {
-      // Position below target
-      arrowPlacement = "top";
-      tooltipStyle = {
-        position: "fixed",
-        top: Math.min(windowHeight - 150, targetRect.bottom + 12),
-        left: `${left}px`,
-        width: `${tooltipWidth}px`,
-        zIndex: 99999,
-      };
+      // Centered fallback on mobile
+      tooltipStyle.bottom = "72px";
+      arrowPlacement = "bottom";
+      arrowLeftPercent = 50;
     }
   } else {
-    // Centered fallback if target is not currently found
-    tooltipStyle = {
-      position: "fixed",
-      bottom: "5rem",
-      left: "50%",
-      transform: "translateX(-50%)",
-      width: `${tooltipWidth}px`,
-      zIndex: 99999,
-    };
+    // Desktop view: Anchored floating card (320px width)
+    const tooltipWidth = 320;
+    if (targetRect) {
+      const targetCenterX = targetRect.left + targetRect.width / 2;
+      let left = targetCenterX - tooltipWidth / 2;
+      left = Math.max(16, Math.min(left, windowWidth - tooltipWidth - 16));
+      arrowLeftPercent = Math.max(15, Math.min(85, ((targetCenterX - left) / tooltipWidth) * 100));
+
+      if (current.placement === "top" || targetRect.bottom + 170 > windowHeight) {
+        arrowPlacement = "bottom";
+        tooltipStyle.bottom = `${Math.max(16, windowHeight - targetRect.top + 10)}px`;
+        tooltipStyle.left = `${left}px`;
+        tooltipStyle.width = `${tooltipWidth}px`;
+      } else {
+        arrowPlacement = "top";
+        tooltipStyle.top = `${Math.max(16, targetRect.bottom + 10)}px`;
+        tooltipStyle.left = `${left}px`;
+        tooltipStyle.width = `${tooltipWidth}px`;
+      }
+    } else {
+      tooltipStyle.bottom = "80px";
+      tooltipStyle.left = "50%";
+      tooltipStyle.transform = "translateX(-50%)";
+      tooltipStyle.width = `${tooltipWidth}px`;
+    }
   }
 
   return (
     <>
+      {/* Full-screen Click-to-Dismiss Transparent Backdrop */}
+      <div
+        onClick={handleDismiss}
+        className="fixed inset-0 z-[99990] bg-black/40 backdrop-blur-[2px] cursor-pointer transition-opacity duration-300"
+        aria-label="Click anywhere to skip tutorial"
+      />
+
       {/* Target Element Highlight Beacon Ring */}
       {targetRect && (
         <div
@@ -212,24 +233,25 @@ export default function GuidedTour({
             width: targetRect.width + 8,
             height: targetRect.height + 8,
             borderRadius: "9999px",
-            zIndex: 99998,
+            zIndex: 99995,
             pointerEvents: "none",
           }}
           className="border-2 border-yellow-400 animate-pulse shadow-[0_0_16px_rgba(255,214,0,0.8)] ring-4 ring-yellow-400/25"
         />
       )}
 
-      {/* Contextual Floating Tooltip Card */}
+      {/* Contextual Floating Tooltip Card (Tapping anywhere skips tutorial) */}
       <div
         ref={tooltipRef}
         style={tooltipStyle}
-        className="p-3.5 sm:p-4 rounded-2xl bg-black/95 border border-yellow-400/70 text-white shadow-2xl backdrop-blur-2xl animate-section-entrance transition-all duration-300 pointer-events-auto"
+        onClick={handleDismiss}
+        className="p-3.5 sm:p-4 rounded-2xl bg-[#0a0a0c]/95 border border-yellow-400/80 text-white shadow-2xl backdrop-blur-2xl animate-section-entrance transition-all duration-300 pointer-events-auto cursor-pointer"
       >
         {/* Directional Arrow Pointer */}
         {targetRect && (
           <div
             style={{ left: `${arrowLeftPercent}%` }}
-            className={`absolute w-3 h-3 bg-black border-yellow-400/70 transform -translate-x-1/2 rotate-45 pointer-events-none ${
+            className={`absolute w-3 h-3 bg-[#0a0a0c] border-yellow-400/80 transform -translate-x-1/2 rotate-45 pointer-events-none ${
               arrowPlacement === "top"
                 ? "-top-1.5 border-t border-l"
                 : "-bottom-1.5 border-b border-r"
@@ -237,25 +259,31 @@ export default function GuidedTour({
           />
         )}
 
-        {/* Header with Step Badge and Skip Button */}
+        {/* Header with Step Badge, Tap-to-Skip notice, and Close button */}
         <div className="flex items-center justify-between gap-2 pb-2 mb-2 border-b border-white/10">
           <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-yellow-400/10 border border-yellow-400/30 text-yellow-400 text-[9px] sm:text-[10px] font-mono font-bold">
             <Icon className="w-3 h-3 text-yellow-400" />
             <span>STEP {currentStepIndex + 1} OF {steps.length}</span>
           </div>
 
-          <button
-            onClick={handleDismiss}
-            className="flex items-center gap-1 text-[10px] font-mono text-neutral-400 hover:text-yellow-400 transition-colors cursor-pointer px-1.5 py-0.5 rounded-md hover:bg-white/5"
-            title="Skip entire tutorial"
-          >
-            <span>Skip All</span>
-            <X className="w-3 h-3" />
-          </button>
+          <div className="flex items-center gap-1.5">
+            <span className="text-[9px] font-mono text-neutral-400 hidden xs:inline">Tap to skip</span>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                handleDismiss();
+              }}
+              className="flex items-center gap-0.5 text-[10px] font-mono text-neutral-400 hover:text-yellow-400 transition-colors cursor-pointer px-1.5 py-0.5 rounded-md hover:bg-white/5"
+              title="Skip entire tutorial"
+            >
+              <span>Skip</span>
+              <X className="w-3 h-3 ml-0.5" />
+            </button>
+          </div>
         </div>
 
         {/* Tooltip Content */}
-        <div className="space-y-1 mb-3">
+        <div className="space-y-1 mb-2.5">
           <h4 className="text-xs sm:text-sm font-bold font-display text-white tracking-tight flex items-center gap-1.5">
             {current.title}
           </h4>
